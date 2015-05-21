@@ -17,6 +17,8 @@ import android.wxapp.service.jerry.model.person.ChangePwd;
 import android.wxapp.service.jerry.model.person.ChangePwdResponse;
 import android.wxapp.service.jerry.model.person.LoginRequest;
 import android.wxapp.service.jerry.model.person.LoginResponse;
+import android.wxapp.service.jerry.model.person.ModifyCustomerRequest;
+import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
 import android.wxapp.service.model.CustomerContactModel;
 import android.wxapp.service.model.CustomerModel;
 import android.wxapp.service.thread.ThreadManager;
@@ -95,29 +97,31 @@ public class PersonRequest extends BaseRequest {
 	 */
 	private String modifyCustomerRequeString = null;
 
-	// Jerry 2015.5.12
-	private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-	private String url;
-
-	// 获取所有联系人时的构造函数
+	/**
+	 * 获取所有联系人时的构造函数
+	 * 
+	 * @param context
+	 */
 	public PersonRequest(Context context) {
 		this.context = context;
 	}
 
-	// 登录验证时的构造函数
-	public PersonRequest(Context context, String aliasName, String identifyCode, String imsi,
-			String noMean) {
-		this.context = context;
-		this.aliasName = aliasName;
-		this.identifyCode = identifyCode;
-		this.imsi = imsi;
-	}
+	/**
+	 * 新建（或编辑）客户时的构造函数
+	 * <p>
+	 * 说明：新建客户时，输入参数Customer模型中，customerID可为任意int数值，contactID为必填且真实，
+	 * <p>
+	 * 服务器返回ID后，必须setCustomerID后才可开始保存到本地;
+	 * <p>
+	 * 编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
+	 * <p>
+	 * 任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
+	 * 
+	 * @param context
+	 * @param customer
+	 * @param customerContactList
+	 */
 
-	// 新建（或编辑）客户时的构造函数
-	// 说明：新建客户时，输入参数Customer模型中，customerID可为任意int数值，contactID为必填且真实，
-	// 服务器返回ID后，必须setCustomerID后才可开始保存到本地;
-	// 编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
-	// 任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
 	public PersonRequest(Context context, CustomerModel customer,
 			ArrayList<CustomerContactModel> customerContactList) {
 		this.context = context;
@@ -125,18 +129,12 @@ public class PersonRequest extends BaseRequest {
 		this.customerContactList = customerContactList;
 	}
 
-	// 删除客户时的构造函数
+	/**
+	 * 删除客户时的构造函数
+	 */
 	public PersonRequest(Context context, String customerID) {
 		this.context = context;
 		this.customerID = customerID;
-	}
-
-	// 修改用户密码的构造函数
-	public PersonRequest(Context context, String personID, String identifyCode, String newIdentifyCode) {
-		this.context = context;
-		this.personID = personID;
-		this.identifyCode = identifyCode;
-		this.newIdentifyCode = newIdentifyCode;
 	}
 
 	// 编辑客户信息的构造函数
@@ -360,6 +358,62 @@ public class PersonRequest extends BaseRequest {
 	}
 
 	/**
+	 * 修改用户信息 FINAL Jerry 15.5.21
+	 */
+	public JsonObjectRequest modifyCustomerInfo() {
+		ModifyCustomerRequest params = new ModifyCustomerRequest(personID, identifyCode, aliasName);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
+								ModifyCustomerResponse.class);
+						// 返回用户id
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
+								Contants.METHOD_PERSON_MODIFYUSERINFO);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
+								r.getEc(), Contants.METHOD_PERSON_MODIFYUSERINFO);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * 登录验证时的构造函数 FINAL Jerry 15.5.21
+	 * 
+	 * @param context
+	 * @param aliasName
+	 * @param identifyCode
+	 * @param imsi
+	 * @param noMean
+	 */
+	public PersonRequest(Context context, String aliasName, String identifyCode, String imsi,
+			String noMean) {
+		this.context = context;
+		this.aliasName = aliasName;
+		this.identifyCode = identifyCode;
+		this.imsi = imsi;
+	}
+
+	/**
 	 * 用户登录 FINAL Jerry 15.5.21
 	 */
 	public JsonObjectRequest getLoginRequest() {
@@ -430,13 +484,13 @@ public class PersonRequest extends BaseRequest {
 						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
 						// 返回用户id
 						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
-								r.getUid(), "Login");
+								r.getUid(), Contants.METHOD_PERSON_LOGIN);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
 						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
-								r.getEc(), "Login");
+								r.getEc(), Contants.METHOD_PERSON_LOGIN);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -449,6 +503,24 @@ public class PersonRequest extends BaseRequest {
 				arg0.printStackTrace();
 			}
 		});
+	}
+
+	/**
+	 * 修改用户信息的构造函数 FINAL Jerry 15.5.21
+	 * <p>
+	 * (修改用户密码 deprecated)
+	 * 
+	 * @param context
+	 * @param personID
+	 * @param identifyCode
+	 * @param newIdentifyCode
+	 * 
+	 */
+	public PersonRequest(Context context, String personID, String identifyCode, String newIdentifyCode) {
+		this.context = context;
+		this.personID = personID;
+		this.identifyCode = identifyCode;
+		this.newIdentifyCode = newIdentifyCode;
 	}
 
 	/**

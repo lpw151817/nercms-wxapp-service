@@ -14,6 +14,7 @@ public class Contants {
 	@Deprecated
 	public static final String MODEL_PERSON = "LoginService" + File.separator;
 	public static final String METHOD_PERSON_LOGIN = "Login";
+	public static final String METHOD_PERSON_MODIFYUSERINFO="ModifyCustomer";
 	@Deprecated
 	public static final String METHOD_PERSON_CHANGEPWD = "ChangePwd";
 
