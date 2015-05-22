@@ -7,7 +7,7 @@ public class Constant {
 	/**
 	 * Handler注册相关常量
 	 */
-	// Person
+	// Person 模块
 	// 请求成功
 	public static final int REQUEST_SUCCESS = 100;
 	// 请求失败
@@ -118,6 +118,28 @@ public class Constant {
 	public static final int SHOW_TASK_FINISH_NOTIFICATION = 703;
 	public static final int SHOW_TASK_DELAY_NOTIFICATION = 704;
 	public static final int SHOW_TASK_MODIFY_NOTIFICATION = 705;
+
+	// GPS模块
+	// GPS信息上传成功
+	public static final int GPS_UPLOAD_REQUEST_SECCESS = 800;
+	// GPS信息上传失败
+	public static final int GPS_UPLOAD_REQUEST_FAIL = 801;
+	// 查询个人最新GPS信息成功
+	public static final int QUERY_PERSONAL_LAST_GPS_REQUEST_SECCESS = 802;
+	// 查询个人最新GPS信息失败
+	public static final int QUERY_PERSONAL_LAST_GPS_REQUEST_FAIL = 803;
+	// 查询多个人最新GPS信息成功
+	public static final int QUERY_LAST_GPSS_REQUEST_SECCESS = 804;
+	// 查询多个人最新GPS信息失败
+	public static final int QUERY_LAST_GPSS_REQUEST_FAIL = 805;
+	// 查询个人GPS轨迹信息成功
+	public static final int QUERY_PERSONAL_GPSS_REQUEST_SECCESS = 806;
+	// 查询个人GPS轨迹信息失败
+	public static final int QUERY_PERSONAL_GPSS_REQUEST_FAIL = 807;
+	// 查询多个人GPS轨迹信息成功
+	public static final int QUERY_GPSS_REQUEST_SECCESS = 808;
+	// 查询多个人GPS轨迹信息失败
+	public static final int QUERY_GPSS_REQUEST_FAIL = 809;
 
 	// 未读状态
 	public static final int UNREAD = 0;

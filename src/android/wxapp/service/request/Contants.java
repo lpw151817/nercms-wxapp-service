@@ -10,7 +10,7 @@ public class Contants {
 	// 模块名称
 	public static final String MODEL_NAME = "HttpService" + File.separator;
 
-	// Person模块
+	// Person模块 Jerry FINAL 5.22
 	@Deprecated
 	public static final String MODEL_PERSON = "LoginService" + File.separator;
 	public static final String METHOD_PERSON_LOGIN = "Login";
@@ -22,6 +22,13 @@ public class Contants {
 	public static final String METHOD_PERSON_GET_ORG_PERSON = "GetOrgCodePerson";
 	@Deprecated
 	public static final String METHOD_PERSON_CHANGEPWD = "ChangePwd";
+
+	// GPS模块 Jerry 5.22
+	public static final String METHOD_GPS_UPLOAD = "GPSUpload";
+	public static final String METHOD_GPS_QUERY_LAST_PERSONAL_GPS = "QueryLastPersonalGPS";
+	public static final String METHOD_GPS_QUERY_LAST_GPSS = "QueryLastGPSs";
+	public static final String METHOD_GPS_QUERY_PERSONAL_GPSS = "QueryPersonalGPSs";
+	public static final String METHOD_GPS_QUERY_GPSS = "QueryGPSs";
 
 	public static final String MODEL_CONTACT = "ContactService" + File.separator;
 	public static final String METHOD_CONTACT_QUERYORGPERSON = "QueryOrgPerson";

@@ -15,6 +15,7 @@ import android.wxapp.service.dao.PersonDao;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
 import android.wxapp.service.jerry.model.person.AddPersonContactRequest;
+import android.wxapp.service.jerry.model.person.AddPersonContactResponse;
 import android.wxapp.service.jerry.model.person.ChangePwdRequest;
 import android.wxapp.service.jerry.model.person.ChangePwdResponse;
 import android.wxapp.service.jerry.model.person.Contacts;
@@ -27,6 +28,7 @@ import android.wxapp.service.jerry.model.person.GetPersonInfoResponse;
 import android.wxapp.service.jerry.model.person.LoginRequest;
 import android.wxapp.service.jerry.model.person.LoginResponse;
 import android.wxapp.service.jerry.model.person.LogoutRequest;
+import android.wxapp.service.jerry.model.person.LogoutResponse;
 import android.wxapp.service.jerry.model.person.ModifyCustomerRequest;
 import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
 import android.wxapp.service.model.CustomerContactModel;
@@ -43,6 +45,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * 完成文档中Person模块的所有接口 待测试
+ * 
+ * @author JerryLiu
+ *
+ */
 public class PersonRequest extends BaseRequest {
 
 	// private Context context;
@@ -381,19 +389,26 @@ public class PersonRequest extends BaseRequest {
 	// this.context = c;
 	// }
 
+	// ======================================================
+	//
+	// JerryLiu 2015.5.22 Complete
+	//
+	// 1.modifyCustomerInfo
+	// 2.getOrgCode
+	// 3.getOrgCodePerson
+	// 4.getLoginRequest
+	// 5.logOut
+	// 6.getPersonInfo
+	// 7.addPersonContact
+	//
+	// ======================================================
+
 	/**
-	 * 查询对应组织结点下的人员 FINAL Jerry 15.5.22
-	 * 
-	 * @param c
-	 * @param ic
-	 *            密码
-	 * @param orgCode
-	 *            需要查询的组织结点(最顶层的父节点此值为1)
-	 * @return
+	 * 修改用户信息 FINAL Jerry 15.5.21
 	 */
-	public JsonObjectRequest getOrgCodePerson(Context c, String ic, String orgCode) {
-		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), ic, orgCode);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
+	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
+		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
@@ -402,18 +417,18 @@ public class PersonRequest extends BaseRequest {
 			public void onResponse(JSONObject arg0) {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
-								GetOrgCodePersonResponse.class);
+						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
+								ModifyCustomerResponse.class);
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
-								Contants.METHOD_PERSON_GET_ORG_PERSON);
+								Constant.MODIFY_USERINFO_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_MODIFYUSERINFO);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_ORG_PERSON_REQUEST_FAIL, r.getEc(),
-								Contants.METHOD_PERSON_GET_ORG_PERSON);
+								Constant.MODIFY_USERINFO_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_MODIFYUSERINFO);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -458,7 +473,7 @@ public class PersonRequest extends BaseRequest {
 								NormalServerResponse.class);
 						// 返回错误代码
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_ORG_NODE_REQUEST_FAIL, r.getEc(),
+								Constant.QUERY_ORG_NODE_REQUEST_FAIL, r,
 								Contants.METHOD_PERSON_GET_ORG_CODE);
 					}
 				} catch (JSONException e) {
@@ -475,80 +490,18 @@ public class PersonRequest extends BaseRequest {
 	}
 
 	/**
-	 * 添加用户联系方式 FINAL Jerry 15.5.22
-	 * <p>
-	 * TIP：ts与cs的两个数组需要一一对应
+	 * 查询对应组织结点下的人员 FINAL Jerry 15.5.22
 	 * 
 	 * @param c
-	 * @param identifyCode
+	 * @param ic
 	 *            密码
-	 * @param personId
-	 *            需要将联系方式添加到用户的id
-	 * @param ts
-	 *            联系方式类型(1：手机号2：座机号3：SIM号4：手台号码5：邮箱)
-	 * @param cs
-	 *            联系方式内容
+	 * @param orgCode
+	 *            需要查询的组织结点(最顶层的父节点此值为1)
 	 * @return
 	 */
-	public JsonObjectRequest addPersonContact(Context c, String identifyCode, String personId,
-			String[] ts, String[] cs) {
-		// 如果联系方式数组不能匹配，直接返回null
-		if (ts.length != cs.length)
-			return null;
-		List<Contacts> contacts = new ArrayList<Contacts>();
-		for (int i = 0; i < cs.length; i++) {
-			contacts.add(new Contacts(ts[i], cs[i]));
-		}
-		AddPersonContactRequest params = new AddPersonContactRequest(getUserId(c), identifyCode,
-				personId, contacts);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
-				+ Contants.METHOD_PERSON_ADD_PERSON_CONTACTS + Contants.PARAM_NAME
-				+ super.gson.toJson(params);
-		System.out.println(this.url);
-		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject arg0) {
-				try {
-					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.ADD_PERSON_CONTACT_REQUEST_SUCCESS,
-								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
-					} else {
-						NormalServerResponse r = gson.fromJson(arg0.toString(),
-								NormalServerResponse.class);
-						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.ADD_PERSON_CONTACT_REQUEST_FAIL, r.getEc(),
-								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-				arg0.printStackTrace();
-			}
-		});
-	}
-
-	/**
-	 * 根据用户id查询用户信息 FINAL Jerry 15.5.22
-	 * 
-	 * @param c
-	 *            activity上下文
-	 * @param identifyCode
-	 *            密码
-	 * @param personId
-	 *            需要查询的用户id
-	 * @return
-	 */
-	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
-		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), identifyCode, personId);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
+	public JsonObjectRequest getOrgCodePerson(Context c, String ic, String orgCode) {
+		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), ic, orgCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
@@ -557,97 +510,18 @@ public class PersonRequest extends BaseRequest {
 			public void onResponse(JSONObject arg0) {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						GetPersonInfoResponse r = gson.fromJson(arg0.toString(),
-								GetPersonInfoResponse.class);
-						// 将接收到的对象发送到ui线程
+						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
+								GetOrgCodePersonResponse.class);
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_PERSON_INFO_REQUEST_SUCCESS, r,
-								Contants.METHOD_PERSON_GET_PERSON_INFO);
+								Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_GET_ORG_PERSON);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_PERSON_INFO_REQUEST_FAIL, r.getEc(),
-								Contants.METHOD_PERSON_GET_PERSON_INFO);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-				arg0.printStackTrace();
-			}
-		});
-
-	}
-
-	/**
-	 * 用户退出 FINAL Jerry 15.5.21
-	 */
-	public JsonObjectRequest logOut(Context c, String identifyCode) {
-		LogoutRequest params = new LogoutRequest(getUserId(c), identifyCode);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
-		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject arg0) {
-				try {
-					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_SUCCESS,
-								Contants.METHOD_PERSON_LOGOUT);
-					} else {
-						NormalServerResponse r = gson.fromJson(arg0.toString(),
-								NormalServerResponse.class);
-						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_FAIL,
-								r.getEc(), Contants.METHOD_PERSON_LOGOUT);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError arg0) {
-				arg0.printStackTrace();
-			}
-		});
-
-	}
-
-	/**
-	 * 修改用户信息 FINAL Jerry 15.5.21
-	 */
-	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
-		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
-		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject arg0) {
-				try {
-					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
-								ModifyCustomerResponse.class);
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.MODIFY_USERINFO_REQUEST_SUCCESS,
-								Contants.METHOD_PERSON_MODIFYUSERINFO);
-					} else {
-						NormalServerResponse r = gson.fromJson(arg0.toString(),
-								NormalServerResponse.class);
-						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.MODIFY_USERINFO_REQUEST_FAIL, r.getEc(),
-								Contants.METHOD_PERSON_MODIFYUSERINFO);
+								Constant.QUERY_ORG_PERSON_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_GET_ORG_PERSON);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -661,24 +535,6 @@ public class PersonRequest extends BaseRequest {
 			}
 		});
 	}
-
-	// /**
-	// * 登录验证时的构造函数 FINAL Jerry 15.5.21
-	// *
-	// * @param context
-	// * @param aliasName
-	// * @param identifyCode
-	// * @param imsi
-	// * @param noMean
-	// */
-	// public PersonRequest(Context context, String aliasName, String
-	// identifyCode, String imsi,
-	// String noMean) {
-	// this.context = context;
-	// this.aliasName = aliasName;
-	// this.identifyCode = identifyCode;
-	// this.imsi = imsi;
-	// }
 
 	/**
 	 * 用户登录 FINAL Jerry 15.5.21
@@ -697,13 +553,13 @@ public class PersonRequest extends BaseRequest {
 						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
 						// 返回用户id
 						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
-								r.getUid(), Contants.METHOD_PERSON_LOGIN);
+								r, Contants.METHOD_PERSON_LOGIN);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
-								r.getEc(), Contants.METHOD_PERSON_LOGIN);
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_LOGIN);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -770,6 +626,175 @@ public class PersonRequest extends BaseRequest {
 		// return loginRequest;
 
 	}
+
+	/**
+	 * 用户退出 FINAL Jerry 15.5.21
+	 */
+	public JsonObjectRequest logOut(Context c, String identifyCode) {
+		LogoutRequest params = new LogoutRequest(getUserId(c), identifyCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						LogoutResponse r = gson.fromJson(arg0.toString(), LogoutResponse.class);
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_SUCCESS,
+								r, Contants.METHOD_PERSON_LOGOUT);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_LOGOUT);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
+
+	/**
+	 * 根据用户id查询用户信息 FINAL Jerry 15.5.22
+	 * 
+	 * @param c
+	 *            activity上下文
+	 * @param identifyCode
+	 *            密码
+	 * @param personId
+	 *            需要查询的用户id
+	 * @return
+	 */
+	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
+		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), identifyCode, personId);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						GetPersonInfoResponse r = gson.fromJson(arg0.toString(),
+								GetPersonInfoResponse.class);
+						// 将接收到的对象发送到ui线程
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_PERSON_INFO_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_GET_PERSON_INFO);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_PERSON_INFO_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_GET_PERSON_INFO);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
+
+	/**
+	 * 添加用户联系方式 FINAL Jerry 15.5.22
+	 * <p>
+	 * TIP：ts与cs的两个数组需要一一对应
+	 * 
+	 * @param c
+	 * @param identifyCode
+	 *            密码
+	 * @param personId
+	 *            需要将联系方式添加到用户的id
+	 * @param ts
+	 *            联系方式类型(1：手机号2：座机号3：SIM号4：手台号码5：邮箱)
+	 * @param cs
+	 *            联系方式内容
+	 * @return
+	 */
+	public JsonObjectRequest addPersonContact(Context c, String identifyCode, String personId,
+			String[] ts, String[] cs) {
+		// 如果联系方式数组不能匹配，直接返回null
+		if (ts.length != cs.length)
+			return null;
+		List<Contacts> contacts = new ArrayList<Contacts>();
+		for (int i = 0; i < cs.length; i++) {
+			contacts.add(new Contacts(ts[i], cs[i]));
+		}
+		AddPersonContactRequest params = new AddPersonContactRequest(getUserId(c), identifyCode,
+				personId, contacts);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
+				+ Contants.METHOD_PERSON_ADD_PERSON_CONTACTS + Contants.PARAM_NAME
+				+ super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						AddPersonContactResponse r = gson.fromJson(arg0.toString(),
+								AddPersonContactResponse.class);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.ADD_PERSON_CONTACT_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误信息
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.ADD_PERSON_CONTACT_REQUEST_FAIL, r,
+								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	// /**
+	// * 登录验证时的构造函数 FINAL Jerry 15.5.21
+	// *
+	// * @param context
+	// * @param aliasName
+	// * @param identifyCode
+	// * @param imsi
+	// * @param noMean
+	// */
+	// public PersonRequest(Context context, String aliasName, String
+	// identifyCode, String imsi,
+	// String noMean) {
+	// this.context = context;
+	// this.aliasName = aliasName;
+	// this.identifyCode = identifyCode;
+	// this.imsi = imsi;
+	// }
 
 	// /**
 	// * // * 修改用户信息的构造函数 FINAL Jerry 15.5.21 // *
@@ -861,10 +886,6 @@ public class PersonRequest extends BaseRequest {
 			}
 		});
 
-	}
-
-	private String getUserId(Context c) {
-		return MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
 	}
 
 }
