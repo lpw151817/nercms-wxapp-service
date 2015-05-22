@@ -1,16 +1,16 @@
 package android.wxapp.service.jerry.model.person;
 
 @Deprecated
-public class ChangePwd {
+public class ChangePwdRequest {
 	String id, np;
 
-	public ChangePwd(String id, String np) {
+	public ChangePwdRequest(String id, String np) {
 		super();
 		this.id = id;
 		this.np = np;
 	}
 
-	public ChangePwd() {
+	public ChangePwdRequest() {
 		super();
 	}
 

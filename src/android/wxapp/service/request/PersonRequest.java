@@ -13,10 +13,13 @@ import android.wxapp.service.dao.DAOFactory;
 import android.wxapp.service.dao.PersonDao;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
-import android.wxapp.service.jerry.model.person.ChangePwd;
+import android.wxapp.service.jerry.model.person.ChangePwdRequest;
 import android.wxapp.service.jerry.model.person.ChangePwdResponse;
+import android.wxapp.service.jerry.model.person.GetPersonInfoRequest;
+import android.wxapp.service.jerry.model.person.GetPersonInfoResponse;
 import android.wxapp.service.jerry.model.person.LoginRequest;
 import android.wxapp.service.jerry.model.person.LoginResponse;
+import android.wxapp.service.jerry.model.person.LogoutRequest;
 import android.wxapp.service.jerry.model.person.ModifyCustomerRequest;
 import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
 import android.wxapp.service.model.CustomerContactModel;
@@ -97,15 +100,7 @@ public class PersonRequest extends BaseRequest {
 	 */
 	private String modifyCustomerRequeString = null;
 
-	/**
-	 * 获取所有联系人时的构造函数
-	 * 
-	 * @param context
-	 */
-	public PersonRequest(Context context) {
-		this.context = context;
-	}
-
+	// 编辑客户信息的构造函数
 	/**
 	 * 新建（或编辑）客户时的构造函数
 	 * <p>
@@ -122,22 +117,16 @@ public class PersonRequest extends BaseRequest {
 	 * @param customerContactList
 	 */
 
+	public PersonRequest() {
+
+	}
+
 	public PersonRequest(Context context, CustomerModel customer,
 			ArrayList<CustomerContactModel> customerContactList) {
 		this.context = context;
 		this.customer = customer;
 		this.customerContactList = customerContactList;
 	}
-
-	/**
-	 * 删除客户时的构造函数
-	 */
-	public PersonRequest(Context context, String customerID) {
-		this.context = context;
-		this.customerID = customerID;
-	}
-
-	// 编辑客户信息的构造函数
 
 	/**
 	 * 得到新建客户的Request
@@ -214,6 +203,14 @@ public class PersonRequest extends BaseRequest {
 				});
 
 		return newCustomerRequest;
+	}
+
+	/**
+	 * 删除客户时的构造函数
+	 */
+	public PersonRequest(Context context, String customerID) {
+		this.context = context;
+		this.customerID = customerID;
 	}
 
 	/**
@@ -326,6 +323,16 @@ public class PersonRequest extends BaseRequest {
 		return modifyCustomerRequest;
 	}
 
+	// /**
+	// * 获取所有联系人时的构造函数
+	// *
+	// * @param context
+	// */
+	// public PersonRequest(Context context, String pid) {
+	// this.context = context;
+	// this.customerID = pid;
+	// }
+
 	/**
 	 * 得到获取所有联系人的Request
 	 * 
@@ -357,10 +364,105 @@ public class PersonRequest extends BaseRequest {
 		return getAllPersonRequest;
 	}
 
+	public PersonRequest(Context c) {
+		this.context = c;
+	}
+
+	/**
+	 * 根据用户id查询用户信息 FINAL Jerry 15.5.22
+	 * 
+	 * @param c
+	 *            activity上下文
+	 * @param identifyCode
+	 *            密码
+	 * @param personId
+	 *            需要查询的用户id
+	 * @return
+	 */
+	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
+		// 获取用户id
+		String userId = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
+		GetPersonInfoRequest params = new GetPersonInfoRequest(userId, identifyCode, personId);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						GetPersonInfoResponse r = gson.fromJson(arg0.toString(),
+								GetPersonInfoResponse.class);
+						// 将接收到的对象发送到ui线程
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_PERSON_INFO_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_LOGOUT);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_PERSON_INFO_REQUEST_FAIL, r.getEc(),
+								Contants.METHOD_PERSON_LOGOUT);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
+
+	/**
+	 * 用户退出 FINAL Jerry 15.5.21
+	 */
+	public JsonObjectRequest logOut(Context c, String identifyCode) {
+		String personID = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
+		LogoutRequest params = new LogoutRequest(personID, identifyCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_SUCCESS,
+								Contants.METHOD_PERSON_LOGOUT);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_FAIL,
+								r.getEc(), Contants.METHOD_PERSON_LOGOUT);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
+
 	/**
 	 * 修改用户信息 FINAL Jerry 15.5.21
 	 */
-	public JsonObjectRequest modifyCustomerInfo() {
+	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
+		String personID = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
 		ModifyCustomerRequest params = new ModifyCustomerRequest(personID, identifyCode, aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -373,15 +475,16 @@ public class PersonRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
 								ModifyCustomerResponse.class);
-						// 返回用户id
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.MODIFY_USERINFO_REQUEST_SUCCESS,
 								Contants.METHOD_PERSON_MODIFYUSERINFO);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
-								r.getEc(), Contants.METHOD_PERSON_MODIFYUSERINFO);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.MODIFY_USERINFO_REQUEST_FAIL, r.getEc(),
+								Contants.METHOD_PERSON_MODIFYUSERINFO);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -396,28 +499,60 @@ public class PersonRequest extends BaseRequest {
 		});
 	}
 
-	/**
-	 * 登录验证时的构造函数 FINAL Jerry 15.5.21
-	 * 
-	 * @param context
-	 * @param aliasName
-	 * @param identifyCode
-	 * @param imsi
-	 * @param noMean
-	 */
-	public PersonRequest(Context context, String aliasName, String identifyCode, String imsi,
-			String noMean) {
-		this.context = context;
-		this.aliasName = aliasName;
-		this.identifyCode = identifyCode;
-		this.imsi = imsi;
-	}
+	// /**
+	// * 登录验证时的构造函数 FINAL Jerry 15.5.21
+	// *
+	// * @param context
+	// * @param aliasName
+	// * @param identifyCode
+	// * @param imsi
+	// * @param noMean
+	// */
+	// public PersonRequest(Context context, String aliasName, String
+	// identifyCode, String imsi,
+	// String noMean) {
+	// this.context = context;
+	// this.aliasName = aliasName;
+	// this.identifyCode = identifyCode;
+	// this.imsi = imsi;
+	// }
 
 	/**
 	 * 用户登录 FINAL Jerry 15.5.21
 	 */
-	public JsonObjectRequest getLoginRequest() {
+	public JsonObjectRequest getLoginRequest(String aliasName, String identifyCode, String imsi) {
+		LoginRequest lr = new LoginRequest(aliasName, identifyCode, imsi);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGIN
+				+ Contants.PARAM_NAME + super.gson.toJson(lr);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
+						// 返回用户id
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
+								r.getUid(), Contants.METHOD_PERSON_LOGIN);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
+								r.getEc(), Contants.METHOD_PERSON_LOGIN);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
 		// loginRequestString = Constant.SERVER_BASE_URL + Constant.LOGIN_URL +
 		// "?param={\"i\":\""
 		// + aliasName + "\",\"c\":\"" + identifyCode + "\",\"s\":\"" + imsi +
@@ -471,29 +606,88 @@ public class PersonRequest extends BaseRequest {
 		//
 		// return loginRequest;
 
-		LoginRequest lr = new LoginRequest(aliasName, identifyCode, imsi);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGIN
-				+ Contants.PARAM_NAME + super.gson.toJson(lr);
-		System.out.println(this.url);
+	}
+
+	// /**
+	// * // * 修改用户信息的构造函数 FINAL Jerry 15.5.21 // *
+	// * <p>
+	// * // * (修改用户密码 deprecated) // * // * @param context // * @param personID
+	// //
+	// * * @param identifyCode // * @param newIdentifyCode // * //
+	// */
+	// public PersonRequest(Context context, String personID, String
+	// identifyCode, String newIdentifyCode) {
+	// this.context = context;
+	// this.personID = personID;
+	// this.identifyCode = identifyCode;
+	// this.newIdentifyCode = newIdentifyCode;
+	// }
+
+	/**
+	 * 修改用户密码 FINAL Jerry 15.5.21
+	 * 
+	 * 废弃接口
+	 * 
+	 * @deprecated
+	 */
+	public JsonObjectRequest getChangePasswordrRequest(Context c, String identifyCode,
+			String newIdentifyCode) {
+		// String personID = MySharedPreference.get(c,
+		// MySharedPreference.USER_ID, "100002");
+		// changePasswordRequestString = Constant.SERVER_BASE_URL +
+		// Constant.CHANGE_PASSWORD_URL
+		// + "?param={\"cid\":\"" + personID + "\",\"op\":\"" + identifyCode +
+		// "\",\"np\":\""
+		// + newIdentifyCode + "\"}";
+		// Log.v("ChangePasswordRequest", changePasswordRequestString);
+		// JsonObjectRequest changePasswordRequest = new
+		// JsonObjectRequest(changePasswordRequestString,
+		// null, new Response.Listener<JSONObject>() {
+		//
+		// @Override
+		// public void onResponse(JSONObject response) {
+		// try {
+		// if (response.getString("success").equals("0")) {
+		// // 修改密码成功
+		// Log.i("changePasswordRequest", response.toString());
+		// // 通知界面
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
+		// } else if (response.getString("success").equals("1")) {
+		// // 登录验证失败
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
+		// }
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// }, new Response.ErrorListener() {
+		//
+		// @Override
+		// public void onErrorResponse(VolleyError error) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
+		// return changePasswordRequest;
+
+		ChangePwdRequest changePwd = new ChangePwdRequest(personID, newIdentifyCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_CHANGEPWD
+				+ Contants.PARAM_NAME + gson.toJson(changePwd);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				try {
-					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
-						// 返回用户id
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
-								r.getUid(), Contants.METHOD_PERSON_LOGIN);
-					} else {
-						NormalServerResponse r = gson.fromJson(arg0.toString(),
-								NormalServerResponse.class);
-						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
-								r.getEc(), Contants.METHOD_PERSON_LOGIN);
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
+				ChangePwdResponse r = gson.fromJson(arg0.toString(), ChangePwdResponse.class);
+				if (r.getS().equals(Contants.RESULT_SUCCESS)) {
+					// 通知界面
+					MessageHandlerManager.getInstance().sendMessage(
+							Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
+				} else if (r.getS().equals(Contants.RESULT_FAIL)) {
+					MessageHandlerManager.getInstance().sendMessage(
+							Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
 				}
 			}
 		}, new ErrorListener() {
@@ -503,97 +697,6 @@ public class PersonRequest extends BaseRequest {
 				arg0.printStackTrace();
 			}
 		});
-	}
-
-	/**
-	 * 修改用户信息的构造函数 FINAL Jerry 15.5.21
-	 * <p>
-	 * (修改用户密码 deprecated)
-	 * 
-	 * @param context
-	 * @param personID
-	 * @param identifyCode
-	 * @param newIdentifyCode
-	 * 
-	 */
-	public PersonRequest(Context context, String personID, String identifyCode, String newIdentifyCode) {
-		this.context = context;
-		this.personID = personID;
-		this.identifyCode = identifyCode;
-		this.newIdentifyCode = newIdentifyCode;
-	}
-
-	/**
-	 * 修改用户密码 FINAL Jerry 15.5.21
-	 * 
-	 * 废弃接口
-	 * 
-	 * @deprecated
-	 */
-	public JsonObjectRequest getChangePasswordrRequest() {
-		changePasswordRequestString = Constant.SERVER_BASE_URL + Constant.CHANGE_PASSWORD_URL
-				+ "?param={\"cid\":\"" + personID + "\",\"op\":\"" + identifyCode + "\",\"np\":\""
-				+ newIdentifyCode + "\"}";
-		Log.v("ChangePasswordRequest", changePasswordRequestString);
-		JsonObjectRequest changePasswordRequest = new JsonObjectRequest(changePasswordRequestString,
-				null, new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						try {
-							if (response.getString("success").equals("0")) {
-								// 修改密码成功
-								Log.i("changePasswordRequest", response.toString());
-								// 通知界面
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
-							} else if (response.getString("success").equals("1")) {
-								// 登录验证失败
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
-							}
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-		return changePasswordRequest;
-
-		// ChangePwd changePwd = new ChangePwd(personID, newIdentifyCode);
-		// this.url = Contants.SERVER_URL + Contants.MODEL_NAME +
-		// Contants.METHOD_PERSON_CHANGEPWD
-		// + Contants.PARAM_NAME + gson.toJson(changePwd);
-		// return new JsonObjectRequest(this.url, null, new
-		// Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject arg0) {
-		// ChangePwdResponse r = gson.fromJson(arg0.toString(),
-		// ChangePwdResponse.class);
-		// if (r.getS().equals(Contants.RESULT_SUCCESS)) {
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
-		// } else if (r.getS().equals(Contants.RESULT_FAIL)) {
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
-		// }
-		// }
-		// }, new ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError arg0) {
-		// arg0.printStackTrace();
-		// }
-		// });
 
 	}
 

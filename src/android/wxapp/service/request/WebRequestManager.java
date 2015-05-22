@@ -33,14 +33,14 @@ public class WebRequestManager {
 
 	// 登录验证
 	public void loginVarification(String aliasName, String identifyCode, String imsi) {
-		queue.add(new PersonRequest(context, aliasName, identifyCode, imsi, "").getLoginRequest());
+		queue.add(new PersonRequest().getLoginRequest(aliasName, identifyCode, imsi));
 	}
 
 	// 修改用户密码
 	@Deprecated
-	public void changePassword(String personID, String identifyCode, String newIdentifyCode) {
-		queue.add(new PersonRequest(context, personID, identifyCode, newIdentifyCode)
-				.getChangePasswordrRequest());
+	public void changePassword(String identifyCode, String newIdentifyCode) {
+		queue.add(new PersonRequest().getChangePasswordrRequest(this.context, identifyCode,
+				newIdentifyCode));
 	}
 
 	// 获取所有联系人信息

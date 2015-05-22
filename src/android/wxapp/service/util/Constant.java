@@ -7,87 +7,105 @@ public class Constant {
 	/**
 	 * Handler注册相关常量
 	 */
+	// Person
 	// 请求成功
-	public static final int REQUEST_SUCCESS = 0;
+	public static final int REQUEST_SUCCESS = 100;
 	// 请求失败
-	public static final int REQUEST_FAIL = 1;
+	public static final int REQUEST_FAIL = 101;
 	// 登录请求成功
-	public static final int LOGIN_REQUEST_SUCCESS = 2;
+	public static final int LOGIN_REQUEST_SUCCESS = 102;
 	// 登录请求失败
-	public static final int LOGIN_REQUEST_FAIL = 3;
+	public static final int LOGIN_REQUEST_FAIL = 103;
+	// 退出请求成功
+	public static final int LOGOUT_REQUEST_SUCCESS = 104;
+	// 退出请求失败
+	public static final int LOGOUT_REQUEST_FAIL = 105;
 	// 修改密码请求成功
-	public static final int CHANGE_PASSWORD_REQUEST_SUCCESS = 4;
+	public static final int CHANGE_PASSWORD_REQUEST_SUCCESS = 106;
 	// 修改密码请求失败
-	public static final int CHANGE_PASSWORD_REQUEST_FAIL = 5;
-	// 创建事务请求成功
-	public static final int CREATE_AFFAIR_REQUEST_SUCCESS = 100;
-	// 创建事务请求失败
-	public static final int CREATE_AFFAIR_REQUEST_FAIL = 101;
-	// 发送反馈请求成功
-	public static final int SEND_FEEDBACK_REQUEST_SUCCESS = 102;
-	// 发送反馈请求失败
-	public static final int SEND_FEEDBACK_REQUEST_FAIL = 103;
-	// 发送消息请求成功
-	public static final int SEND_MESSAGE_REQUEST_SUCCESS = 104;
-	// 发送消息请求失败
-	public static final int SEND_MESSAGE_REQUEST_FAIL = 105;
+	public static final int CHANGE_PASSWORD_REQUEST_FAIL = 107;
 	// 新建客户请求成功
-	public static final int CREATE_CUSTOMER_REQUEST_SUCCESS = 106;
+	public static final int CREATE_CUSTOMER_REQUEST_SUCCESS = 108;
 	// 新建客户请求失败
-	public static final int CREATE_CUSTOMER_REQUEST_FAIL = 107;
+	public static final int CREATE_CUSTOMER_REQUEST_FAIL = 109;
 	// 新建客户请求成功
-	public static final int MODIFY_CUSTOMER_REQUEST_SUCCESS = 108;
+	public static final int MODIFY_CUSTOMER_REQUEST_SUCCESS = 110;
 	// 新建客户请求失败
-	public static final int MODIFY_CUSTOMER_REQUEST_FAIL = 109;
-	// 结束任务请求成功
-	public static final int END_TASK_REQUEST_SUCCESS = 110;
-	// 结束任务请求失败
-	public static final int END_TASK_REQUEST_FAIL = 111;
-	// 结束任务请求成功
-	public static final int MODIFY_TASK_REQUEST_SUCCESS = 112;
-	// 结束任务请求失败
-	public static final int MODIFY_TASK_REQUEST_FAIL = 113;
+	public static final int MODIFY_CUSTOMER_REQUEST_FAIL = 111;
 	// 删除客户请求成功
-	public static final int DELETE_CUSTOMER_REQUEST_SUCCESS = 114;
+	public static final int DELETE_CUSTOMER_REQUEST_SUCCESS = 112;
 	// 删除客户请求失败
-	public static final int DELETE_CUSTOMER_REQUEST_FAIL = 115;
-	
-	
-	
-	
-	// 附件下载成功
-	public static final int FILE_DOWNLOAD_SUCCESS = 10;
-	// 附件下载失败
-	public static final int FILE_DOWNLOAD_FAIL = 11;
-	// 附件下载成功
-	public static final int FILE_UPLOAD_SUCCESS = 12;
-	// 附件下载失败
-	public static final int FILE_UPLOAD_FAIL = 13;
-	// MQTT收到新任务推送通知
-	public static final int MQTT_NEW_TASK = 20;
-	// MQTT收到任务完成推送通知
-	public static final int MQTT_END_TASK = 21;
-	// MQTT收到任务时间修改推送通知
-	public static final int MQTT_MODIFY_TASK = 22;
-	// MQTT收到新任务推送通知
-	public static final int MQTT_NEW_FEEDBACK = 23;
-	// MQTT收到新任务推送通知
-	public static final int MQTT_NEW_MESSAGE = 24;
+	public static final int DELETE_CUSTOMER_REQUEST_FAIL = 113;
+	// 修改用户信息成功
+	public static final int MODIFY_USERINFO_REQUEST_SUCCESS = 114;
+	// 修改用户信息失败
+	public static final int MODIFY_USERINFO_REQUEST_FAIL = 115;
+	// 查询个人信息成功
+	public static final int QUERY_PERSON_INFO_REQUEST_SUCCESS = 116;
+	// 查询个人信息失败
+	public static final int QUERY_PERSON_INFO_REQUEST_FAIL = 117;
 
-	// 新消息保存完成通知
-	public static final int SAVE_MESSAGE_SUCCESS = 30;
+	// Affair
+	// 创建事务请求成功
+	public static final int CREATE_AFFAIR_REQUEST_SUCCESS = 200;
+	// 创建事务请求失败
+	public static final int CREATE_AFFAIR_REQUEST_FAIL = 201;
+	// 结束任务请求成功
+	public static final int END_TASK_REQUEST_SUCCESS = 202;
+	// 结束任务请求失败
+	public static final int END_TASK_REQUEST_FAIL = 203;
+	// 结束任务请求成功
+	public static final int MODIFY_TASK_REQUEST_SUCCESS = 204;
+	// 结束任务请求失败
+	public static final int MODIFY_TASK_REQUEST_FAIL = 205;
 	// 新任务保存完成通知
-	public static final int SAVE_TASK_SUCCESS = 31;
+	public static final int SAVE_TASK_SUCCESS = 206;
+
+	// Feedback
+	// 发送反馈请求成功
+	public static final int SEND_FEEDBACK_REQUEST_SUCCESS = 300;
+	// 发送反馈请求失败
+	public static final int SEND_FEEDBACK_REQUEST_FAIL = 301;
 	// 新反馈保存完成通知
-	public static final int SAVE_FEEDBACK_SUCCESS = 32;
+	public static final int SAVE_FEEDBACK_SUCCESS = 302;
+
+	// Message
+	// 发送消息请求成功
+	public static final int SEND_MESSAGE_REQUEST_SUCCESS = 400;
+	// 发送消息请求失败
+	public static final int SEND_MESSAGE_REQUEST_FAIL = 401;
+	// 新消息保存完成通知
+	public static final int SAVE_MESSAGE_SUCCESS = 402;
+
+	// Attachment
+	// 附件下载成功
+	public static final int FILE_DOWNLOAD_SUCCESS = 500;
+	// 附件下载失败
+	public static final int FILE_DOWNLOAD_FAIL = 501;
+	// 附件下载成功
+	public static final int FILE_UPLOAD_SUCCESS = 502;
+	// 附件下载失败
+	public static final int FILE_UPLOAD_FAIL = 503;
+
+	// MQTT
+	// MQTT收到新任务推送通知
+	public static final int MQTT_NEW_TASK = 600;
+	// MQTT收到任务完成推送通知
+	public static final int MQTT_END_TASK = 601;
+	// MQTT收到任务时间修改推送通知
+	public static final int MQTT_MODIFY_TASK = 602;
+	// MQTT收到新任务推送通知
+	public static final int MQTT_NEW_FEEDBACK = 603;
+	// MQTT收到新任务推送通知
+	public static final int MQTT_NEW_MESSAGE = 604;
 
 	// Notification 通知
-	public static final int SHOW_MESSAGE_NOTIFICATION = 40;
-	public static final int SHOW_TASK_NOTIFICATION = 41;
-	public static final int SHOW_FEEDBACK_NOTIFICATION = 42;
-	public static final int SHOW_TASK_FINISH_NOTIFICATION = 43;
-	public static final int SHOW_TASK_DELAY_NOTIFICATION = 44;
-	public static final int SHOW_TASK_MODIFY_NOTIFICATION = 45;
+	public static final int SHOW_MESSAGE_NOTIFICATION = 700;
+	public static final int SHOW_TASK_NOTIFICATION = 701;
+	public static final int SHOW_FEEDBACK_NOTIFICATION = 702;
+	public static final int SHOW_TASK_FINISH_NOTIFICATION = 703;
+	public static final int SHOW_TASK_DELAY_NOTIFICATION = 704;
+	public static final int SHOW_TASK_MODIFY_NOTIFICATION = 705;
 
 	// 未读状态
 	public static final int UNREAD = 0;
@@ -113,19 +131,19 @@ public class Constant {
 	// public static final String FILE_SERVER_FEEDBACK_ATTACH_URL =
 	// "http://192.168.1.100:15005/HFSFileServer/FeedbackAttachments/";
 
-	public static final String SERVER_IP="192.168.1.100";
-	
+	public static final String SERVER_IP = "192.168.1.100";
+
 	// 文件服务器基址
 	// public static final String FILE_SERVER_BASE_URL =
 	// "http://192.168.1.100:15005/HFSFileServer/";
-	public static final String FILE_SERVER_BASE_URL = SERVER_IP+":15005/HFSFileServer/";
+	public static final String FILE_SERVER_BASE_URL = SERVER_IP + ":15005/HFSFileServer/";
 
 	// 服务器请求地址
 	// public static final String SERVER_BASE_URL =
 	// "http://192.168.1.100:15000/HttpService/";
-	public static final String SERVER_BASE_URL = SERVER_IP+":15000/HttpService/";
-	
-	public static final String SERVER_CRASH_REPORT=SERVER_IP+":15000/HttpService/CrashReport";
+	public static final String SERVER_BASE_URL = SERVER_IP + ":15000/HttpService/";
+
+	public static final String SERVER_CRASH_REPORT = SERVER_IP + ":15000/HttpService/CrashReport";
 
 	// 业务接口
 	public static final String LOGIN_URL = "Login"; // 登录验证
