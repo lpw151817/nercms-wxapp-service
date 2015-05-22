@@ -44,6 +44,18 @@ public class Constant {
 	public static final int QUERY_PERSON_INFO_REQUEST_SUCCESS = 116;
 	// 查询个人信息失败
 	public static final int QUERY_PERSON_INFO_REQUEST_FAIL = 117;
+	// 添加联系方式成功
+	public static final int ADD_PERSON_CONTACT_REQUEST_SUCCESS = 118;
+	// 添加联系方式失败
+	public static final int ADD_PERSON_CONTACT_REQUEST_FAIL = 119;
+	// 获取组织结点成功
+	public static final int QUERY_ORG_NODE_REQUEST_SUCCESS = 120;
+	// 获取组织结点失败
+	public static final int QUERY_ORG_NODE_REQUEST_FAIL = 121;
+	// 获取组织结点人员成功
+	public static final int QUERY_ORG_PERSON_REQUEST_SUCCESS = 122;
+	// 获取组织结点人员失败
+	public static final int QUERY_ORG_PERSON_REQUEST_FAIL = 123;
 
 	// Affair
 	// 创建事务请求成功

@@ -46,22 +46,22 @@ public class WebRequestManager {
 	// 获取所有联系人信息
 	public void getAllPerson() {
 		// queue.add(new GetAllPersonRequest(context).getRequest());
-		queue.add(new PersonRequest(context).getAllPersonRequest());
+		queue.add(new PersonRequest().getAllPersonRequest(context));
 	}
 
 	// 新建客户
 	public void newCustomer(CustomerModel customer, ArrayList<CustomerContactModel> contactList) {
-		queue.add(new PersonRequest(context, customer, contactList).sendNewCustomerRequest());
+		queue.add(new PersonRequest().sendNewCustomerRequest(context, customer, contactList));
 	}
 
 	// 编辑客户信息
 	public void modifyCustomer(CustomerModel customer, ArrayList<CustomerContactModel> contactList) {
-		queue.add(new PersonRequest(context, customer, contactList).sendModifyCustomerRequest());
+		queue.add(new PersonRequest().sendModifyCustomerRequest(customer, contactList));
 	}
 
 	// 删除客户
 	public void deleteCustomer(String customerID) {
-		queue.add(new PersonRequest(context, customerID).sendDeleteCustomerRequest());
+		queue.add(new PersonRequest().sendDeleteCustomerRequest(context, customerID));
 	}
 
 	// 创建新事务

@@ -14,9 +14,12 @@ public class Contants {
 	@Deprecated
 	public static final String MODEL_PERSON = "LoginService" + File.separator;
 	public static final String METHOD_PERSON_LOGIN = "Login";
-	public static final String METHOD_PERSON_MODIFYUSERINFO="ModifyCustomer";
-	public static final String METHOD_PERSON_LOGOUT="Logout";
-	public static final String METHOD_PERSON_GET_PERSON_INFO="GetPersonInfo";
+	public static final String METHOD_PERSON_MODIFYUSERINFO = "ModifyCustomer";
+	public static final String METHOD_PERSON_LOGOUT = "Logout";
+	public static final String METHOD_PERSON_GET_PERSON_INFO = "GetPersonInfo";
+	public static final String METHOD_PERSON_ADD_PERSON_CONTACTS = "AddPersonContact";
+	public static final String METHOD_PERSON_GET_ORG_CODE = "GetOrgCode";
+	public static final String METHOD_PERSON_GET_ORG_PERSON = "GetOrgCodePerson";
 	@Deprecated
 	public static final String METHOD_PERSON_CHANGEPWD = "ChangePwd";
 

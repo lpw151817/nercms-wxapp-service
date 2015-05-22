@@ -3,6 +3,7 @@ package android.wxapp.service.request;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,8 +14,14 @@ import android.wxapp.service.dao.DAOFactory;
 import android.wxapp.service.dao.PersonDao;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
+import android.wxapp.service.jerry.model.person.AddPersonContactRequest;
 import android.wxapp.service.jerry.model.person.ChangePwdRequest;
 import android.wxapp.service.jerry.model.person.ChangePwdResponse;
+import android.wxapp.service.jerry.model.person.Contacts;
+import android.wxapp.service.jerry.model.person.GetOrgCodePersonRequest;
+import android.wxapp.service.jerry.model.person.GetOrgCodePersonResponse;
+import android.wxapp.service.jerry.model.person.GetOrgCodeRequest;
+import android.wxapp.service.jerry.model.person.GetOrgCodeResponse;
 import android.wxapp.service.jerry.model.person.GetPersonInfoRequest;
 import android.wxapp.service.jerry.model.person.GetPersonInfoResponse;
 import android.wxapp.service.jerry.model.person.LoginRequest;
@@ -38,102 +45,107 @@ import com.google.gson.GsonBuilder;
 
 public class PersonRequest extends BaseRequest {
 
-	private Context context;
-	/**
-	 * // 用户ID
-	 */
-	private String personID;
-	/**
-	 * // 用户登录名
-	 */
-	private String aliasName;
-	/**
-	 * // 用户密码
-	 */
-	private String identifyCode;
-	/**
-	 * // IMSI号
-	 */
-	private String imsi;
-
-	/**
-	 * // 待修改的用户新密码
-	 */
-	private String newIdentifyCode;
-
-	/**
-	 * // 待新建（或编辑）的客户模型
-	 */
-	private CustomerModel customer;
-	/**
-	 * // 待新建（或编辑）的客户的联系方式列表
-	 */
-	private ArrayList<CustomerContactModel> customerContactList = null;
-
-	/**
-	 * // 待删除客户的ID
-	 */
-	private String customerID;
-
-	/**
-	 * // 新建客户请求字符串
-	 */
-	private String newCustomerRequestString = null;
-	/**
-	 * // 删除客户请求字符串
-	 */
-	private String deleteCustomerRequestString = null;
-	/**
-	 * // 用户登录验证请求字符串
-	 */
-	private String loginRequestString = null;
-	/**
-	 * // 获取所有联系人请求字符串
-	 */
-	private String getAllPersonRequestString = null;
-	/**
-	 * // 修改用户密码请求字符串
-	 */
-	private String changePasswordRequestString = null;
-	/**
-	 * // 编辑客户信息请求字符串
-	 */
-	private String modifyCustomerRequeString = null;
-
-	// 编辑客户信息的构造函数
-	/**
-	 * 新建（或编辑）客户时的构造函数
-	 * <p>
-	 * 说明：新建客户时，输入参数Customer模型中，customerID可为任意int数值，contactID为必填且真实，
-	 * <p>
-	 * 服务器返回ID后，必须setCustomerID后才可开始保存到本地;
-	 * <p>
-	 * 编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
-	 * <p>
-	 * 任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
-	 * 
-	 * @param context
-	 * @param customer
-	 * @param customerContactList
-	 */
+	// private Context context;
+	// /**
+	// * // 用户ID
+	// */
+	// private String personID;
+	// /**
+	// * // 用户登录名
+	// */
+	// private String aliasName;
+	// /**
+	// * // 用户密码
+	// */
+	// private String identifyCode;
+	// /**
+	// * // IMSI号
+	// */
+	// private String imsi;
+	//
+	// /**
+	// * // 待修改的用户新密码
+	// */
+	// private String newIdentifyCode;
+	//
+	// /**
+	// * // 待新建（或编辑）的客户模型
+	// */
+	// private CustomerModel customer;
+	// /**
+	// * // 待新建（或编辑）的客户的联系方式列表
+	// */
+	// private ArrayList<CustomerContactModel> customerContactList = null;
+	//
+	// /**
+	// * // 待删除客户的ID
+	// */
+	// private String customerID;
+	//
+	// /**
+	// * // 新建客户请求字符串
+	// */
+	// private String newCustomerRequestString = null;
+	// /**
+	// * // 删除客户请求字符串
+	// */
+	// private String deleteCustomerRequestString = null;
+	// /**
+	// * // 用户登录验证请求字符串
+	// */
+	// private String loginRequestString = null;
+	// /**
+	// * // 获取所有联系人请求字符串
+	// */
+	// private String getAllPersonRequestString = null;
+	// /**
+	// * // 修改用户密码请求字符串
+	// */
+	// private String changePasswordRequestString = null;
+	// /**
+	// * // 编辑客户信息请求字符串
+	// */
+	// private String modifyCustomerRequeString = null;
 
 	public PersonRequest() {
 
 	}
 
-	public PersonRequest(Context context, CustomerModel customer,
-			ArrayList<CustomerContactModel> customerContactList) {
-		this.context = context;
-		this.customer = customer;
-		this.customerContactList = customerContactList;
-	}
+	// // 编辑客户信息的构造函数
+	// /**
+	// * 新建（或编辑）客户时的构造函数
+	// * <p>
+	// * 说明：新建客户时，输入参数Customer模型中，customerID可为任意int数值，contactID为必填且真实，
+	// * <p>
+	// * 服务器返回ID后，必须setCustomerID后才可开始保存到本地;
+	// * <p>
+	// * 编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
+	// * <p>
+	// * 任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
+	// *
+	// * @param context
+	// * @param customer
+	// * @param customerContactList
+	// */
+	// public PersonRequest(Context context, CustomerModel customer,
+	// ArrayList<CustomerContactModel> customerContactList) {
+	// this.context = context;
+	// this.customer = customer;
+	// this.customerContactList = customerContactList;
+	// }
 
 	/**
 	 * 得到新建客户的Request
 	 * 
+	 * @param context
+	 * @param customer
+	 *            编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
+	 * @param customerContactList
+	 *            任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
 	 * @return
 	 */
-	public JsonObjectRequest sendNewCustomerRequest() {
+	public JsonObjectRequest sendNewCustomerRequest(Context context, CustomerModel customer,
+			ArrayList<CustomerContactModel> customerContactList) {
 		/* 发送事务 */
 		// 创建包含JSON对象的请求地址
 		StringBuilder requestParams = new StringBuilder();
@@ -157,14 +169,14 @@ public class PersonRequest extends BaseRequest {
 		}
 
 		try {
-			newCustomerRequestString = Constant.SERVER_BASE_URL + Constant.CREATE_CUSTOMER_URL
-					+ "?param=" + URLEncoder.encode(requestParams.toString(), "UTF-8");
+			url = Constant.SERVER_BASE_URL + Constant.CREATE_CUSTOMER_URL + "?param="
+					+ URLEncoder.encode(requestParams.toString(), "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		JsonObjectRequest newCustomerRequest = new JsonObjectRequest(newCustomerRequestString, null,
+		JsonObjectRequest newCustomerRequest = new JsonObjectRequest(url, null,
 				new Response.Listener<JSONObject>() {
 
 					@Override
@@ -205,24 +217,27 @@ public class PersonRequest extends BaseRequest {
 		return newCustomerRequest;
 	}
 
-	/**
-	 * 删除客户时的构造函数
-	 */
-	public PersonRequest(Context context, String customerID) {
-		this.context = context;
-		this.customerID = customerID;
-	}
+	// /**
+	// * 删除客户时的构造函数
+	// */
+	// public PersonRequest(Context context, String customerID) {
+	// this.context = context;
+	// this.customerID = customerID;
+	// }
 
 	/**
-	 * 得到删除客户的Request
+	 * 删除客户
 	 * 
+	 * @param context
+	 * @param customerID
+	 *            待删除客户的ID
 	 * @return
 	 */
-	public JsonObjectRequest sendDeleteCustomerRequest() {
-		deleteCustomerRequestString = Constant.SERVER_BASE_URL + Constant.DELETE_CUSTOMER_URL
-				+ "?param={\"csid\":\"" + customerID + "\"}";
-		JsonObjectRequest deleteCustomerRequest = new JsonObjectRequest(deleteCustomerRequestString,
-				null, new Response.Listener<JSONObject>() {
+	public JsonObjectRequest sendDeleteCustomerRequest(final Context context, final String customerID) {
+		url = Constant.SERVER_BASE_URL + Constant.DELETE_CUSTOMER_URL + "?param={\"csid\":\""
+				+ customerID + "\"}";
+		JsonObjectRequest deleteCustomerRequest = new JsonObjectRequest(url, null,
+				new Response.Listener<JSONObject>() {
 
 					@Override
 					public void onResponse(JSONObject response) {
@@ -255,7 +270,17 @@ public class PersonRequest extends BaseRequest {
 		return deleteCustomerRequest;
 	}
 
-	public JsonObjectRequest sendModifyCustomerRequest() {
+	/**
+	 * 修改客户信息
+	 * 
+	 * @param customer
+	 *            待编辑的客户模型
+	 * @param customerContactList
+	 *            待编辑的客户的联系方式列表
+	 * @return
+	 */
+	public JsonObjectRequest sendModifyCustomerRequest(CustomerModel customer,
+			ArrayList<CustomerContactModel> customerContactList) {
 		// 创建包含JSON对象的请求地址
 		StringBuilder requestParams = new StringBuilder();
 		requestParams.append("{\"csid\":\"" + customer.getCustomerID() + "\",");
@@ -277,13 +302,13 @@ public class PersonRequest extends BaseRequest {
 			requestParams.append("\"cots\":null}");
 		}
 		try {
-			modifyCustomerRequeString = Constant.SERVER_BASE_URL + Constant.MODIFY_CUSTOMER_URL
-					+ "?param=" + URLEncoder.encode(requestParams.toString(), "UTF-8");
+			url = Constant.SERVER_BASE_URL + Constant.MODIFY_CUSTOMER_URL + "?param="
+					+ URLEncoder.encode(requestParams.toString(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		JsonObjectRequest modifyCustomerRequest = new JsonObjectRequest(modifyCustomerRequeString, null,
+		JsonObjectRequest modifyCustomerRequest = new JsonObjectRequest(url, null,
 				new Response.Listener<JSONObject>() {
 
 					@Override
@@ -323,27 +348,15 @@ public class PersonRequest extends BaseRequest {
 		return modifyCustomerRequest;
 	}
 
-	// /**
-	// * 获取所有联系人时的构造函数
-	// *
-	// * @param context
-	// */
-	// public PersonRequest(Context context, String pid) {
-	// this.context = context;
-	// this.customerID = pid;
-	// }
-
 	/**
 	 * 得到获取所有联系人的Request
 	 * 
 	 * @return
 	 */
-	public JsonObjectRequest getAllPersonRequest() {
-
-		personID = MySharedPreference.get(context, MySharedPreference.USER_ID, "100002");
-		getAllPersonRequestString = Constant.SERVER_BASE_URL + Constant.GET_ALL_PERSON_URL
-				+ "?param={\"mid\":\"" + personID + "\"}";
-		JsonObjectRequest getAllPersonRequest = new JsonObjectRequest(getAllPersonRequestString, null,
+	public JsonObjectRequest getAllPersonRequest(final Context context) {
+		url = Constant.SERVER_BASE_URL + Constant.GET_ALL_PERSON_URL + "?param={\"mid\":\""
+				+ getUserId(context) + "\"}";
+		JsonObjectRequest getAllPersonRequest = new JsonObjectRequest(url, null,
 				new Response.Listener<JSONObject>() {
 
 					@Override
@@ -364,8 +377,162 @@ public class PersonRequest extends BaseRequest {
 		return getAllPersonRequest;
 	}
 
-	public PersonRequest(Context c) {
-		this.context = c;
+	// public PersonRequest(Context c) {
+	// this.context = c;
+	// }
+
+	/**
+	 * 查询对应组织结点下的人员 FINAL Jerry 15.5.22
+	 * 
+	 * @param c
+	 * @param ic
+	 *            密码
+	 * @param orgCode
+	 *            需要查询的组织结点(最顶层的父节点此值为1)
+	 * @return
+	 */
+	public JsonObjectRequest getOrgCodePerson(Context c, String ic, String orgCode) {
+		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), ic, orgCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
+								GetOrgCodePersonResponse.class);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_GET_ORG_PERSON);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_ORG_PERSON_REQUEST_FAIL, r.getEc(),
+								Contants.METHOD_PERSON_GET_ORG_PERSON);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * 查询组织结构树中的结点 FINAL Jerry 15.5.22
+	 * 
+	 * @param c
+	 * @param ic
+	 *            密码
+	 * @param orgCode
+	 *            父节点的code(最顶层的父节点此值为1)
+	 * @return
+	 */
+	public JsonObjectRequest getOrgCode(Context c, String ic, String orgCode) {
+		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), ic, orgCode);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_ORG_NODE_REQUEST_SUCCESS, r,
+								Contants.METHOD_PERSON_GET_ORG_CODE);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_ORG_NODE_REQUEST_FAIL, r.getEc(),
+								Contants.METHOD_PERSON_GET_ORG_CODE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * 添加用户联系方式 FINAL Jerry 15.5.22
+	 * <p>
+	 * TIP：ts与cs的两个数组需要一一对应
+	 * 
+	 * @param c
+	 * @param identifyCode
+	 *            密码
+	 * @param personId
+	 *            需要将联系方式添加到用户的id
+	 * @param ts
+	 *            联系方式类型(1：手机号2：座机号3：SIM号4：手台号码5：邮箱)
+	 * @param cs
+	 *            联系方式内容
+	 * @return
+	 */
+	public JsonObjectRequest addPersonContact(Context c, String identifyCode, String personId,
+			String[] ts, String[] cs) {
+		// 如果联系方式数组不能匹配，直接返回null
+		if (ts.length != cs.length)
+			return null;
+		List<Contacts> contacts = new ArrayList<Contacts>();
+		for (int i = 0; i < cs.length; i++) {
+			contacts.add(new Contacts(ts[i], cs[i]));
+		}
+		AddPersonContactRequest params = new AddPersonContactRequest(getUserId(c), identifyCode,
+				personId, contacts);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
+				+ Contants.METHOD_PERSON_ADD_PERSON_CONTACTS + Contants.PARAM_NAME
+				+ super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.ADD_PERSON_CONTACT_REQUEST_SUCCESS,
+								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 返回错误代码
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.ADD_PERSON_CONTACT_REQUEST_FAIL, r.getEc(),
+								Contants.METHOD_PERSON_ADD_PERSON_CONTACTS);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
 	}
 
 	/**
@@ -380,9 +547,7 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
-		// 获取用户id
-		String userId = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
-		GetPersonInfoRequest params = new GetPersonInfoRequest(userId, identifyCode, personId);
+		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), identifyCode, personId);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -397,14 +562,14 @@ public class PersonRequest extends BaseRequest {
 						// 将接收到的对象发送到ui线程
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_PERSON_INFO_REQUEST_SUCCESS, r,
-								Contants.METHOD_PERSON_LOGOUT);
+								Contants.METHOD_PERSON_GET_PERSON_INFO);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_PERSON_INFO_REQUEST_FAIL, r.getEc(),
-								Contants.METHOD_PERSON_LOGOUT);
+								Contants.METHOD_PERSON_GET_PERSON_INFO);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -424,8 +589,7 @@ public class PersonRequest extends BaseRequest {
 	 * 用户退出 FINAL Jerry 15.5.21
 	 */
 	public JsonObjectRequest logOut(Context c, String identifyCode) {
-		String personID = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
-		LogoutRequest params = new LogoutRequest(personID, identifyCode);
+		LogoutRequest params = new LogoutRequest(getUserId(c), identifyCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -462,8 +626,7 @@ public class PersonRequest extends BaseRequest {
 	 * 修改用户信息 FINAL Jerry 15.5.21
 	 */
 	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
-		String personID = MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
-		ModifyCustomerRequest params = new ModifyCustomerRequest(personID, identifyCode, aliasName);
+		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -673,7 +836,7 @@ public class PersonRequest extends BaseRequest {
 		// });
 		// return changePasswordRequest;
 
-		ChangePwdRequest changePwd = new ChangePwdRequest(personID, newIdentifyCode);
+		ChangePwdRequest changePwd = new ChangePwdRequest(getUserId(c), newIdentifyCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_CHANGEPWD
 				+ Contants.PARAM_NAME + gson.toJson(changePwd);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
@@ -698,6 +861,10 @@ public class PersonRequest extends BaseRequest {
 			}
 		});
 
+	}
+
+	private String getUserId(Context c) {
+		return MySharedPreference.get(c, MySharedPreference.USER_ID, "100002");
 	}
 
 }
