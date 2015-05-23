@@ -40,20 +40,23 @@ public class Contants {
 	public static final String METHOD_AFFAIRS_SendFeedback = "SendFeedback";
 	public static final String METHOD_AFFAIRS_GetFeedback = "GetFeedback";
 	// ==================================
-	
-	//Feedback模块 Jerry 
+
+	// Feedback模块 Jerry
 	public static final String METHOD_FEEDBACK_SEND = "TaskFeedback";
 	public static final String METHOD_FEEDBACK_QUERY = "FeedbackInfoQuery";
-	
-	//Message模块 Jerry
+
+	// Message模块 Jerry
+	@Deprecated
 	public static final String MODEL_MESSAGE = "MessageService" + File.separator;
+	public static final String METHOD_MESSAGE_UPDATE = "MessageUpdateQuery";
+	public static final String METHOD_MESSAGE_SEND = "SendMessage";
 	public static final String METHOD_MESSAGE_SendPersonalMsg = "SendPersonalMsg";
 	public static final String METHOD_MESSAGE_QueryPersonalMsgHistory = "QueryPersonalMsgHistory";
 	public static final String METHOD_MESSAGE_SendGroupMsg = "SendGroupMsg";
 	public static final String METHOD_MESSAGE_QueryGroupMsgHistory = "QueryGroupMsgHistory";
 	public static final String METHOD_MESSAGE_CreatNonbasicGroup = "CreatNonbasicGroup";
 	public static final String METHOD_MESSAGE_DeleteNonbasicGroup = "DeleteNonbasicGroup";
-	
+
 	// GPS模块 Jerry 5.22
 	public static final String METHOD_GPS_UPLOAD = "GPSUpload";
 	public static final String METHOD_GPS_QUERY_LAST_PERSONAL_GPS = "QueryLastPersonalGPS";
@@ -64,7 +67,6 @@ public class Contants {
 	public static final String MODEL_CONTACT = "ContactService" + File.separator;
 	public static final String METHOD_CONTACT_QUERYORGPERSON = "QueryOrgPerson";
 	public static final String METHOD_CONTACT_QUERYPERSONINFO = "QueryPersionInfo";
-
 
 	public static final String MODEL_CONFERECNCE = "ConferenceService" + File.separator;
 	public static final String METHOD_CONFERECNCE_AppointConference = "AppointConference";

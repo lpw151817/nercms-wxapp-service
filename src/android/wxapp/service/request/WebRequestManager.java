@@ -110,13 +110,14 @@ public class WebRequestManager {
 	}
 
 	// 发送新消息
-	public void sendMessage(MessageModel message) {
-		queue.add(new MessageRequest(message).sendMessageRequest());
+	public void sendMessage(String ic, String t, String sid, String[] rids, String st, String c,
+			String at, String au, String ut) {
+		queue.add(new MessageRequest().sendMessageRequest(context, ic, t, sid, rids, st, c, at, au, ut));
 	}
 
 	// 获取新消息
-	public void getMessageUpdate() {
-		queue.add(new MessageRequest(context).getMessageUpdateRequest());
+	public void getMessageUpdate(String ic, String count) {
+		queue.add(new MessageRequest().getMessageUpdateRequest(context, ic, count));
 	}
 
 	public void sendCrashReport(JsonObjectRequest request) {

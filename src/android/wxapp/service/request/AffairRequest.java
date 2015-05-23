@@ -125,7 +125,7 @@ public class AffairRequest extends BaseRequest {
 	// ======================================================
 
 	/**
-	 * 获取事务更新 逻辑有问题，需要重新结合接口 JERRY 5.23
+	 * 获取事务更新 JERRY 5.23
 	 * <p>
 	 * 判断返回的s值是否需要进行再次调用
 	 * 
@@ -137,10 +137,10 @@ public class AffairRequest extends BaseRequest {
 	 */
 	public JsonObjectRequest getAffairUpdateRequest(final Context c, String ic, String count) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null || getLastUpdateTime(c) == null)
+		if (getUserId(c) == null || getLastAffairUpdateTime(c) == null)
 			return null;
 		TaskUpdateQueryRequest params = new TaskUpdateQueryRequest(getUserId(c), ic,
-				getLastUpdateTime(c), count);
+				getLastAffairUpdateTime(c), count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_LIST
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);

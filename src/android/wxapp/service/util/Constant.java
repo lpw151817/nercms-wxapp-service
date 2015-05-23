@@ -57,7 +57,7 @@ public class Constant {
 	// 获取组织结点人员失败
 	public static final int QUERY_ORG_PERSON_REQUEST_FAIL = 123;
 
-	// Affair Jerry
+	// Affair Jerry 5.23
 	// 创建事务请求成功
 	public static final int CREATE_AFFAIR_REQUEST_SUCCESS = 200;
 	// 创建事务请求失败
@@ -93,7 +93,7 @@ public class Constant {
 	// 请求任务详情失败
 	public static final int QUERY_TASK_INFO_REQUEST_FAIL = 216;
 
-	// Feedback
+	// Feedback jerry 5.23
 	// 发送反馈请求成功
 	public static final int SEND_FEEDBACK_REQUEST_SUCCESS = 300;
 	// 发送反馈请求失败
@@ -105,13 +105,17 @@ public class Constant {
 	// 查询反馈失败
 	public static final int QUERY_FEEDBACK_REQUEST_FAIL = 304;
 
-	// Message
+	// Message jerry 5.23
 	// 发送消息请求成功
 	public static final int SEND_MESSAGE_REQUEST_SUCCESS = 400;
 	// 发送消息请求失败
 	public static final int SEND_MESSAGE_REQUEST_FAIL = 401;
 	// 新消息保存完成通知
 	public static final int SAVE_MESSAGE_SUCCESS = 402;
+	// 更新消息请求成功
+	public static final int UPDATE_MESSAGE_REQUEST_SUCCESS = 403;
+	// 更新消息请求失败
+	public static final int UPDATE_MESSAGE_REQUEST_FAIL = 404;
 
 	// Attachment
 	// 附件下载成功
