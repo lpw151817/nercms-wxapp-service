@@ -60,6 +60,8 @@ public class GpsRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest gpsUpload(Context c, String identifyCode, GpsInfo g) {
+		if (getUserId(c) == null)
+			return null;
 		// 将gps信息直接打包成json传输，之后需要将gps信息进行压缩处理
 		GpsUploadRequest params = new GpsUploadRequest(getUserId(c), identifyCode, gson.toJson(g));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_UPLOAD
@@ -106,6 +108,8 @@ public class GpsRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest queryLastPersonalGPS(Context c, String identifyCode, String id) {
+		if (getUserId(c) == null)
+			return null;
 		QueryLastPersonalGpsRequest params = new QueryLastPersonalGpsRequest(getUserId(c), identifyCode,
 				id);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
@@ -159,6 +163,8 @@ public class GpsRequest extends BaseRequest {
 		for (int i = 0; i < ids.length; i++) {
 			idList.add(new QueryLastGpssRequestIds(ids[i]));
 		}
+		if (getUserId(c) == null)
+			return null;
 		QueryLastGpssRequest params = new QueryLastGpssRequest(getUserId(c), identifyCode, idList);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_LAST_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -206,6 +212,8 @@ public class GpsRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest queryPersonalGPSs(Context c, String identifyCode, String cid) {
+		if (getUserId(c) == null)
+			return null;
 		QueryPersonalGpssRequest params = new QueryPersonalGpssRequest(getUserId(c), identifyCode, cid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_PERSONAL_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -257,6 +265,8 @@ public class GpsRequest extends BaseRequest {
 		for (int i = 0; i < cids.length; i++) {
 			l.add(new QueryGpssRequestIds(cids[i]));
 		}
+		if (getUserId(c) == null)
+			return null;
 		QueryGpssRequest params = new QueryGpssRequest(getUserId(c), identifyCode, l);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);

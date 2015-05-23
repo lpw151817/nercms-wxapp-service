@@ -23,6 +23,20 @@ public class Contants {
 	@Deprecated
 	public static final String METHOD_PERSON_CHANGEPWD = "ChangePwd";
 
+	// Affair模块 Jerry
+	@Deprecated
+	public static final String MODEL_AFFAIRS = "AffairsService" + File.separator;
+	public static final String METHOD_AFFAIRS_UPDATE_LIST = "TaskUpdateQuery";
+	public static final String METHOD_AFFAIRS_ADDAFFAIR = "CreateTask";
+	public static final String METHOD_AFFAIRS_MODIFY_TASK = "ModifyTask";
+	public static final String METHOD_AFFAIRS_QUERY_COUNT = "QueryAffairCount";
+	public static final String METHOD_AFFAIRS_END_TASK = "EndTask";
+	public static final String METHOD_AFFAIRS_CloseAffair = "CloseAffair";
+	public static final String METHOD_AFFAIRS_QueryAffairList = "QueryAffairList";
+	public static final String METHOD_AFFAIRS_QueryAffairInfo = "QueryAffairInfo";
+	public static final String METHOD_AFFAIRS_SendFeedback = "SendFeedback";
+	public static final String METHOD_AFFAIRS_GetFeedback = "GetFeedback";
+
 	// GPS模块 Jerry 5.22
 	public static final String METHOD_GPS_UPLOAD = "GPSUpload";
 	public static final String METHOD_GPS_QUERY_LAST_PERSONAL_GPS = "QueryLastPersonalGPS";
@@ -33,15 +47,6 @@ public class Contants {
 	public static final String MODEL_CONTACT = "ContactService" + File.separator;
 	public static final String METHOD_CONTACT_QUERYORGPERSON = "QueryOrgPerson";
 	public static final String METHOD_CONTACT_QUERYPERSONINFO = "QueryPersionInfo";
-
-	public static final String MODEL_AFFAIRS = "AffairsService" + File.separator;
-	public static final String METHOD_AFFAIRS_ADDAFFAIR = "AddAffair";
-	public static final String METHOD_AFFAIRS_CloseAffair = "CloseAffair";
-	public static final String METHOD_AFFAIRS_EditAffair = "EditAffair";
-	public static final String METHOD_AFFAIRS_QueryAffairList = "QueryAffairList";
-	public static final String METHOD_AFFAIRS_QueryAffairInfo = "QueryAffairInfo";
-	public static final String METHOD_AFFAIRS_SendFeedback = "SendFeedback";
-	public static final String METHOD_AFFAIRS_GetFeedback = "GetFeedback";
 
 	public static final String MODEL_MESSAGE = "MessageService" + File.separator;
 	public static final String METHOD_MESSAGE_SendPersonalMsg = "SendPersonalMsg";
@@ -63,6 +68,7 @@ public class Contants {
 
 	// 服务器是否返回成功标志
 	public static final String RESULT_SUCCESS = "0";
+	public static final String RESULT_MORE = "-1";
 	@Deprecated
 	public static final String RESULT_FAIL = "1";
 

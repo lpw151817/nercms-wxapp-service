@@ -362,6 +362,8 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest getAllPersonRequest(final Context context) {
+		if (getUserId(context) == null)
+			return null;
 		url = Constant.SERVER_BASE_URL + Constant.GET_ALL_PERSON_URL + "?param={\"mid\":\""
 				+ getUserId(context) + "\"}";
 		JsonObjectRequest getAllPersonRequest = new JsonObjectRequest(url, null,
@@ -407,6 +409,8 @@ public class PersonRequest extends BaseRequest {
 	 * 修改用户信息 FINAL Jerry 15.5.21
 	 */
 	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
+		if (getUserId(c) == null)
+			return null;
 		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -454,6 +458,8 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest getOrgCode(Context c, String ic, String orgCode) {
+		if (getUserId(c) == null)
+			return null;
 		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), ic, orgCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -500,6 +506,8 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest getOrgCodePerson(Context c, String ic, String orgCode) {
+		if (getUserId(c) == null)
+			return null;
 		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), ic, orgCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -631,6 +639,8 @@ public class PersonRequest extends BaseRequest {
 	 * 用户退出 FINAL Jerry 15.5.21
 	 */
 	public JsonObjectRequest logOut(Context c, String identifyCode) {
+		if (getUserId(c) == null)
+			return null;
 		LogoutRequest params = new LogoutRequest(getUserId(c), identifyCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -677,6 +687,8 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
+		if (getUserId(c) == null)
+			return null;
 		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), identifyCode, personId);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -740,6 +752,8 @@ public class PersonRequest extends BaseRequest {
 		for (int i = 0; i < cs.length; i++) {
 			contacts.add(new Contacts(ts[i], cs[i]));
 		}
+		if (getUserId(c) == null)
+			return null;
 		AddPersonContactRequest params = new AddPersonContactRequest(getUserId(c), identifyCode,
 				personId, contacts);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
@@ -860,7 +874,8 @@ public class PersonRequest extends BaseRequest {
 		// }
 		// });
 		// return changePasswordRequest;
-
+		if (getUserId(c) == null)
+			return null;
 		ChangePwdRequest changePwd = new ChangePwdRequest(getUserId(c), newIdentifyCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_CHANGEPWD
 				+ Contants.PARAM_NAME + gson.toJson(changePwd);

@@ -1,6 +1,7 @@
 package android.wxapp.service.request;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.wxapp.service.AppApplication;
@@ -65,26 +66,28 @@ public class WebRequestManager {
 	}
 
 	// 创建新事务
-	public void sendAffair(AffairModel affair) {
+	public void sendAffair(String ic, String t, String sid, String d, String topic, String bt,
+			String et, String ct, String lot, String lotime, String up, List<String> ats, List<String> us) {
 		// 添加到RequestQueue
 		// queue.add(new SendAffairRequest(affair).getRequest());
-		queue.add(new AffairRequest(affair).getCreateAffairRequest());
+		queue.add(new AffairRequest().getCreateAffairRequest(context, ic, t, sid, d, topic, bt, et, ct,
+				lot, lotime, up, ats, us));
 	}
 
 	// 修改任务完成时间
-	public void modifyAffairEndTime(String affairID, String timeString) {
-		queue.add(new AffairRequest(context, affairID, timeString).getModifyEndTimeRequest());
+	public void modifyAffairEndTime(String ic, String affairID, String timeString) {
+		queue.add(new AffairRequest().getModifyEndTimeRequest(context, ic, affairID, timeString));
 	}
 
 	// 完成事务
-	public void endAffair(String affairID) {
-		queue.add(new AffairRequest(context, affairID).getEndTaskRequest());
+	public void endAffair(String ic, String affairID) {
+		queue.add(new AffairRequest().getEndTaskRequest(context, ic, affairID, null));
 	}
 
-	// 获取任务更新
-	public void getAffairUpdate() {
+	// ！！！！获取任务更新 逻辑需要调整
+	public void getAffairUpdate(String ic, String count) {
 		// queue.add(new GetAffairUpdateRequest(context).getRequest());
-		queue.add(new AffairRequest(context).getAffairUpdateRequest());
+		queue.add(new AffairRequest().getAffairUpdateRequest(context, ic, count));
 	}
 
 	// 发送新反馈

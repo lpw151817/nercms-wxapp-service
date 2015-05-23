@@ -7,7 +7,7 @@ public class Constant {
 	/**
 	 * Handler注册相关常量
 	 */
-	// Person 模块
+	// Person 模块 Jerry 15.5.21
 	// 请求成功
 	public static final int REQUEST_SUCCESS = 100;
 	// 请求失败
@@ -57,7 +57,7 @@ public class Constant {
 	// 获取组织结点人员失败
 	public static final int QUERY_ORG_PERSON_REQUEST_FAIL = 123;
 
-	// Affair
+	// Affair Jerry
 	// 创建事务请求成功
 	public static final int CREATE_AFFAIR_REQUEST_SUCCESS = 200;
 	// 创建事务请求失败
@@ -72,6 +72,18 @@ public class Constant {
 	public static final int MODIFY_TASK_REQUEST_FAIL = 205;
 	// 新任务保存完成通知
 	public static final int SAVE_TASK_SUCCESS = 206;
+	// 更新任务列表成功
+	public static final int UPDATE_TASK_LIST_REQUEST_SUCCESS = 207;
+	// 更新任务列表失败
+	public static final int UPDATE_TASK_LIST_REQUEST_FAIL = 208;
+	// 修改任务结束时间成功
+	public static final int UPDATE_TASK_END_TIME_REQUEST_SUCCESS = 209;
+	// 修改任务结束时间失败
+	public static final int UPDATE_TASK_END_TIME_REQUEST_FAIL = 210;
+	// 请求任务数量成功
+	public static final int QUERY_TASK_COUNT_REQUEST_SUCCESS = 211;
+	// 请求任务数量失败
+	public static final int QUERY_TASK_COUNT_REQUEST_FAIL = 212;
 
 	// Feedback
 	// 发送反馈请求成功
@@ -119,7 +131,7 @@ public class Constant {
 	public static final int SHOW_TASK_DELAY_NOTIFICATION = 704;
 	public static final int SHOW_TASK_MODIFY_NOTIFICATION = 705;
 
-	// GPS模块
+	// GPS模块 Jerry 15.5.21
 	// GPS信息上传成功
 	public static final int GPS_UPLOAD_REQUEST_SECCESS = 800;
 	// GPS信息上传失败
