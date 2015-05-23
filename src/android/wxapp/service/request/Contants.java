@@ -23,7 +23,7 @@ public class Contants {
 	@Deprecated
 	public static final String METHOD_PERSON_CHANGEPWD = "ChangePwd";
 
-	// Affair模块 Jerry
+	// Affair模块 Jerry 5.23
 	@Deprecated
 	public static final String MODEL_AFFAIRS = "AffairsService" + File.separator;
 	public static final String METHOD_AFFAIRS_UPDATE_LIST = "TaskUpdateQuery";
@@ -33,12 +33,27 @@ public class Contants {
 	public static final String METHOD_AFFAIRS_END_TASK = "EndTask";
 	public static final String METHOD_AFFAIRS_QUERY_LIST = "QueryAffairList";
 	public static final String METHOD_AFFAIRS_QUERY_INFO = "QueryAffairInfo";
+	// ===========以下为废弃接口==============
 	public static final String METHOD_AFFAIRS_CloseAffair = "CloseAffair";
 	public static final String METHOD_AFFAIRS_QueryAffairList = "QueryAffairList";
 	public static final String METHOD_AFFAIRS_QueryAffairInfo = "QueryAffairInfo";
 	public static final String METHOD_AFFAIRS_SendFeedback = "SendFeedback";
 	public static final String METHOD_AFFAIRS_GetFeedback = "GetFeedback";
-
+	// ==================================
+	
+	//Feedback模块 Jerry 
+	public static final String METHOD_FEEDBACK_SEND = "TaskFeedback";
+	public static final String METHOD_FEEDBACK_QUERY = "FeedbackInfoQuery";
+	
+	//Message模块 Jerry
+	public static final String MODEL_MESSAGE = "MessageService" + File.separator;
+	public static final String METHOD_MESSAGE_SendPersonalMsg = "SendPersonalMsg";
+	public static final String METHOD_MESSAGE_QueryPersonalMsgHistory = "QueryPersonalMsgHistory";
+	public static final String METHOD_MESSAGE_SendGroupMsg = "SendGroupMsg";
+	public static final String METHOD_MESSAGE_QueryGroupMsgHistory = "QueryGroupMsgHistory";
+	public static final String METHOD_MESSAGE_CreatNonbasicGroup = "CreatNonbasicGroup";
+	public static final String METHOD_MESSAGE_DeleteNonbasicGroup = "DeleteNonbasicGroup";
+	
 	// GPS模块 Jerry 5.22
 	public static final String METHOD_GPS_UPLOAD = "GPSUpload";
 	public static final String METHOD_GPS_QUERY_LAST_PERSONAL_GPS = "QueryLastPersonalGPS";
@@ -50,13 +65,6 @@ public class Contants {
 	public static final String METHOD_CONTACT_QUERYORGPERSON = "QueryOrgPerson";
 	public static final String METHOD_CONTACT_QUERYPERSONINFO = "QueryPersionInfo";
 
-	public static final String MODEL_MESSAGE = "MessageService" + File.separator;
-	public static final String METHOD_MESSAGE_SendPersonalMsg = "SendPersonalMsg";
-	public static final String METHOD_MESSAGE_QueryPersonalMsgHistory = "QueryPersonalMsgHistory";
-	public static final String METHOD_MESSAGE_SendGroupMsg = "SendGroupMsg";
-	public static final String METHOD_MESSAGE_QueryGroupMsgHistory = "QueryGroupMsgHistory";
-	public static final String METHOD_MESSAGE_CreatNonbasicGroup = "CreatNonbasicGroup";
-	public static final String METHOD_MESSAGE_DeleteNonbasicGroup = "DeleteNonbasicGroup";
 
 	public static final String MODEL_CONFERECNCE = "ConferenceService" + File.separator;
 	public static final String METHOD_CONFERECNCE_AppointConference = "AppointConference";

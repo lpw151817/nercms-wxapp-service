@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.wxapp.service.AppApplication;
+import android.wxapp.service.jerry.model.feedback.TaskFeedbackRequestIds;
 import android.wxapp.service.model.AffairModel;
 import android.wxapp.service.model.CustomerContactModel;
 import android.wxapp.service.model.CustomerModel;
@@ -91,14 +92,21 @@ public class WebRequestManager {
 	}
 
 	// 发送新反馈
-	public void sendFeedback(FeedbackModel feedback) {
-		queue.add(new FeedbackRequest(feedback).sendFeedbackRequest());
+	public void sendFeedback(Context context, String ic, String sid, String st, String c, String at,
+			String au, String ut, String[] rids) {
+		queue.add(new FeedbackRequest().sendFeedbackRequest(context, ic, sid, st, 4 + "", c, at, au, ut,
+				rids));
+	}
+
+	// 查询反馈详情
+	public void getFeedbackInfo(String ic, String aid) {
+		queue.add(new FeedbackRequest().getFeedbackInfoRequest(context, ic, aid));
 	}
 
 	// 获取新反馈
 	public void getFeedbackUpdate() {
 		// queue.add(new GetFeedbackUpdateRequest(context).getRequest());
-		queue.add(new FeedbackRequest(context).getFeedbackUpdateRequest());
+		queue.add(new FeedbackRequest().getFeedbackUpdateRequest());
 	}
 
 	// 发送新消息

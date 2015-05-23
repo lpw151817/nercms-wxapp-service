@@ -100,6 +100,10 @@ public class Constant {
 	public static final int SEND_FEEDBACK_REQUEST_FAIL = 301;
 	// 新反馈保存完成通知
 	public static final int SAVE_FEEDBACK_SUCCESS = 302;
+	// 查询反馈成功
+	public static final int QUERY_FEEDBACK_REQUEST_SUCCESS = 303;
+	// 查询反馈失败
+	public static final int QUERY_FEEDBACK_REQUEST_FAIL = 304;
 
 	// Message
 	// 发送消息请求成功

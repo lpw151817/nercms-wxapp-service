@@ -45,69 +45,70 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 public class AffairRequest extends BaseRequest {
 
-	private Context context;
-	/**
-	 * // 待编辑的事务ID
-	 */
-	private String affairID;
-	/**
-	 * // 待发送创建事务模型
-	 */
-	private AffairModel affair;
-	/**
-	 * // 创建事务请求字符串
-	 */
-	private String createAffairString = null;
-	/**
-	 * // 登录用户ID
-	 */
-	private String userID;
-	/**
-	 * // 上一次更新事务的时间
-	 */
-	private String lastUpdateTime;
-	/**
-	 * // 获取事务更新请求字符串
-	 */
-	private String getAffairUpdateString = "";
-	/**
-	 * // 修改后的任务完成时间
-	 */
-	private String modifiedEndTime;
-	/**
-	 * // 任务完成请求字符串
-	 */
-	private String endTaskRequestString = null;
-	/**
-	 * // 修改任务结束时间请求字符串
-	 */
-	private String modifyEndTimeString = null;
+	// private Context context;
+	// /**
+	// * // 待编辑的事务ID
+	// */
+	// private String affairID;
+	// /**
+	// * // 待发送创建事务模型
+	// */
+	// private AffairModel affair;
+	// /**
+	// * // 创建事务请求字符串
+	// */
+	// private String createAffairString = null;
+	// /**
+	// * // 登录用户ID
+	// */
+	// private String userID;
+	// /**
+	// * // 上一次更新事务的时间
+	// */
+	// private String lastUpdateTime;
+	// /**
+	// * // 获取事务更新请求字符串
+	// */
+	// private String getAffairUpdateString = "";
+	// /**
+	// * // 修改后的任务完成时间
+	// */
+	// private String modifiedEndTime;
+	// /**
+	// * // 任务完成请求字符串
+	// */
+	// private String endTaskRequestString = null;
+	// /**
+	// * // 修改任务结束时间请求字符串
+	// */
+	// private String modifyEndTimeString = null;
 
 	public AffairRequest() {
 	}
 
-	// 获取任务更新构造函数
-	public AffairRequest(Context context) {
-		this.context = context;
-	}
-
-	// 创建新任务构造函数
-	public AffairRequest(AffairModel affair) {
-		this.affair = affair;
-	}
-
-	// 完成任务的构造函数
-	public AffairRequest(Context context, String affairID) {
-		this.context = context;
-		this.affairID = affairID;
-	}
-
-	// 修改任务完成时间构造函数
-	public AffairRequest(Context context, String affairID, String modifiedEndTime) {
-		this.context = context;
-		this.affairID = affairID;
-		this.modifiedEndTime = modifiedEndTime;
-	}
+	// // 获取任务更新构造函数
+	// public AffairRequest(Context context) {
+	// this.context = context;
+	// }
+	//
+	// // 创建新任务构造函数
+	// public AffairRequest(AffairModel affair) {
+	// this.affair = affair;
+	// }
+	//
+	// // 完成任务的构造函数
+	// public AffairRequest(Context context, String affairID) {
+	// this.context = context;
+	// this.affairID = affairID;
+	// }
+	//
+	// // 修改任务完成时间构造函数
+	// public AffairRequest(Context context, String affairID, String
+	// modifiedEndTime) {
+	// this.context = context;
+	// this.affairID = affairID;
+	// this.modifiedEndTime = modifiedEndTime;
+	// }
 
 	// ======================================================
 	//
@@ -115,9 +116,11 @@ public class AffairRequest extends BaseRequest {
 	//
 	// 1.getAffairUpdateRequest
 	// 2.getCreateAffairRequest
-	// 3.
-	// 4.
-	// 5.
+	// 3.getModifyEndTimeRequest
+	// 4.getEndTaskRequest
+	// 5.queryAffairCount
+	// 6.queryAffairList
+	// 7.queryAffairInfo
 	//
 	// ======================================================
 
@@ -774,32 +777,34 @@ public class AffairRequest extends BaseRequest {
 
 	}
 
-	/**
-	 * 服务器反馈Json解析成Affair列表
-	 * 
-	 * @param resultJsonObject
-	 * @return
-	 * @deprecated
-	 */
-	private ArrayList<AffairModel> getArrayListFromJson(JSONObject resultJsonObject) {
-		String updateTimeStamp = null;
-		ArrayList<AffairModel> affairList = null;
-		if (resultJsonObject != null) {
-			affairList = null;
-			affairList = MyJsonParseUtil.getAffairList(resultJsonObject);
-			if (affairList == null) {
-				return null;
-			}
-			updateTimeStamp = MyJsonParseUtil.getUpdateTimeStamp(resultJsonObject);
-
-			// 更新最后一次更新任务的时戳
-			if (updateTimeStamp != null) {
-				MySharedPreference.save(context, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
-						updateTimeStamp);
-			}
-		}
-
-		return affairList;
-	}
+	// /**
+	// * 服务器反馈Json解析成Affair列表
+	// *
+	// * @param resultJsonObject
+	// * @return
+	// * @deprecated
+	// */
+	// private ArrayList<AffairModel> getArrayListFromJson(JSONObject
+	// resultJsonObject) {
+	// String updateTimeStamp = null;
+	// ArrayList<AffairModel> affairList = null;
+	// if (resultJsonObject != null) {
+	// affairList = null;
+	// affairList = MyJsonParseUtil.getAffairList(resultJsonObject);
+	// if (affairList == null) {
+	// return null;
+	// }
+	// updateTimeStamp = MyJsonParseUtil.getUpdateTimeStamp(resultJsonObject);
+	//
+	// // 更新最后一次更新任务的时戳
+	// if (updateTimeStamp != null) {
+	// MySharedPreference.save(context,
+	// MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
+	// updateTimeStamp);
+	// }
+	// }
+	//
+	// return affairList;
+	// }
 
 }
