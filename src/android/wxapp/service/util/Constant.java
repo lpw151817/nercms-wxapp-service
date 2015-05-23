@@ -84,6 +84,14 @@ public class Constant {
 	public static final int QUERY_TASK_COUNT_REQUEST_SUCCESS = 211;
 	// 请求任务数量失败
 	public static final int QUERY_TASK_COUNT_REQUEST_FAIL = 212;
+	// 请求任务列表成功
+	public static final int QUERY_TASK_LIST_REQUEST_SUCCESS = 213;
+	// 请求任务列表失败
+	public static final int QUERY_TASK_LIST_REQUEST_FAIL = 214;
+	// 请求任务详情成功
+	public static final int QUERY_TASK_INFO_REQUEST_SUCCESS = 215;
+	// 请求任务详情失败
+	public static final int QUERY_TASK_INFO_REQUEST_FAIL = 216;
 
 	// Feedback
 	// 发送反馈请求成功

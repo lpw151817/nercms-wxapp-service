@@ -22,6 +22,10 @@ import android.wxapp.service.jerry.model.affair.ModifyTaskRequest;
 import android.wxapp.service.jerry.model.affair.ModifyTaskResponse;
 import android.wxapp.service.jerry.model.affair.QueryAffairCountRequest;
 import android.wxapp.service.jerry.model.affair.QueryAffairCountResponse;
+import android.wxapp.service.jerry.model.affair.QueryAffairInfoRequest;
+import android.wxapp.service.jerry.model.affair.QueryAffairInfoResponse;
+import android.wxapp.service.jerry.model.affair.QueryAffairListRequest;
+import android.wxapp.service.jerry.model.affair.QueryAffairListResponse;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
 import android.wxapp.service.jerry.model.gps.GpsUploadRequest;
@@ -650,10 +654,132 @@ public class AffairRequest extends BaseRequest {
 	}
 
 	/**
+	 * 查询任务列表 Jerry 5.23
+	 * 
+	 * @param c
+	 * @param ic
+	 * @param sor
+	 *            用于标记是自己发布的事务还是接收到的事务（0：自己发布的事务 1：自己接收到的事务）
+	 * @param t
+	 *            用于标记查询事务的状态（0：延误事务 1：已完成事务 2：正在完成中的事务）
+	 * @param count
+	 *            标记是第几次查询数据，用于分页请求数据
+	 * @return
+	 */
+	public JsonObjectRequest queryAffairList(Context c, String ic, String sor, String t, String count) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(c) == null)
+			return null;
+		QueryAffairListRequest params = new QueryAffairListRequest(getUserId(c), ic, sor, t, count);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_LIST
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println(arg0.toString());
+				try {
+					// 表示已经没有更多的数据需要再次进行请求
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						QueryAffairListResponse r = gson.fromJson(arg0.toString(),
+								QueryAffairListResponse.class);
+						// TODO 进行数据库的操作,保存数据
+
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_TASK_LIST_REQUEST_SUCCESS, r,
+								Contants.METHOD_AFFAIRS_QUERY_LIST);
+					}
+					// 还有更多的数据需要进行请求
+					else if (arg0.getString("s").equals(Contants.RESULT_MORE)) {
+						QueryAffairListResponse r = gson.fromJson(arg0.toString(),
+								QueryAffairListResponse.class);
+						// TODO 进行数据库的操作,保存数据
+
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_TASK_LIST_REQUEST_SUCCESS, r,
+								Contants.METHOD_AFFAIRS_QUERY_LIST);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_TASK_LIST_REQUEST_FAIL, r,
+								Contants.METHOD_AFFAIRS_QUERY_LIST);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	/**
+	 * 查询任务详情 Jerry 5.23
+	 * 
+	 * @param c
+	 * @param ic
+	 * @param aid
+	 *            任务id
+	 * @return
+	 */
+	public JsonObjectRequest queryAffairInfo(Context c, String ic, String aid) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(c) == null)
+			return null;
+		QueryAffairInfoRequest params = new QueryAffairInfoRequest(getUserId(c), ic, aid);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_INFO
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println("request>>>>>>" + this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println("response>>>>>>>" + arg0.toString());
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						QueryAffairInfoResponse r = gson.fromJson(arg0.toString(),
+								QueryAffairInfoResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_TASK_INFO_REQUEST_SUCCESS, r,
+								Contants.METHOD_AFFAIRS_QUERY_INFO);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_TASK_INFO_REQUEST_FAIL, r,
+								Contants.METHOD_AFFAIRS_QUERY_INFO);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
+
+	/**
 	 * 服务器反馈Json解析成Affair列表
 	 * 
 	 * @param resultJsonObject
 	 * @return
+	 * @deprecated
 	 */
 	private ArrayList<AffairModel> getArrayListFromJson(JSONObject resultJsonObject) {
 		String updateTimeStamp = null;

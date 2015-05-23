@@ -31,6 +31,8 @@ public class Contants {
 	public static final String METHOD_AFFAIRS_MODIFY_TASK = "ModifyTask";
 	public static final String METHOD_AFFAIRS_QUERY_COUNT = "QueryAffairCount";
 	public static final String METHOD_AFFAIRS_END_TASK = "EndTask";
+	public static final String METHOD_AFFAIRS_QUERY_LIST = "QueryAffairList";
+	public static final String METHOD_AFFAIRS_QUERY_INFO = "QueryAffairInfo";
 	public static final String METHOD_AFFAIRS_CloseAffair = "CloseAffair";
 	public static final String METHOD_AFFAIRS_QueryAffairList = "QueryAffairList";
 	public static final String METHOD_AFFAIRS_QueryAffairInfo = "QueryAffairInfo";
