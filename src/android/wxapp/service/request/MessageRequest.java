@@ -14,6 +14,10 @@ import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryRequest;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
+import android.wxapp.service.jerry.model.message.QueryContactPersonMessageRequest;
+import android.wxapp.service.jerry.model.message.QueryContactPersonMessageResponse;
+import android.wxapp.service.jerry.model.message.ReceiveMessageRequest;
+import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.jerry.model.message.SendMessageRequest;
 import android.wxapp.service.jerry.model.message.SendMessageRequestIds;
 import android.wxapp.service.jerry.model.message.SendMessageResponse;
@@ -31,6 +35,19 @@ import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 public class MessageRequest extends BaseRequest {
+
+	// ======================================================
+	//
+	// JerryLiu 2015.5.22
+	//
+	// 1.getMessageUpdateRequest
+	// 2.sendMessageRequest
+	// 3.queryContactPersonMessage
+	// 4.deleteMessage
+	// 5.queryMessageHistory
+	// 6.receiveMessage
+	//
+	// ======================================================
 
 	// private Context context;
 	// /**
@@ -226,7 +243,7 @@ public class MessageRequest extends BaseRequest {
 								NormalServerResponse.class);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.SEND_MESSAGE_REQUEST_SUCCESS, r, Contants.METHOD_MESSAGE_SEND);
+								Constant.SEND_MESSAGE_REQUEST_FAIL, r, Contants.METHOD_MESSAGE_SEND);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -303,6 +320,120 @@ public class MessageRequest extends BaseRequest {
 		// });
 		//
 		// return sendMessageRequest;
+	}
+
+	/**
+	 * 查询最近联系人 最近消息列表
+	 * 
+	 * @param context
+	 * @param ic
+	 * @return
+	 */
+	public JsonObjectRequest queryContactPersonMessage(Context context, String ic) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(context) == null)
+			return null;
+		QueryContactPersonMessageRequest params = new QueryContactPersonMessageRequest(
+				getUserId(context), ic);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
+				+ Contants.METHOD_MESSAGE_QUERY_CONTACT_MERSON_MESSAGE + Contants.PARAM_NAME
+				+ super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println(arg0.toString());
+				try {
+					// 表示已经没有更多的数据需要再次进行请求
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						QueryContactPersonMessageResponse r = gson.fromJson(arg0.toString(),
+								QueryContactPersonMessageResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_RECENT_MESSAGE_REQUEST_SUCCESS, r,
+								Contants.METHOD_MESSAGE_QUERY_CONTACT_MERSON_MESSAGE);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_RECENT_MESSAGE_REQUEST_FAIL, r,
+								Contants.METHOD_MESSAGE_QUERY_CONTACT_MERSON_MESSAGE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+	}
+
+	// 暂不实现
+	public JsonObjectRequest deleteMessage() {
+		return null;
+	}
+
+	// 暂不实现
+	public JsonObjectRequest queryMessageHistory() {
+		return null;
+	}
+
+	/**
+	 * 查询接收到的消息的详细内容
+	 * 
+	 * @param context
+	 * @param ic
+	 * @param mid
+	 *            需要查询的消息id
+	 * @return
+	 */
+	public JsonObjectRequest receiveMessage(Context context, String ic, String mid) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(context) == null)
+			return null;
+		ReceiveMessageRequest params = new ReceiveMessageRequest(getUserId(context), ic, mid);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_RECEIVE
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println(this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println(arg0.toString());
+				try {
+					// 表示已经没有更多的数据需要再次进行请求
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						ReceiveMessageResponse r = gson.fromJson(arg0.toString(),
+								ReceiveMessageResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_MESSAGE_INFO_REQUEST_SUCCESS, r,
+								Contants.METHOD_MESSAGE_RECEIVE);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.QUERY_MESSAGE_INFO_REQUEST_FAIL, r,
+								Contants.METHOD_MESSAGE_RECEIVE);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
 	}
 
 	// private ArrayList<MessageModel> getMessageListFromJson(JSONObject

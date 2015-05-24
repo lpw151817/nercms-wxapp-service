@@ -50,6 +50,8 @@ public class Contants {
 	public static final String MODEL_MESSAGE = "MessageService" + File.separator;
 	public static final String METHOD_MESSAGE_UPDATE = "MessageUpdateQuery";
 	public static final String METHOD_MESSAGE_SEND = "SendMessage";
+	public static final String METHOD_MESSAGE_QUERY_CONTACT_MERSON_MESSAGE = "QueryContactPersonMessage";
+	public static final String METHOD_MESSAGE_RECEIVE = "ReceiveMessage";
 	public static final String METHOD_MESSAGE_SendPersonalMsg = "SendPersonalMsg";
 	public static final String METHOD_MESSAGE_QueryPersonalMsgHistory = "QueryPersonalMsgHistory";
 	public static final String METHOD_MESSAGE_SendGroupMsg = "SendGroupMsg";

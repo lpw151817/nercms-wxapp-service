@@ -116,6 +116,14 @@ public class Constant {
 	public static final int UPDATE_MESSAGE_REQUEST_SUCCESS = 403;
 	// 更新消息请求失败
 	public static final int UPDATE_MESSAGE_REQUEST_FAIL = 404;
+	// 查询最近联系人消息请求成功
+	public static final int QUERY_RECENT_MESSAGE_REQUEST_SUCCESS = 405;
+	// 查询最近联系人消息请求失败
+	public static final int QUERY_RECENT_MESSAGE_REQUEST_FAIL = 406;
+	// 查询最近联系人消息请求成功
+	public static final int QUERY_MESSAGE_INFO_REQUEST_SUCCESS = 407;
+	// 查询最近联系人消息请求失败
+	public static final int QUERY_MESSAGE_INFO_REQUEST_FAIL = 408;
 
 	// Attachment
 	// 附件下载成功
