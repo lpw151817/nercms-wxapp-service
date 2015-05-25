@@ -5,6 +5,14 @@ import java.util.List;
 public class QueryAffairInfoResponse {
 	String s, t, sid, d, topic, bt, et, ct, lot, lotime, up;
 	List<CreateTaskRequestAttachment> att;
+	List<CreateTaskRequestIds> rids;
+	
+	public List<CreateTaskRequestIds> getRids() {
+		return rids;
+	}
+	public void setRids(List<CreateTaskRequestIds> rids) {
+		this.rids = rids;
+	}
 	public String getS() {
 		return s;
 	}
@@ -79,7 +87,7 @@ public class QueryAffairInfoResponse {
 	}
 	public QueryAffairInfoResponse(String s, String t, String sid, String d, String topic, String bt,
 			String et, String ct, String lot, String lotime, String up,
-			List<CreateTaskRequestAttachment> att) {
+			List<CreateTaskRequestAttachment> att, List<CreateTaskRequestIds> rids) {
 		super();
 		this.s = s;
 		this.t = t;
@@ -93,6 +101,7 @@ public class QueryAffairInfoResponse {
 		this.lotime = lotime;
 		this.up = up;
 		this.att = att;
+		this.rids = rids;
 	}
 	public QueryAffairInfoResponse() {
 		super();
