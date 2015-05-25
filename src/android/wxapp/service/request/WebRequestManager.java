@@ -68,11 +68,12 @@ public class WebRequestManager {
 
 	// 创建新事务
 	public void sendAffair(String ic, String t, String sid, String d, String topic, String bt,
-			String et, String ct, String lot, String lotime, String up, List<String> ats, List<String> us) {
+			String et, String ct, String lot, String lotime, String up, List<String> ats,
+			List<String> us, String[] rids) {
 		// 添加到RequestQueue
 		// queue.add(new SendAffairRequest(affair).getRequest());
 		queue.add(new AffairRequest().getCreateAffairRequest(context, ic, t, sid, d, topic, bt, et, ct,
-				lot, lotime, up, ats, us));
+				lot, lotime, up, ats, us, rids));
 	}
 
 	// 修改任务完成时间

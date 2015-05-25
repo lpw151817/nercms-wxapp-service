@@ -15,6 +15,7 @@ import android.wxapp.service.dao.DAOFactory;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.affair.CreateTaskRequest;
 import android.wxapp.service.jerry.model.affair.CreateTaskRequestAttachment;
+import android.wxapp.service.jerry.model.affair.CreateTaskRequestIds;
 import android.wxapp.service.jerry.model.affair.CreateTaskResponse;
 import android.wxapp.service.jerry.model.affair.EndTaskRequest;
 import android.wxapp.service.jerry.model.affair.EndTaskResponse;
@@ -274,11 +275,13 @@ public class AffairRequest extends BaseRequest {
 	 *            附件类型数组（1：文本 2：图片3：录像4：录音5 ：GPS）
 	 * @param us
 	 *            附件链接数组
+	 * @param rids
+	 *            接受者的id数组
 	 * @return
 	 */
 	public JsonObjectRequest getCreateAffairRequest(Context c, String ic, String t, String sid,
 			String d, String topic, String bt, String et, String ct, String lot, String lotime,
-			String up, List<String> ats, List<String> us) {
+			String up, List<String> ats, List<String> us, String[] rids) {
 		// 如果为获取到用户的id，则直接返回
 		if (getUserId(c) == null || (ats.size() != us.size()))
 			return null;
@@ -286,9 +289,12 @@ public class AffairRequest extends BaseRequest {
 		for (int i = 0; i < us.size(); i++) {
 			l.add(new CreateTaskRequestAttachment(ats.get(i), us.get(i)));
 		}
-
+		List<CreateTaskRequestIds> l2 = new ArrayList<CreateTaskRequestIds>();
+		for (String s : rids) {
+			l2.add(new CreateTaskRequestIds(s));
+		}
 		CreateTaskRequest params = new CreateTaskRequest(getUserId(c), ic, t, sid, d, topic, bt, et, ct,
-				lot, lotime, up, l);
+				lot, lotime, up, l, l2);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_ADDAFFAIR
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);

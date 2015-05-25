@@ -5,6 +5,7 @@ import java.util.List;
 public class CreateTaskRequest {
 	String uid, ic, t, sid, d, topic, bt, et, ct, lot, lotime, up;
 	List<CreateTaskRequestAttachment> att;
+	List<CreateTaskRequestIds> rids;
 
 	public String getUid() {
 		return uid;
@@ -104,7 +105,7 @@ public class CreateTaskRequest {
 
 	public CreateTaskRequest(String uid, String ic, String t, String sid, String d, String topic,
 			String bt, String et, String ct, String lot, String lotime, String up,
-			List<CreateTaskRequestAttachment> att) {
+			List<CreateTaskRequestAttachment> att, List<CreateTaskRequestIds> rids) {
 		super();
 		this.uid = uid;
 		this.ic = ic;
@@ -119,6 +120,15 @@ public class CreateTaskRequest {
 		this.lotime = lotime;
 		this.up = up;
 		this.att = att;
+		this.rids = rids;
+	}
+
+	public List<CreateTaskRequestIds> getRids() {
+		return rids;
+	}
+
+	public void setRids(List<CreateTaskRequestIds> rids) {
+		this.rids = rids;
 	}
 
 	public List<CreateTaskRequestAttachment> getAtt() {
