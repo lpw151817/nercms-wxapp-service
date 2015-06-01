@@ -33,38 +33,55 @@ public class WebRequestManager {
 		this.queue = this.application.myQueue;
 	}
 
-	// 登录验证
+	//
+	// Person Model
+	//
+
+	// 登录验证 FINAL Jerry 5.25
 	public void loginVarification(String aliasName, String identifyCode, String imsi) {
 		queue.add(new PersonRequest().getLoginRequest(aliasName, identifyCode, imsi));
 	}
 
-	// 修改用户密码
+	// 获取组织结点
+	public void getOrgCode(String orgCode) {
+		queue.add(new PersonRequest().getOrgCode(this.context, orgCode));
+	}
+
+	// 修改用户密码 废弃接口 Jerry 5.25
 	@Deprecated
 	public void changePassword(String identifyCode, String newIdentifyCode) {
 		queue.add(new PersonRequest().getChangePasswordrRequest(this.context, identifyCode,
 				newIdentifyCode));
 	}
 
-	// 获取所有联系人信息
+	// 获取所有联系人信息 废弃接口 Jerry 5.25
+	@Deprecated
 	public void getAllPerson() {
 		// queue.add(new GetAllPersonRequest(context).getRequest());
 		queue.add(new PersonRequest().getAllPersonRequest(context));
 	}
 
-	// 新建客户
+	// 新建客户 废弃接口 Jerry 5.25
+	@Deprecated
 	public void newCustomer(CustomerModel customer, ArrayList<CustomerContactModel> contactList) {
 		queue.add(new PersonRequest().sendNewCustomerRequest(context, customer, contactList));
 	}
 
-	// 编辑客户信息
+	// 编辑客户信息 废弃接口 Jerry 5.25
+	@Deprecated
 	public void modifyCustomer(CustomerModel customer, ArrayList<CustomerContactModel> contactList) {
 		queue.add(new PersonRequest().sendModifyCustomerRequest(customer, contactList));
 	}
 
-	// 删除客户
+	// 删除客户 废弃接口 Jerry 5.25
+	@Deprecated
 	public void deleteCustomer(String customerID) {
 		queue.add(new PersonRequest().sendDeleteCustomerRequest(context, customerID));
 	}
+
+	//
+	// Affair Model
+	//
 
 	// 创建新事务
 	public void sendAffair(String ic, String t, String sid, String d, String topic, String bt,

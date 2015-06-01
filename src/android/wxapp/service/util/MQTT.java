@@ -16,7 +16,7 @@ import android.util.Log;
 import android.wxapp.service.handler.MessageHandlerManager;
 
 public class MQTT {
-	public static String SERVER_URL = "tcp://202.114.117.234:1883";
+	public static String SERVER_URL = "tcp://202.114.66.77:1883";
 	// public static String CLIENT_ID = MqttClient.generateClientId();//不可超过23字节
 	public static String CLIENT_ID = ""; // WeiHao：默认为空，具体初始化在用户Login之后进行
 	public final static String SUBSCRIBE_TOPIC_PREFIX = "nercms/schedule/";

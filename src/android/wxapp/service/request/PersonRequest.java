@@ -152,77 +152,84 @@ public class PersonRequest extends BaseRequest {
 	 *            任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
 	 * @return
 	 */
+	@Deprecated
 	public JsonObjectRequest sendNewCustomerRequest(Context context, CustomerModel customer,
 			ArrayList<CustomerContactModel> customerContactList) {
-		/* 发送事务 */
-		// 创建包含JSON对象的请求地址
-		StringBuilder requestParams = new StringBuilder();
-		requestParams.append("{\"name\":\"" + customer.getName() + "\",");
-		requestParams.append("\"unit\":\"" + customer.getUnit() + "\",");
-		requestParams.append("\"dpt\":\"" + customer.getDescription() + "\",");
-		requestParams.append("\"coid\":\"" + customer.getContactID() + "\",");
-
-		if (customerContactList != null && customerContactList.size() != 0) {
-			requestParams.append("\"cots\":[");
-			for (int i = 0; i < customerContactList.size(); i++) {
-				requestParams.append("{\"type\":\"" + customerContactList.get(i).getType() + "\",");
-				requestParams.append("\"cot\":\"" + customerContactList.get(i).getContent() + "\"}");
-				if (i < customerContactList.size() - 1) {
-					requestParams.append(",");
-				}
-			}
-			requestParams.append("]}");
-		} else { // 无联系方式信息
-			requestParams.append("\"cots\":null}");
-		}
-
-		try {
-			url = Constant.SERVER_BASE_URL + Constant.CREATE_CUSTOMER_URL + "?param="
-					+ URLEncoder.encode(requestParams.toString(), "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		JsonObjectRequest newCustomerRequest = new JsonObjectRequest(url, null,
-				new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						// 发送成功，判断服务器是否返回成功，并通知Handler返回消息
-						Log.i("newCustomerRequest", response.toString());
-
-						try {
-							if (response.getString("success").equals("0")) {
-								// 服务器保存成功
-								String customerID = response.getString("csid");
-								// 通知界面
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.CREATE_CUSTOMER_REQUEST_SUCCESS, customerID,
-										"ContactAdd");
-								// 0721添加通知contactFragment 刷新组织结构树
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.CREATE_CUSTOMER_REQUEST_SUCCESS, customerID, "Main");
-
-							} else if (response.getString("success").equals("1")) {
-								Log.i("newCustomerRequest", response.getString("reason").toString());
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.CREATE_CUSTOMER_REQUEST_FAIL, "ContactAdd");
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						// 发送失败，通知Handler错误信息
-
-					}
-				});
-
-		return newCustomerRequest;
+		return null;
+		// /* 发送事务 */
+		// // 创建包含JSON对象的请求地址
+		// StringBuilder requestParams = new StringBuilder();
+		// requestParams.append("{\"name\":\"" + customer.getName() + "\",");
+		// requestParams.append("\"unit\":\"" + customer.getUnit() + "\",");
+		// requestParams.append("\"dpt\":\"" + customer.getDescription() +
+		// "\",");
+		// requestParams.append("\"coid\":\"" + customer.getContactID() +
+		// "\",");
+		//
+		// if (customerContactList != null && customerContactList.size() != 0) {
+		// requestParams.append("\"cots\":[");
+		// for (int i = 0; i < customerContactList.size(); i++) {
+		// requestParams.append("{\"type\":\"" +
+		// customerContactList.get(i).getType() + "\",");
+		// requestParams.append("\"cot\":\"" +
+		// customerContactList.get(i).getContent() + "\"}");
+		// if (i < customerContactList.size() - 1) {
+		// requestParams.append(",");
+		// }
+		// }
+		// requestParams.append("]}");
+		// } else { // 无联系方式信息
+		// requestParams.append("\"cots\":null}");
+		// }
+		//
+		// try {
+		// url = Constant.SERVER_BASE_URL + Constant.CREATE_CUSTOMER_URL +
+		// "?param="
+		// + URLEncoder.encode(requestParams.toString(), "UTF-8");
+		// } catch (UnsupportedEncodingException e1) {
+		// e1.printStackTrace();
+		// }
+		//
+		// JsonObjectRequest newCustomerRequest = new JsonObjectRequest(url,
+		// null,
+		// new Response.Listener<JSONObject>() {
+		//
+		// @Override
+		// public void onResponse(JSONObject response) {
+		// // 发送成功，判断服务器是否返回成功，并通知Handler返回消息
+		// Log.i("newCustomerRequest", response.toString());
+		//
+		// try {
+		// if (response.getString("success").equals("0")) {
+		// // 服务器保存成功
+		// String customerID = response.getString("csid");
+		// // 通知界面
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.CREATE_CUSTOMER_REQUEST_SUCCESS, customerID,
+		// "ContactAdd");
+		// // 0721添加通知contactFragment 刷新组织结构树
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.CREATE_CUSTOMER_REQUEST_SUCCESS, customerID, "Main");
+		//
+		// } else if (response.getString("success").equals("1")) {
+		// Log.i("newCustomerRequest", response.getString("reason").toString());
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.CREATE_CUSTOMER_REQUEST_FAIL, "ContactAdd");
+		// }
+		// } catch (JSONException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }, new Response.ErrorListener() {
+		//
+		// @Override
+		// public void onErrorResponse(VolleyError error) {
+		// // 发送失败，通知Handler错误信息
+		//
+		// }
+		// });
+		//
+		// return newCustomerRequest;
 	}
 
 	// /**
@@ -241,41 +248,45 @@ public class PersonRequest extends BaseRequest {
 	 *            待删除客户的ID
 	 * @return
 	 */
+	@Deprecated
 	public JsonObjectRequest sendDeleteCustomerRequest(final Context context, final String customerID) {
-		url = Constant.SERVER_BASE_URL + Constant.DELETE_CUSTOMER_URL + "?param={\"csid\":\""
-				+ customerID + "\"}";
-		JsonObjectRequest deleteCustomerRequest = new JsonObjectRequest(url, null,
-				new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						try {
-							if (response.getString("success").equalsIgnoreCase("0")) {
-								Log.i("deleteCustomerRequest", response.toString());
-								Log.v("deleteCustomerRequest", "客户已标记删除");
-
-								// 服务器端标志删除完成，下一步手机端数据库删除该客户信息
-								PersonDao dao = DAOFactory.getInstance().getPersonDao(context);
-								dao.deleteCustomer(customerID);
-								// 0722 通知UI
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.DELETE_CUSTOMER_REQUEST_SUCCESS, customerID, "Main");
-
-							} else {
-
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.e("deleteCustomerRequest", error.toString());
-					}
-				});
-
-		return deleteCustomerRequest;
+		return null;
+		// url = Constant.SERVER_BASE_URL + Constant.DELETE_CUSTOMER_URL +
+		// "?param={\"csid\":\""
+		// + customerID + "\"}";
+		// JsonObjectRequest deleteCustomerRequest = new JsonObjectRequest(url,
+		// null,
+		// new Response.Listener<JSONObject>() {
+		//
+		// @Override
+		// public void onResponse(JSONObject response) {
+		// try {
+		// if (response.getString("success").equalsIgnoreCase("0")) {
+		// Log.i("deleteCustomerRequest", response.toString());
+		// Log.v("deleteCustomerRequest", "客户已标记删除");
+		//
+		// // 服务器端标志删除完成，下一步手机端数据库删除该客户信息
+		// PersonDao dao = DAOFactory.getInstance().getPersonDao(context);
+		// dao.deleteCustomer(customerID);
+		// // 0722 通知UI
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.DELETE_CUSTOMER_REQUEST_SUCCESS, customerID, "Main");
+		//
+		// } else {
+		//
+		// }
+		// } catch (JSONException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }, new Response.ErrorListener() {
+		// @Override
+		// public void onErrorResponse(VolleyError error) {
+		// Log.e("deleteCustomerRequest", error.toString());
+		// }
+		// });
+		//
+		// return deleteCustomerRequest;
 	}
 
 	/**
@@ -287,73 +298,79 @@ public class PersonRequest extends BaseRequest {
 	 *            待编辑的客户的联系方式列表
 	 * @return
 	 */
+	@Deprecated
 	public JsonObjectRequest sendModifyCustomerRequest(CustomerModel customer,
 			ArrayList<CustomerContactModel> customerContactList) {
-		// 创建包含JSON对象的请求地址
-		StringBuilder requestParams = new StringBuilder();
-		requestParams.append("{\"csid\":\"" + customer.getCustomerID() + "\",");
-		requestParams.append("\"name\":\"" + customer.getName() + "\",");
-		requestParams.append("\"unit\":\"" + customer.getUnit() + "\",");
-		requestParams.append("\"dpt\":\"" + customer.getDescription() + "\",");
-
-		if (customerContactList != null && customerContactList.size() != 0) {
-			requestParams.append("\"cots\":[");
-			for (int i = 0; i < customerContactList.size(); i++) {
-				requestParams.append("{\"type\":\"" + customerContactList.get(i).getType() + "\",");
-				requestParams.append("\"cot\":\"" + customerContactList.get(i).getContent() + "\"}");
-				if (i < customerContactList.size() - 1) {
-					requestParams.append(",");
-				}
-			}
-			requestParams.append("]}");
-		} else { // 无联系方式信息
-			requestParams.append("\"cots\":null}");
-		}
-		try {
-			url = Constant.SERVER_BASE_URL + Constant.MODIFY_CUSTOMER_URL + "?param="
-					+ URLEncoder.encode(requestParams.toString(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		JsonObjectRequest modifyCustomerRequest = new JsonObjectRequest(url, null,
-				new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						// 发送成功，判断服务器是否返回成功，并通知Handler返回消息
-						Log.i("modifyCustomerRequest", response.toString());
-
-						try {
-							if (response.getString("success").equals("0")) {
-
-								// 服务器保存成功
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.MODIFY_CUSTOMER_REQUEST_SUCCESS, "ContactAdd");
-								// 0721 通知UI 刷新组织结构树
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.MODIFY_CUSTOMER_REQUEST_SUCCESS, "Main");
-
-							} else if (response.getString("success").equals("1")) {
-								Log.i("newCustomerRequest", response.getString("reason").toString());
-								MessageHandlerManager.getInstance().sendMessage(
-										Constant.MODIFY_CUSTOMER_REQUEST_FAIL, "ContactAdd");
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-
-		return modifyCustomerRequest;
+		return null;
+		// // 创建包含JSON对象的请求地址
+		// StringBuilder requestParams = new StringBuilder();
+		// requestParams.append("{\"csid\":\"" + customer.getCustomerID() +
+		// "\",");
+		// requestParams.append("\"name\":\"" + customer.getName() + "\",");
+		// requestParams.append("\"unit\":\"" + customer.getUnit() + "\",");
+		// requestParams.append("\"dpt\":\"" + customer.getDescription() +
+		// "\",");
+		//
+		// if (customerContactList != null && customerContactList.size() != 0) {
+		// requestParams.append("\"cots\":[");
+		// for (int i = 0; i < customerContactList.size(); i++) {
+		// requestParams.append("{\"type\":\"" +
+		// customerContactList.get(i).getType() + "\",");
+		// requestParams.append("\"cot\":\"" +
+		// customerContactList.get(i).getContent() + "\"}");
+		// if (i < customerContactList.size() - 1) {
+		// requestParams.append(",");
+		// }
+		// }
+		// requestParams.append("]}");
+		// } else { // 无联系方式信息
+		// requestParams.append("\"cots\":null}");
+		// }
+		// try {
+		// url = Constant.SERVER_BASE_URL + Constant.MODIFY_CUSTOMER_URL +
+		// "?param="
+		// + URLEncoder.encode(requestParams.toString(), "UTF-8");
+		// } catch (UnsupportedEncodingException e) {
+		// e.printStackTrace();
+		// }
+		// JsonObjectRequest modifyCustomerRequest = new JsonObjectRequest(url,
+		// null,
+		// new Response.Listener<JSONObject>() {
+		//
+		// @Override
+		// public void onResponse(JSONObject response) {
+		// // 发送成功，判断服务器是否返回成功，并通知Handler返回消息
+		// Log.i("modifyCustomerRequest", response.toString());
+		//
+		// try {
+		// if (response.getString("success").equals("0")) {
+		//
+		// // 服务器保存成功
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.MODIFY_CUSTOMER_REQUEST_SUCCESS, "ContactAdd");
+		// // 0721 通知UI 刷新组织结构树
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.MODIFY_CUSTOMER_REQUEST_SUCCESS, "Main");
+		//
+		// } else if (response.getString("success").equals("1")) {
+		// Log.i("newCustomerRequest", response.getString("reason").toString());
+		// MessageHandlerManager.getInstance().sendMessage(
+		// Constant.MODIFY_CUSTOMER_REQUEST_FAIL, "ContactAdd");
+		// }
+		// } catch (JSONException e) {
+		// e.printStackTrace();
+		// }
+		//
+		// }
+		// }, new Response.ErrorListener() {
+		//
+		// @Override
+		// public void onErrorResponse(VolleyError error) {
+		//
+		// }
+		// });
+		//
+		// return modifyCustomerRequest;
 	}
 
 	/**
@@ -361,30 +378,34 @@ public class PersonRequest extends BaseRequest {
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public JsonObjectRequest getAllPersonRequest(final Context context) {
-		if (getUserId(context) == null)
-			return null;
-		url = Constant.SERVER_BASE_URL + Constant.GET_ALL_PERSON_URL + "?param={\"mid\":\""
-				+ getUserId(context) + "\"}";
-		JsonObjectRequest getAllPersonRequest = new JsonObjectRequest(url, null,
-				new Response.Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject response) {
-						// 发送成功，判断服务器是否返回成功，并通知Handler返回消息
-						Log.i("getAllPersonsInfo", "下载联系人成功，转到保存线程");
-						ThreadManager.getInstance().startSaveAllPersonThread(response, context);
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						// TODO Auto-generated method stub
-
-					}
-				});
-
-		return getAllPersonRequest;
+		return null;
+		// if (getUserId(context) == null)
+		// return null;
+		// url = Constant.SERVER_BASE_URL + Constant.GET_ALL_PERSON_URL +
+		// "?param={\"mid\":\""
+		// + getUserId(context) + "\"}";
+		// JsonObjectRequest getAllPersonRequest = new JsonObjectRequest(url,
+		// null,
+		// new Response.Listener<JSONObject>() {
+		//
+		// @Override
+		// public void onResponse(JSONObject response) {
+		// // 发送成功，判断服务器是否返回成功，并通知Handler返回消息
+		// Log.i("getAllPersonsInfo", "下载联系人成功，转到保存线程");
+		// ThreadManager.getInstance().startSaveAllPersonThread(response,
+		// context);
+		// }
+		// }, new Response.ErrorListener() {
+		//
+		// @Override
+		// public void onErrorResponse(VolleyError error) {
+		//
+		// }
+		// });
+		//
+		// return getAllPersonRequest;
 	}
 
 	// public PersonRequest(Context c) {
@@ -457,10 +478,10 @@ public class PersonRequest extends BaseRequest {
 	 *            父节点的code(最顶层的父节点此值为1)
 	 * @return
 	 */
-	public JsonObjectRequest getOrgCode(Context c, String ic, String orgCode) {
-		if (getUserId(c) == null)
+	public JsonObjectRequest getOrgCode(Context c, String orgCode) {
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), ic, orgCode);
+		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -471,6 +492,7 @@ public class PersonRequest extends BaseRequest {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
+						// TODO 进行数据库的添加
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_ORG_NODE_REQUEST_SUCCESS, r,
 								Contants.METHOD_PERSON_GET_ORG_CODE);
@@ -520,6 +542,7 @@ public class PersonRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
 								GetOrgCodePersonResponse.class);
+						// TODO DB Update
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
 								Contants.METHOD_PERSON_GET_ORG_PERSON);
@@ -593,7 +616,6 @@ public class PersonRequest extends BaseRequest {
 		// identifyCode
 		// + "\",\"s\":\"" + imsi + "\"}", "UTF-8");
 		// } catch (UnsupportedEncodingException e1) {
-		// // TODO Auto-generated catch block
 		// e1.printStackTrace();
 		// }
 		//
@@ -861,7 +883,6 @@ public class PersonRequest extends BaseRequest {
 		// Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
 		// }
 		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
 		// }
@@ -869,7 +890,6 @@ public class PersonRequest extends BaseRequest {
 		//
 		// @Override
 		// public void onErrorResponse(VolleyError error) {
-		// // TODO Auto-generated method stub
 		//
 		// }
 		// });

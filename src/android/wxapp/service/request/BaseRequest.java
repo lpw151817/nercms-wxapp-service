@@ -25,4 +25,8 @@ public class BaseRequest {
 	protected String getLastMessageUpdateTime(Context context) {
 		return MySharedPreference.get(context, MySharedPreference.LAST_UPDATE_MESSAGE_TIMESTAMP, null);
 	}
+
+	protected String getUserIc(Context context) {
+		return MySharedPreference.get(context, MySharedPreference.USER_IC, null);
+	}
 }

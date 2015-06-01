@@ -41,9 +41,8 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
  */
 
 @ReportsCrashes(formKey = "", mailTo = "ponyw@qq.com", customReportContent = {
-		ReportField.APP_VERSION_NAME, ReportField.APP_VERSION_CODE,
-		ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
-		ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT }, mode = ReportingInteractionMode.SILENT, forceCloseDialogAfterToast = false)
+		ReportField.APP_VERSION_NAME, ReportField.APP_VERSION_CODE, ReportField.ANDROID_VERSION,
+		ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA, ReportField.STACK_TRACE, ReportField.LOGCAT }, mode = ReportingInteractionMode.SILENT, forceCloseDialogAfterToast = false)
 public class AppApplication extends Application {
 
 	public static AppApplication appInstance;
@@ -59,13 +58,11 @@ public class AppApplication extends Application {
 		webRequestManager = new WebRequestManager(this, getApplicationContext());
 
 		// 图片缓存配置
-		File cacheDir = new File(Environment.getExternalStorageDirectory()
-				.getPath() + "/nercms-Schedule/cache/");
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				getApplicationContext()).denyCacheImageMultipleSizesInMemory()
-				.memoryCache(new LruMemoryCache(2 * 1024 * 1024))
-				.memoryCacheSize(2 * 1024 * 1024)
-				.discCacheSize(50 * 1024 * 1024)
+		File cacheDir = new File(Environment.getExternalStorageDirectory().getPath()
+				+ "/nercms-Schedule/cache/");
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+				.denyCacheImageMultipleSizesInMemory().memoryCache(new LruMemoryCache(2 * 1024 * 1024))
+				.memoryCacheSize(2 * 1024 * 1024).discCacheSize(50 * 1024 * 1024)
 				.denyCacheImageMultipleSizesInMemory()
 				.discCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
@@ -75,9 +72,9 @@ public class AppApplication extends Application {
 
 		// 异常捕获ACRA配置
 		ACRA.init(appInstance);
-		ErrorReporter.getInstance().setReportSender(
-				new CrashReportSender(getApplicationContext()));
+		ErrorReporter.getInstance().setReportSender(new CrashReportSender(getApplicationContext()));
 		super.onCreate();
+
 	}
 
 	public AppApplication() {
@@ -163,21 +160,18 @@ public class AppApplication extends Application {
 			// 然后一步上传到服务器
 			// ..
 
-			String appVersionName = arg0
-					.getProperty(ReportField.APP_VERSION_NAME);
-			String appVersionCode = arg0
-					.getProperty(ReportField.APP_VERSION_CODE);
-			String androidVersion = arg0
-					.getProperty(ReportField.ANDROID_VERSION);
+			String appVersionName = arg0.getProperty(ReportField.APP_VERSION_NAME);
+			String appVersionCode = arg0.getProperty(ReportField.APP_VERSION_CODE);
+			String androidVersion = arg0.getProperty(ReportField.ANDROID_VERSION);
 			String phoneModel = arg0.getProperty(ReportField.PHONE_MODEL);
 			String customData = arg0.getProperty(ReportField.CUSTOM_DATA);
 			String stackTrace = arg0.getProperty(ReportField.STACK_TRACE);
 
 			String logName = "CrashReport_"
-					+ new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(
-							System.currentTimeMillis())) + ".txt";
-			File logFile = new File(Environment.getExternalStorageDirectory()
-					.getPath() + "/nercms-Schedule/Log/", logName);
+					+ new SimpleDateFormat("yyyyMMddHHmmss")
+							.format(new Date(System.currentTimeMillis())) + ".txt";
+			File logFile = new File(Environment.getExternalStorageDirectory().getPath()
+					+ "/nercms-Schedule/Log/", logName);
 			if (!logFile.exists()) {
 				try {
 					logFile.createNewFile();
