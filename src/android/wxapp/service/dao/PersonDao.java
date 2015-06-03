@@ -7,6 +7,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.wxapp.service.jerry.model.person.GetOrgCodePersonResponse;
+import android.wxapp.service.jerry.model.person.GetOrgCodeResponse;
+import android.wxapp.service.jerry.model.person.OrgInfo;
+import android.wxapp.service.jerry.model.person.OrgPersonInfo;
 import android.wxapp.service.model.ContactModel;
 import android.wxapp.service.model.CustomerContactModel;
 import android.wxapp.service.model.CustomerModel;
@@ -18,6 +22,7 @@ import android.wxapp.service.model.StructuredStaffModel;
 public class PersonDao {
 
 	private DatabaseHelper dbHelper;
+	private SQLiteDatabase db;
 
 	private static String TAG = "PersonDao";
 
@@ -33,9 +38,8 @@ public class PersonDao {
 	public boolean isDBTNull() {
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db.rawQuery("SELECT COUNT(*) FROM "
-					+ DBConstants.ORG_STAFF_TABLE_NAME, null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT COUNT(*) FROM " + DBConstants.ORG_STAFF_TABLE_NAME, null);
 			cursor.moveToFirst();
 			int i = cursor.getInt(0);
 			if (i == 0) {
@@ -50,6 +54,70 @@ public class PersonDao {
 		}
 	}
 
+	public boolean clearOrgCode() {
+		db = dbHelper.getWritableDatabase();
+		db.execSQL("delete * from " + DatabaseHelper.TABLE_ORG_CODE);
+		return true;
+	}
+
+	/**
+	 * 存储orgcode jerry 6.1
+	 * 
+	 * @param r
+	 * @return
+	 */
+	public boolean saveOrgCode(GetOrgCodeResponse r) {
+		db = dbHelper.getWritableDatabase();
+		long i = 0;
+		ContentValues v = new ContentValues();
+		for (OrgInfo item : r.getOrg_codes()) {
+			v.clear();
+			v.put(DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION, item.getD());
+			v.put(DatabaseHelper.FIELD_ORG_CODE_ORG_CODE, item.getOc());
+			i = db.insertOrThrow(DatabaseHelper.TABLE_ORG_CODE, null, v);
+			if (i == -1) {
+				Log.i(TAG, "存储机构节点表失败!");
+				return false;
+			} else {
+				continue;
+			}
+		}
+		Log.i(TAG, "存储机构节点表成功!");
+		return true;
+	}
+
+	public boolean clearOrgCodePerson() {
+		db = dbHelper.getWritableDatabase();
+		db.execSQL("delete * from " + DatabaseHelper.TABLE_ORG_PERSON);
+		return true;
+	}
+
+	/**
+	 * 存储org_code_person jerry 6.1
+	 * 
+	 * @param r
+	 * @return
+	 */
+	public boolean saveOrgCodePerson(GetOrgCodePersonResponse r) {
+		db = dbHelper.getWritableDatabase();
+		long i = 0;
+		ContentValues v = new ContentValues();
+		for (OrgPersonInfo item : r.getPersons()) {
+			v.clear();
+			v.put(DatabaseHelper.FIELD_ORG_PERSON_USER_ID, item.getUid());
+			v.put(DatabaseHelper.FIELD_ORG_PERSON_USER_NAME, item.getUn());
+			i = db.insertOrThrow(DatabaseHelper.TABLE_ORG_PERSON, null, v);
+			if (i == -1) {
+				Log.i(TAG, "存储机构节点人员表失败!");
+				return false;
+			} else {
+				continue;
+			}
+		}
+		Log.i(TAG, "存储机构节点人员表成功!");
+		return true;
+	}
+
 	/**
 	 * 以下四个均为添加联系人数据（4个表）到数据库
 	 * 
@@ -58,9 +126,8 @@ public class PersonDao {
 	 */
 	public boolean saveOrgNode(OrgNodeModel orgNode) {
 		ContentValues values = createContentValues(orgNode);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.insertOrThrow(DBConstants.ORG_NODE_TABLE_NAME, null,
-				values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.ORG_NODE_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储机构节点表失败!");
 			return false;
@@ -72,9 +139,8 @@ public class PersonDao {
 
 	public boolean saveOrgNodeStaff(OrgNodeStaffModel orgNodeStaff) {
 		ContentValues values = createContentValues(orgNodeStaff);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.insertOrThrow(DBConstants.ORG_NODE_STAFF_TABLE_NAME, null,
-				values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.ORG_NODE_STAFF_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储机构节点成员表失败!");
 			return false;
@@ -86,9 +152,8 @@ public class PersonDao {
 
 	public boolean saveOrgStaff(OrgStaffModel orgStaff) {
 		ContentValues values = createContentValues(orgStaff);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.insertOrThrow(DBConstants.ORG_STAFF_TABLE_NAME, null,
-				values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.ORG_STAFF_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储机构联系人表失败!");
 			return false;
@@ -100,9 +165,8 @@ public class PersonDao {
 
 	public boolean saveContact(ContactModel contact) {
 		ContentValues values = createContentValues(contact);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db
-				.insertOrThrow(DBConstants.CONTACT_TABLE_NAME, null, values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.CONTACT_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储联系方式表失败!");
 			return false;
@@ -120,9 +184,8 @@ public class PersonDao {
 	 */
 	public boolean saveCustomer(CustomerModel customer) {
 		ContentValues values = createContentValues(customer);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.insertOrThrow(DBConstants.CUSTOMER_TABLE_NAME, null,
-				values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.CUSTOMER_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储客户表失败!");
 			return false;
@@ -140,10 +203,10 @@ public class PersonDao {
 	 */
 	public boolean modifyCostomer(CustomerModel customer) {
 		ContentValues values = createContentValues(customer);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db = dbHelper.getWritableDatabase();
 		// 更新Customer表信息
-		long id = db.update(DBConstants.CUSTOMER_TABLE_NAME, values,
-				"customer_id = ?", new String[] { customer.getCustomerID() });
+		long id = db.update(DBConstants.CUSTOMER_TABLE_NAME, values, "customer_id = ?",
+				new String[] { customer.getCustomerID() });
 		// 删除该Customer对应的联系方式信息
 		db.delete(DBConstants.CUSTOMER_CONTACT_TABLE_NAME, "customer_id = ?",
 				new String[] { customer.getCustomerID() });
@@ -164,9 +227,8 @@ public class PersonDao {
 	 */
 	public boolean saveCustomerContact(CustomerContactModel customerContact) {
 		ContentValues values = createContentValues(customerContact);
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.insertOrThrow(DBConstants.CUSTOMER_CONTACT_TABLE_NAME,
-				null, values);
+		db = dbHelper.getWritableDatabase();
+		long id = db.insertOrThrow(DBConstants.CUSTOMER_CONTACT_TABLE_NAME, null, values);
 		if (id == -1) {
 			Log.i(TAG, "存储客户联系方式表失败!");
 			return false;
@@ -185,15 +247,12 @@ public class PersonDao {
 
 		// 清空联系相关 4+2 表的数据SQL语句
 		String cleanCmdText1 = "DELETE FROM " + DBConstants.ORG_NODE_TABLE_NAME;
-		String cleanCmdText2 = "DELETE FROM "
-				+ DBConstants.ORG_NODE_STAFF_TABLE_NAME;
-		String cleanCmdText3 = "DELETE FROM "
-				+ DBConstants.ORG_STAFF_TABLE_NAME;
+		String cleanCmdText2 = "DELETE FROM " + DBConstants.ORG_NODE_STAFF_TABLE_NAME;
+		String cleanCmdText3 = "DELETE FROM " + DBConstants.ORG_STAFF_TABLE_NAME;
 		String cleanCmdText4 = "DELETE FROM " + DBConstants.CONTACT_TABLE_NAME;
 
 		String cleanCmdText5 = "DELETE FROM " + DBConstants.CUSTOMER_TABLE_NAME;
-		String cleanCmdText6 = "DELETE FROM "
-				+ DBConstants.CUSTOMER_CONTACT_TABLE_NAME;
+		String cleanCmdText6 = "DELETE FROM " + DBConstants.CUSTOMER_CONTACT_TABLE_NAME;
 
 		// 更新sqlite_sequence表（默认），自增列序号归零
 		String updateCmdText1 = "UPDATE sqlite_sequence SET seq = 0 WHERE name='"
@@ -211,7 +270,7 @@ public class PersonDao {
 				+ DBConstants.CUSTOMER_CONTACT_TABLE_NAME + "'";
 
 		// 执行SQL语句
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db = dbHelper.getWritableDatabase();
 		try {
 			db.execSQL(cleanCmdText1);
 			db.execSQL(cleanCmdText2);
@@ -245,9 +304,8 @@ public class PersonDao {
 		ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db.rawQuery("SELECT org_code, description FROM org_node",
-					null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT org_code, description FROM org_node", null);
 
 			while (cursor.moveToNext()) {
 				orgList.add(createOrgNodeFromCursor(cursor));
@@ -270,11 +328,9 @@ public class PersonDao {
 		ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT org_code, description FROM org_node WHERE org_code like '1_'",
-							null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code like '1_'",
+					null);
 
 			while (cursor.moveToNext()) {
 				orgList.add(createOrgNodeFromCursor(cursor));
@@ -299,10 +355,9 @@ public class PersonDao {
 		ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db.rawQuery(
-					"SELECT org_code, description FROM org_node WHERE org_code like '"
-							+ secondNodeCode + "_'", null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code like '"
+					+ secondNodeCode + "_'", null);
 
 			while (cursor.moveToNext()) {
 				orgList.add(createOrgNodeFromCursor(cursor));
@@ -327,14 +382,12 @@ public class PersonDao {
 		ArrayList<StructuredStaffModel> ssmList = new ArrayList<StructuredStaffModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
-									+ " FROM org_staff OS"
-									+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
-									+ " inner join org_node ONN on ONS.org_code=ONN.org_code",
-							null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery(
+					"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+							+ " FROM org_staff OS"
+							+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
+							+ " inner join org_node ONN on ONS.org_code=ONN.org_code", null);
 			while (cursor.moveToNext()) {
 				ssmList.add(createSSMFromCursor(cursor));
 			}
@@ -357,14 +410,13 @@ public class PersonDao {
 		ArrayList<StructuredStaffModel> ssmList = new ArrayList<StructuredStaffModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
-									+ " FROM org_staff OS"
-									+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
-									+ " inner join org_node ONN on ONS.org_code=ONN.org_code "
-									+ "WHERE ONN.org_code=" + orgCode, null);
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery(
+					"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+							+ " FROM org_staff OS"
+							+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
+							+ " inner join org_node ONN on ONS.org_code=ONN.org_code "
+							+ "WHERE ONN.org_code=" + orgCode, null);
 			while (cursor.moveToNext()) {
 				ssmList.add(createSSMFromCursor(cursor));
 			}
@@ -387,23 +439,21 @@ public class PersonDao {
 			ArrayList<StructuredStaffModel> ssmList2) {
 		ArrayList<StructuredStaffModel> ssmList = ssmList2;
 		int i = ssmList.size();
-		ArrayList<StructuredStaffModel> ssmcList = new ArrayList<StructuredStaffModel>(
-				i);
+		ArrayList<StructuredStaffModel> ssmcList = new ArrayList<StructuredStaffModel>(i);
 
 		Cursor cursor = null;
 
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
+			db = dbHelper.getReadableDatabase();
 			if (0 != i) {
 				for (int j = 0; j < i; j++) {
 
 					ArrayList<ContactModel> contact = new ArrayList<ContactModel>();
 
 					StructuredStaffModel ssm = ssmList.get(j);
-					cursor = db
-							.rawQuery(
-									"SELECT contact_id, type, content FROM contact WHERE contact_id = ?",
-									new String[] { ssm.getContactID() });
+					cursor = db.rawQuery(
+							"SELECT contact_id, type, content FROM contact WHERE contact_id = ?",
+							new String[] { ssm.getContactID() });
 
 					while (cursor.moveToNext()) {
 						contact.add(createContactFromCursor(cursor));
@@ -432,11 +482,9 @@ public class PersonDao {
 		ArrayList<ContactModel> contactList = new ArrayList<ContactModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT contact_id, type, content FROM contact WHERE contact_id = ?",
-							new String[] { contactID });
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT contact_id, type, content FROM contact WHERE contact_id = ?",
+					new String[] { contactID });
 
 			while (cursor.moveToNext()) {
 				contactList.add(createContactFromCursor(cursor));
@@ -458,7 +506,7 @@ public class PersonDao {
 		ArrayList<CustomerModel> customerList = new ArrayList<CustomerModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
+			db = dbHelper.getReadableDatabase();
 			cursor = db
 					.rawQuery(
 							"SELECT customer_id, name, unit, description, contact_id FROM customer WHERE contact_id = ?",
@@ -485,11 +533,10 @@ public class PersonDao {
 		ArrayList<CustomerContactModel> customerContactList = new ArrayList<CustomerContactModel>();
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT customer_id, type, content FROM customer_contact WHERE customer_id = ?",
-							new String[] { customerID });
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery(
+					"SELECT customer_id, type, content FROM customer_contact WHERE customer_id = ?",
+					new String[] { customerID });
 			while (cursor.moveToNext()) {
 				customerContactList.add(creatCustomerContactFromCursor(cursor));
 			}
@@ -510,7 +557,7 @@ public class PersonDao {
 	 *            客户ID
 	 */
 	public void deleteCustomer(String customerID) {
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db = dbHelper.getWritableDatabase();
 		long id = db.delete(DBConstants.CUSTOMER_TABLE_NAME, "customer_id = ?",
 				new String[] { customerID });
 		if (id == -1) {
@@ -530,15 +577,13 @@ public class PersonDao {
 	public StructuredStaffModel getSSMByID(String userID) {
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
-									+ " FROM org_staff OS"
-									+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
-									+ " inner join org_node ONN on ONS.org_code=ONN.org_code"
-									+ " WHERE OS.contact_id = ?",
-							new String[] { userID });
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery(
+					"SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+							+ " FROM org_staff OS"
+							+ " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
+							+ " inner join org_node ONN on ONS.org_code=ONN.org_code"
+							+ " WHERE OS.contact_id = ?", new String[] { userID });
 
 			if (cursor.moveToFirst()) {
 				return createSSMFromCursor(cursor);
@@ -563,7 +608,7 @@ public class PersonDao {
 	public CustomerModel getCustomerByID(String customerID) {
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
+			db = dbHelper.getReadableDatabase();
 			cursor = db
 					.rawQuery(
 							"SELECT customer_id, name, unit, description, contact_id FROM customer WHERE customer_id = ?",
@@ -592,11 +637,9 @@ public class PersonDao {
 	public OrgNodeModel getOrgNodeByOrgID(String orgID) {
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db
-					.rawQuery(
-							"SELECT org_code, description FROM org_node WHERE org_code = ?",
-							new String[] { orgID });
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code = ?",
+					new String[] { orgID });
 			if (cursor.moveToFirst()) {
 				return createOrgNodeFromCursor(cursor);
 			} else {
@@ -619,9 +662,9 @@ public class PersonDao {
 	public String getPersonNameByID(String personID) {
 		Cursor cursor = null;
 		try {
-			SQLiteDatabase db = dbHelper.getReadableDatabase();
-			cursor = db.rawQuery("SELECT name " + " FROM org_staff "
-					+ " WHERE contact_id = ?", new String[] { personID });
+			db = dbHelper.getReadableDatabase();
+			cursor = db.rawQuery("SELECT name " + " FROM org_staff " + " WHERE contact_id = ?",
+					new String[] { personID });
 
 			if (cursor.moveToFirst()) {
 				return cursor.getString(0);
@@ -685,8 +728,7 @@ public class PersonDao {
 		return values;
 	}
 
-	private ContentValues createContentValues(
-			CustomerContactModel customerContact) {
+	private ContentValues createContentValues(CustomerContactModel customerContact) {
 		ContentValues values = new ContentValues();
 		values.put("customer_id", customerContact.getCustomerID());
 		values.put("type", customerContact.getType());
@@ -705,8 +747,8 @@ public class PersonDao {
 		String position = cursor.getString(5);
 		String rank = cursor.getString(6);
 
-		return new StructuredStaffModel(contactID, orgCode, orgDescription,
-				sequence, name, position, rank);
+		return new StructuredStaffModel(contactID, orgCode, orgDescription, sequence, name, position,
+				rank);
 	}
 
 	// 由cursor创建Contact模型

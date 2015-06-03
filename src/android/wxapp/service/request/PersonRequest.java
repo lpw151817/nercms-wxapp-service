@@ -33,6 +33,8 @@ import android.wxapp.service.jerry.model.person.ModifyCustomerRequest;
 import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
 import android.wxapp.service.model.CustomerContactModel;
 import android.wxapp.service.model.CustomerModel;
+import android.wxapp.service.thread.SaveOrgCodePersonThread;
+import android.wxapp.service.thread.SaveOrgCodeThread;
 import android.wxapp.service.thread.ThreadManager;
 import android.wxapp.service.util.Constant;
 import android.wxapp.service.util.MySharedPreference;
@@ -472,16 +474,16 @@ public class PersonRequest extends BaseRequest {
 	 * 查询组织结构树中的结点 FINAL Jerry 15.5.22
 	 * 
 	 * @param c
-	 * @param ic
-	 *            密码
-	 * @param orgCode
-	 *            父节点的code(最顶层的父节点此值为1)
 	 * @return
 	 */
-	public JsonObjectRequest getOrgCode(Context c, String orgCode) {
+	public JsonObjectRequest getOrgCode(final Context c) {
 		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCode);
+		String orgCodeUptateTime = MySharedPreference.get(c,
+				MySharedPreference.LAST_UPDATE_ORGCODE_TIMESTAMP, null);
+		if (orgCodeUptateTime == null)
+			orgCodeUptateTime = System.currentTimeMillis() + "";
+		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCodeUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -492,10 +494,12 @@ public class PersonRequest extends BaseRequest {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
-						// TODO 进行数据库的添加
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_ORG_NODE_REQUEST_SUCCESS, r,
-								Contants.METHOD_PERSON_GET_ORG_CODE);
+						// 进行数据库的添加,并保存时间戳，返回handler到ui线程进行操作
+						new SaveOrgCodeThread(c, r).run();
+
+						// MessageHandlerManager.getInstance().sendMessage(
+						// Constant.QUERY_ORG_NODE_REQUEST_SUCCESS, r,
+						// Contants.METHOD_PERSON_GET_ORG_CODE);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
@@ -521,16 +525,17 @@ public class PersonRequest extends BaseRequest {
 	 * 查询对应组织结点下的人员 FINAL Jerry 15.5.22
 	 * 
 	 * @param c
-	 * @param ic
-	 *            密码
-	 * @param orgCode
-	 *            需要查询的组织结点(最顶层的父节点此值为1)
 	 * @return
 	 */
-	public JsonObjectRequest getOrgCodePerson(Context c, String ic, String orgCode) {
-		if (getUserId(c) == null)
+	public JsonObjectRequest getOrgCodePerson(final Context c) {
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), ic, orgCode);
+		String orgPersonUptateTime = MySharedPreference.get(c,
+				MySharedPreference.LAST_UPDATE_ORGPERSON_TIMESTAMP, null);
+		if (orgPersonUptateTime == null)
+			orgPersonUptateTime = System.currentTimeMillis() + "";
+		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), getUserIc(c),
+				orgPersonUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -542,10 +547,12 @@ public class PersonRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
 								GetOrgCodePersonResponse.class);
-						// TODO DB Update
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
-								Contants.METHOD_PERSON_GET_ORG_PERSON);
+						// 进行数据库的添加,并返回handler到ui线程进行操作
+						new SaveOrgCodePersonThread(c, r);
+
+						// MessageHandlerManager.getInstance().sendMessage(
+						// Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
+						// Contants.METHOD_PERSON_GET_ORG_PERSON);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);

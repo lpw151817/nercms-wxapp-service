@@ -1,10 +1,18 @@
 package android.wxapp.service.jerry.model.person;
 
 public class GetOrgCodePersonRequest {
-	String uid,ic,oc;
+	String uid, ic, t;
 
 	public String getUid() {
 		return uid;
+	}
+
+	public String getT() {
+		return t;
+	}
+
+	public void setT(String t) {
+		this.t = t;
 	}
 
 	public void setUid(String uid) {
@@ -19,22 +27,15 @@ public class GetOrgCodePersonRequest {
 		this.ic = ic;
 	}
 
-	public String getOc() {
-		return oc;
-	}
-
-	public void setOc(String oc) {
-		this.oc = oc;
-	}
-
 	public GetOrgCodePersonRequest() {
 		super();
 	}
 
-	public GetOrgCodePersonRequest(String uid, String ic, String oc) {
+	public GetOrgCodePersonRequest(String uid, String ic, String t) {
 		super();
 		this.uid = uid;
 		this.ic = ic;
-		this.oc = oc;
+		this.t = t;
 	}
+
 }

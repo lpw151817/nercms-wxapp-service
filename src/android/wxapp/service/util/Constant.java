@@ -56,6 +56,14 @@ public class Constant {
 	public static final int QUERY_ORG_PERSON_REQUEST_SUCCESS = 122;
 	// 获取组织结点人员失败
 	public static final int QUERY_ORG_PERSON_REQUEST_FAIL = 123;
+	// 保存组织结点成功
+	public static final int SAVE_ORG_CODE_SUCCESS = 124;
+	// 保存组织结点失败
+	public static final int SAVE_ORG_CODE_FAIL = 125;
+	// 保存组织结点人员成功
+	public static final int SAVE_ORG_PERSON_SUCCESS = 126;
+	// 保存组织结点人员失败
+	public static final int SAVE_ORG_PERSON_FAIL = 127;
 
 	// Affair Jerry 5.23
 	// 创建事务请求成功

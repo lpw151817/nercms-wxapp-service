@@ -6,6 +6,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * 表结构如下
+ * <p>
+ * org_code(id,org_code,description);
+ * <p>
+ * org_code_person(id,user_id,user_name);
+ * <p>
+ * 
+ * @author JerryLiu
+ * @time 2015-6-1
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// 版本
@@ -15,6 +26,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// 数据库名
 	public static final String DATABASE_NAME = "App.db";
+
+	// Jerry 6.1
+	// 表名
+	public static final String TABLE_ORG_CODE = "org_code";
+	// 字段
+	public static final String FIELD_ORG_CODE_ID = "id";
+	public static final String FIELD_ORG_CODE_ORG_CODE = "org_code";
+	public static final String FIELD_ORG_CODE_DESCRIPTION = "description";
+	// 创建表的SQL
+	public static final String SQL_ORG_CODE_CREATE_TABLE = "create table " + TABLE_ORG_CODE + " ("
+			+ FIELD_ORG_CODE_ID + " integer primary key autoincrement, " + FIELD_ORG_CODE_ORG_CODE
+			+ " text," + FIELD_ORG_CODE_DESCRIPTION + " text)";
+
+	public static final String TABLE_ORG_PERSON = "org_code_person";
+	// 字段
+	public static final String FIELD_ORG_PERSON_ID = "id";
+	public static final String FIELD_ORG_PERSON_USER_ID = "user_id";
+	public static final String FIELD_ORG_PERSON_USER_NAME = "user_name";
+	public static final String SQL_ORG_PERSON_CREATE_TABLE = "create table " + TABLE_ORG_PERSON + " ("
+			+ FIELD_ORG_PERSON_ID + " integer primary key autoincrement, " + FIELD_ORG_PERSON_USER_ID
+			+ " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
+	// //////////////////////
 
 	// 事务相关数据表名
 	public static final String AFFAIRS_TABLE_NAME = "affairs_info";
@@ -29,37 +62,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// 联系人相关 建表SQL语句
 	public static final String CREATE_ORG_NODE_TABLE_SQL = "create table "
-			+ DBConstants.ORG_NODE_TABLE_NAME
-			+ " (id integer  primary key autoincrement, " + "org_code text,"
-			+ "description text);";
+			+ DBConstants.ORG_NODE_TABLE_NAME + " (id integer  primary key autoincrement, "
+			+ "org_code text," + "description text);";
 
 	public static final String CREATE_ORG_NODE_STAFF_TABLE_SQL = "create table "
-			+ DBConstants.ORG_NODE_STAFF_TABLE_NAME
-			+ " (id integer primary key autoincrement, "
-			+ "org_code text,"
-			+ "contact_id text," + "sequence text);";
+			+ DBConstants.ORG_NODE_STAFF_TABLE_NAME + " (id integer primary key autoincrement, "
+			+ "org_code text," + "contact_id text," + "sequence text);";
 
 	public static final String CREATE_ORG_STAFF_TABLE_SQL = "create table "
-			+ DBConstants.ORG_STAFF_TABLE_NAME
-			+ " (id integer  primary key autoincrement, " + "contact_id text,"
-			+ "name text," + "position text," + "rank text);";
+			+ DBConstants.ORG_STAFF_TABLE_NAME + " (id integer  primary key autoincrement, "
+			+ "contact_id text," + "name text," + "position text," + "rank text);";
 
 	public static final String CREATE_CONTACT_TABLE_SQL = "create table "
-			+ DBConstants.CONTACT_TABLE_NAME
-			+ " (id integer primary key autoincrement, " + "contact_id text,"
-			+ "type integer," + "content text);";
+			+ DBConstants.CONTACT_TABLE_NAME + " (id integer primary key autoincrement, "
+			+ "contact_id text," + "type integer," + "content text);";
 
 	public static final String CREATE_CUSTOMER_TABLE_SQL = "create table "
-			+ DBConstants.CUSTOMER_TABLE_NAME
-			+ " (id integer primary key autoincrement, " + "customer_id text,"
-			+ "name text," + "unit text," + "description text,"
+			+ DBConstants.CUSTOMER_TABLE_NAME + " (id integer primary key autoincrement, "
+			+ "customer_id text," + "name text," + "unit text," + "description text,"
 			+ "contact_id text);";
 
 	public static final String CREATE_CUSTOMER_CONTACT_TABLE_SQL = "create table "
-			+ DBConstants.CUSTOMER_CONTACT_TABLE_NAME
-			+ " (id integer primary key autoincrement, "
-			+ "customer_id text,"
-			+ "type integer," + "content text);";
+			+ DBConstants.CUSTOMER_CONTACT_TABLE_NAME + " (id integer primary key autoincrement, "
+			+ "customer_id text," + "type integer," + "content text);";
 
 	// 事务相关 建表SQL语句
 	public static final String CREATE_AFFAIRS_TABLE_SQL = "create table affairs_info (id integer  primary key autoincrement, "
@@ -73,7 +98,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ "complete_time text, "
 			+ "last_operate_type integer, "
 			+ "last_operate_time text, "
-			+ "is_read integer, " + "status integer);";
+			+ "is_read integer, "
+			+ "status integer);";
 
 	public static final String CREATE_PERSON_ON_DUTY_TABLE_SQL = "create table person_on_duty (id integer  primary key autoincrement, "
 			+ "affair_id text, " + "person_id integer);";
@@ -85,7 +111,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ "feedback_id text, "
 			+ "affair_id text, "
 			+ "person_id integer, "
-			+ "feedback_time text, " + "content text, " + "is_read integer);";
+			+ "feedback_time text, "
+			+ "content text, " + "is_read integer);";
 
 	public static final String CREATE_FEEDBACK_ATTACHMENT_TABLE_SQL = "create table feedback_attachment (id integer primary key autoincrement, "
 			+ "feedback_id text, " + "attachment_type integer, " + "url text);";
@@ -102,8 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ "content text, "
 			+ "attachment_type integer, "
 			+ "attachment_url text, "
-			+ "is_group integer, "
-			+ "is_read integer);";
+			+ "is_group integer, " + "is_read integer);";
 
 	// 电话表建表语句
 	public static final String CREATE_PHONE_TABLE_SQL = "create table phone (id integer  primary key autoincrement, "
@@ -125,8 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ "sponsor_id integer, "
 			+ "create_time text, "
 			+ "reservation_time text, "
-			+ "start_time text, "
-			+ "end_time text, " + "status integer);";
+			+ "start_time text, " + "end_time text, " + "status integer);";
 
 	// 电话表建表语句
 	public static final String CREATE_CONFERENCE_PERSON_TABLE_SQL = "create table conference_person (id integer  primary key autoincrement, "
@@ -168,6 +193,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 
 		Log.v(LOG_TAG, "SQLite: onCreate");
+
+		// jerry create table 6.1
+		db.execSQL(SQL_ORG_PERSON_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table ORG_PERSON");
+		Log.v(LOG_TAG, SQL_ORG_PERSON_CREATE_TABLE);
+		db.execSQL(SQL_ORG_CODE_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table ORG_CODE");
+		Log.v(LOG_TAG, SQL_ORG_CODE_CREATE_TABLE);
+		// /////////////////////
 
 		db.execSQL(CREATE_ORG_NODE_TABLE_SQL);
 		Log.v(LOG_TAG, "SQLite: onCreate table org_node");
@@ -213,33 +247,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Log.v(LOG_TAG, "SQLite: onUpgrade");
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ORG_NODE_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.ORG_NODE_STAFF_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ORG_NODE_STAFF_TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ORG_STAFF_TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CONTACT_TABLE_NAME);
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CUSTOMER_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.CUSTOMER_CONTACT_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CUSTOMER_CONTACT_TABLE_NAME);
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.AFFAIRS_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.PERSON_ON_DUTY_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.AFFAIR_ATTACHMENT_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.PERSON_ON_DUTY_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.AFFAIR_ATTACHMENT_TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.FEEDBACK_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.FEEDBACK_ATTACHMENT_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.AFFAIR_OPERATE_LOG_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.FEEDBACK_ATTACHMENT_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.AFFAIR_OPERATE_LOG_TABLE_NAME);
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.MESSAGE_TABLE_NAME);
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.PHONE_TABLE_NAME);
 
 		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CONFERENCE_TABLE_NAME);
-		db.execSQL("DROP TABLE IF EXISTS "
-				+ DBConstants.CONFERENCE_PERSON_TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CONFERENCE_PERSON_TABLE_NAME);
 
 		onCreate(db);
 

@@ -1,41 +1,41 @@
 package android.wxapp.service.jerry.model.person;
 
 public class GetOrgCodeRequest {
-String uid,ic,oc;
+	String uid, ic, t;
 
-public String getUid() {
-	return uid;
-}
+	public String getT() {
+		return t;
+	}
 
-public void setUid(String uid) {
-	this.uid = uid;
-}
+	public void setT(String t) {
+		this.t = t;
+	}
 
-public String getIc() {
-	return ic;
-}
+	public GetOrgCodeRequest(String uid, String ic, String t) {
+		super();
+		this.uid = uid;
+		this.ic = ic;
+		this.t = t;
+	}
 
-public void setIc(String ic) {
-	this.ic = ic;
-}
+	public String getUid() {
+		return uid;
+	}
 
-public String getOc() {
-	return oc;
-}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 
-public void setOc(String oc) {
-	this.oc = oc;
-}
+	public String getIc() {
+		return ic;
+	}
 
-public GetOrgCodeRequest(String uid, String ic, String oc) {
-	super();
-	this.uid = uid;
-	this.ic = ic;
-	this.oc = oc;
-}
+	public void setIc(String ic) {
+		this.ic = ic;
+	}
 
-public GetOrgCodeRequest() {
-	super();
-}
+	public GetOrgCodeRequest() {
+		super();
+	}
 
 }

@@ -42,9 +42,14 @@ public class WebRequestManager {
 		queue.add(new PersonRequest().getLoginRequest(aliasName, identifyCode, imsi));
 	}
 
-	// 获取组织结点
-	public void getOrgCode(String orgCode) {
-		queue.add(new PersonRequest().getOrgCode(this.context, orgCode));
+	// 获取所有的组织结点
+	public void getOrgCode() {
+		queue.add(new PersonRequest().getOrgCode(this.context));
+	}
+
+	// 获取所有的人员信息
+	public void getOrgPerson() {
+		queue.add(new PersonRequest().getOrgCodePerson(this.context));
 	}
 
 	// 修改用户密码 废弃接口 Jerry 5.25
