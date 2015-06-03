@@ -44,16 +44,19 @@ public class MessageHandlerManager {
 	// 注册，在注册时，最后提供类名
 	public void register(Handler h, int what, String className) {
 		messageHandlerList.add(h, what, className);
+		Log.i("handler register", "what:" + what + "\t className:" + className);
 	}
 
 	// 注销已what为消息标识的Registrant对象
 	public void unregister(int what) {
 		messageHandlerList.remove(what);
+		Log.i("handler unregister", "what:" + what);
 	}
 
 	// 注销已what为消息标识，同时类名为class_name的Registrant对象
 	public void unregister(int what, String className) {
 		messageHandlerList.remove(what, className);
+		Log.i("handler unregister", "what:" + what + "\t className:" + className);
 	}
 
 	// 注销所有handler
@@ -102,6 +105,7 @@ public class MessageHandlerManager {
 	// 通知以What为消息标识的消息发生，同时附带有obj内容，这个消息只由类名为class_name的类处理
 	public void sendMessage(int what, Object obj, String class_name) {
 		messageHandlerList.sendMessage(what, 0, 0, obj, class_name);
+		Log.i("handler sendMessage", "what:" + what + "\t className:" + class_name);
 	}
 
 	// 通知以What为消息标识的消息发生，同时附带有arg1，arg2内容，这个消息只由类名为class_name的类处理
@@ -110,8 +114,7 @@ public class MessageHandlerManager {
 	}
 
 	// 通知以What为消息标识的消息发生，同时附带有arg1，arg2，obj内容，这个消息只由类名为class_name的类处理
-	public void sendMessage(int what, int arg1, int arg2, int obj,
-			String class_name) {
+	public void sendMessage(int what, int arg1, int arg2, int obj, String class_name) {
 		messageHandlerList.sendMessage(what, arg1, arg2, obj, class_name);
 	}
 }

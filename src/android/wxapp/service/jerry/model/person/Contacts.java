@@ -15,8 +15,25 @@ public class Contacts {
 	String t;
 	String c;// 联系方式内容
 
-	public String getT() {
-		return t;
+	public enum CONTACT_ITEM {
+		MOBILE, PHONE, SIMI, HAND, EMAIL
+	}
+
+	public CONTACT_ITEM getT() throws Exception {
+		switch (Integer.parseInt(t)) {
+		case 1:
+			return CONTACT_ITEM.MOBILE;
+		case 2:
+			return CONTACT_ITEM.PHONE;
+		case 3:
+			return CONTACT_ITEM.SIMI;
+		case 4:
+			return CONTACT_ITEM.HAND;
+		case 5:
+			return CONTACT_ITEM.EMAIL;
+		default:
+			return null;
+		}
 	}
 
 	public void setT(String t) {

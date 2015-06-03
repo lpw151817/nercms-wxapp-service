@@ -667,10 +667,10 @@ public class PersonRequest extends BaseRequest {
 	/**
 	 * 用户退出 FINAL Jerry 15.5.21
 	 */
-	public JsonObjectRequest logOut(Context c, String identifyCode) {
-		if (getUserId(c) == null)
+	public JsonObjectRequest logOut(Context c) {
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		LogoutRequest params = new LogoutRequest(getUserId(c), identifyCode);
+		LogoutRequest params = new LogoutRequest(getUserId(c), getUserIc(c));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -715,10 +715,10 @@ public class PersonRequest extends BaseRequest {
 	 *            需要查询的用户id
 	 * @return
 	 */
-	public JsonObjectRequest getPersonInfo(Context c, String identifyCode, String personId) {
-		if (getUserId(c) == null)
+	public JsonObjectRequest getPersonInfo(final Context c, String personId) {
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), identifyCode, personId);
+		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), getUserIc(c), personId);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -730,6 +730,8 @@ public class PersonRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetPersonInfoResponse r = gson.fromJson(arg0.toString(),
 								GetPersonInfoResponse.class);
+						// 保存数据库
+						new PersonDao(c).saveCustomer(r);
 						// 将接收到的对象发送到ui线程
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_PERSON_INFO_REQUEST_SUCCESS, r,

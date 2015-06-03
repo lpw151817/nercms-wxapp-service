@@ -45,15 +45,15 @@ public class CustomerModel {
 		this.contactID = contactID;
 	}
 
-	/** ±£´æ **/
-	public boolean save(Context context) {
-		PersonDao dao = null;
-		dao = daoFactory.getPersonDao(context);
-		try {
-			return dao.saveCustomer(this);
-		} finally {
-		}
-	}
+//	/** ±£´æ **/
+//	public boolean save(Context context) {
+//		PersonDao dao = null;
+//		dao = daoFactory.getPersonDao(context);
+//		try {
+//			return dao.saveCustomer(this);
+//		} finally {
+//		}
+//	}
 
 	public String getCustomerID() {
 		return customerID;

@@ -89,7 +89,7 @@ public class SaveAllPersonThread extends Thread {
 
 			for (int i = 0; i < customerList.size(); i++) {
 				CustomerModel customer = customerList.get(i);
-				customer.save(context);
+//				customer.save(context);
 			}
 
 			for (int i = 0; i < customerContactList.size(); i++) {
