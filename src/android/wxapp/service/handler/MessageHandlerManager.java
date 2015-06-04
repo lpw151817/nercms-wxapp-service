@@ -59,10 +59,10 @@ public class MessageHandlerManager {
 		Log.i("handler unregister", "what:" + what + "\t className:" + className);
 	}
 
-	// 注销所有handler
-	public void unregisterAll() {
-		messageHandlerList.clear();
-	}
+//	// 注销所有handler
+//	public void unregisterAll() {
+//		messageHandlerList.clear();
+//	}
 
 	// 消息的组成分为what（消息标识），附带内容arg1，arg2，obj
 
