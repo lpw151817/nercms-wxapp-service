@@ -66,21 +66,22 @@ public class SaveAffairThread extends Thread {
 
 					if (affair.getLastOperateType() == 1) { // 最后一次操作为新建事务
 
-						// 保存事务本身
-						// 2014-6-26 WeiHao
-						// 事务
-						if (affair.save(context)) {
-							// 保存事务责任人
-							affair.getPerson().save(context);
-
-							// 保存附件
-							if (affair.getAttachments() != null) {
-								for (AffairAttachModel attach : affair.getAttachments()) {
-									attach.save(context);
-								}
-							}
-
-						}
+						// // 保存事务本身
+						// // 2014-6-26 WeiHao
+						// // 事务
+						// if (affair.save(context)) {
+						// // 保存事务责任人
+						// affair.getPerson().save(context);
+						//
+						// // 保存附件
+						// if (affair.getAttachments() != null) {
+						// for (AffairAttachModel attach :
+						// affair.getAttachments()) {
+						// attach.save(context);
+						// }
+						// }
+						//
+						// }
 
 					} else if (affair.getLastOperateType() == 2) { // 最后一次操作为置完成事务
 						// 更新相应的本地数据库
@@ -126,8 +127,8 @@ public class SaveAffairThread extends Thread {
 							attach.save(context);
 						}
 					}
-					// 保存事务本身
-					affair.save(context);
+					// // 保存事务本身
+					// affair.save(context);
 
 					affairList.remove(0);
 				}

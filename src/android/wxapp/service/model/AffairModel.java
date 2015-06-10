@@ -94,15 +94,15 @@ public class AffairModel {
 		this.attachments = null; // 附件，默认为空；如有附件，需手动set
 	}
 
-	/** 保存 **/
-	public boolean save(Context context) {
-		AffairDao dao = null;
-		dao = daoFactory.getAffairDao(context);
-		try {
-			return dao.saveAffair(this);
-		} finally {
-		}
-	}
+//	/** 保存 **/
+//	public boolean save(Context context) {
+//		AffairDao dao = null;
+//		dao = daoFactory.getAffairDao(context);
+//		try {
+//			return dao.saveAffair(this);
+//		} finally {
+//		}
+//	}
 
 	public String getAffairID() {
 		return affairID;

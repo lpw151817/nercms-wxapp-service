@@ -11,9 +11,18 @@ import android.util.Log;
  * <p>
  * org_code(id,org_code,description);
  * <p>
- * org_code_person(id,user_id,user_name);
+ * org_code_person(id,user_id,user_name,org_code);
  * <p>
  * myinfo(id,user_name,name,description,remark,contacts);
+ * <p>
+ * affair(id,affiarid,type （1：任务 2：请示 3：通知）, senderid,description, topic,
+ * createtime, endtime, completetime, lastoperatetype（1-新建，2-置完成（手动），3-置延误（自动）
+ * ，4-修改截止日期）, lastoperatetime, updatetime,readtime, attachment [ {
+ * "at":"XXXXXXXX", //附件类型（1：文本 2：图片3：录像4：录音5 ：GPS） "u":"XXXXXXXX" //附件链接 },… ]
+ * )
+ * <p>
+ * person_on_duty(id,affair_id,person_id,type(1:责任人，2:抄送人),update_time)
+ * 
  * 
  * @author JerryLiu
  * @time 2015-6-1
@@ -44,13 +53,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String TABLE_ORG_PERSON = "org_code_person";
 	// 字段
 	public static final String FIELD_ORG_PERSON_ID = "id";
+	public static final String FIELD_ORG_PERSON_ORG_CODE = "org_code";
 	public static final String FIELD_ORG_PERSON_USER_ID = "user_id";
 	public static final String FIELD_ORG_PERSON_USER_NAME = "user_name";
 	public static final String SQL_ORG_PERSON_CREATE_TABLE = "create table " + TABLE_ORG_PERSON + " ("
 			+ FIELD_ORG_PERSON_ID + " integer primary key autoincrement, " + FIELD_ORG_PERSON_USER_ID
-			+ " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
+			+ " text," + FIELD_ORG_PERSON_ORG_CODE + " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
 
-	// 表名 myinfo myinfo(id,user_name,name,description,remark,contacts);
+	// 表名 myinfo
 	public static final String TABLE_MY_INFO = "myinfo";
 	// 字段
 	public static final String FIELD_MY_INFO_ID = "id";
@@ -62,8 +72,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	// 创建表的SQL
 	public static final String SQL_MY_INFO_CREATE_TABLE = "create table " + TABLE_MY_INFO + " ("
 			+ FIELD_MY_INFO_ID + " integer primary key autoincrement, " + FIELD_MY_INFO_USERNAME
-			+ " text," + FIELD_MY_INFO_NAME + " text" + FIELD_MY_INFO_DES + " text"
-			+ FIELD_MY_INFO_REMARK + " text" + FIELD_MY_INFO_CONTACTS + " text)";
+			+ " text," + FIELD_MY_INFO_NAME + " text," + FIELD_MY_INFO_DES + " text,"
+			+ FIELD_MY_INFO_REMARK + " text," + FIELD_MY_INFO_CONTACTS + " text)";
+
+	// 表名 affiar
+	public static final String TABLE_AFFIARINFO = "affair_info";
+	// 字段
+	public static final String FIELD_AFFIARINFO_ID = "id";
+	public static final String FIELD_AFFIARINFO_AFFAIR_ID = "affiarid";
+	// （1：任务 2：请示 3：通知）
+	public static final String FIELD_AFFIARINFO_TYPE = "type";
+	public static final String FIELD_AFFIARINFO_SENDERID = "senderid";
+	public static final String FIELD_AFFIARINFO_DES = "description";
+	public static final String FIELD_AFFIARINFO_TOPIC = "topic";
+	public static final String FIELD_AFFIARINFO_CREATETIME = "createtime";
+	public static final String FIELD_AFFIARINFO_ENDTIME = "endtime";
+	public static final String FIELD_AFFIARINFO_COMPLETETIME = "completetime";
+	public static final String FIELD_AFFIARINFO_READTIME = "readtime";
+	// （1-新建，2-置完成（手动），3-置延误（自动） ，4-修改截止日期）
+	public static final String FIELD_AFFIARINFO_LAST_OPERATE_TYPE = "lastoperatetype";
+	public static final String FIELD_AFFIARINFO_LAST_OPERATE_TIME = "lastoperatetime";
+	public static final String FIELD_AFFIARINFO_UPDATETIME = "updatetime";
+	/**
+	 * [ { "at":"XXXXXXXX", //附件类型（1：文本 2：图片3：录像4：录音5 ：GPS） "u":"XXXXXXXX"
+	 * //附件链接 },… ] )
+	 */
+	public static final String FIELD_AFFIARINFO_ATTACHMENT = "attachment";
+	// 创建表的SQL
+	public static final String SQL_AFFAIRINFO_CREATE_TABLE = "create table " + TABLE_AFFIARINFO + " ("
+			+ FIELD_AFFIARINFO_ID + " integer primary key autoincrement, " + FIELD_AFFIARINFO_AFFAIR_ID
+			+ " text," + FIELD_AFFIARINFO_TYPE + " text," + FIELD_AFFIARINFO_SENDERID + " text,"
+			+ FIELD_AFFIARINFO_DES + " text," + FIELD_AFFIARINFO_TOPIC + " text,"
+			+ FIELD_AFFIARINFO_CREATETIME + " text," + FIELD_AFFIARINFO_ENDTIME + " text,"
+			+ FIELD_AFFIARINFO_COMPLETETIME + " text," + FIELD_AFFIARINFO_READTIME + " text,"
+			+ FIELD_AFFIARINFO_LAST_OPERATE_TYPE + " text," + FIELD_AFFIARINFO_LAST_OPERATE_TIME
+			+ " text," + FIELD_AFFIARINFO_UPDATETIME + " text," + FIELD_AFFIARINFO_ATTACHMENT + " text)";
+
+	// 表名 affiar *
+	// person_on_duty(id,affair_id,person_id,type(1:责任人，2:抄送人),update_time)
+	public static final String TABLE_PERSON_ON_DUTY = "person_on_duty";
+	// 字段
+	public static final String FIELD_POD_ID = "id";
+	public static final String FIELD_POD_AID = "affair_id";
+	public static final String FIELD_POD_PID = "person_id";
+	// (1:责任人，2:抄送人)
+	public static final String FIELD_POD_TYPE = "type";
+	public static final String FIELD_POD_UT = "update_time";
+	// 创建表的SQL
+	public static final String SQL_POD_CREATE_TABLE = "create table " + TABLE_PERSON_ON_DUTY + " ("
+			+ FIELD_POD_ID + " integer primary key autoincrement, " + FIELD_POD_AID + " text,"
+			+ FIELD_POD_PID + " text," + FIELD_POD_TYPE + " text," + FIELD_POD_UT + " text)";
 	// //////////////////////
 
 	// // 事务相关数据表名
@@ -242,92 +300,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_MY_INFO_CREATE_TABLE);
 		Log.v(LOG_TAG, "SQLite: onCreate table MY_INFO");
 		Log.v(LOG_TAG, SQL_MY_INFO_CREATE_TABLE);
-		// /////////////////////
-
-		// db.execSQL(CREATE_ORG_NODE_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table org_node");
-		// db.execSQL(CREATE_ORG_NODE_STAFF_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table org_node_staff");
-		// db.execSQL(CREATE_ORG_STAFF_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table org_staff");
-		// db.execSQL(CREATE_CONTACT_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table contact");
-		//
-		// db.execSQL(CREATE_CUSTOMER_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table customer");
-		// db.execSQL(CREATE_CUSTOMER_CONTACT_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table customer_contact");
-		//
-		// db.execSQL(CREATE_AFFAIRS_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table affairs_info");
-		// db.execSQL(CREATE_PERSON_ON_DUTY_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table person_on_duty");
-		// db.execSQL(CREATE_AFFAIR_ATTACHMENT_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table affairs_attachment");
-		// db.execSQL(CREATE_AFFAIR_FEEDBACK_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table affair_feedback");
-		// db.execSQL(CREATE_FEEDBACK_ATTACHMENT_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table feedback_attachment");
-		// db.execSQL(CREATE_AFFAIR_LOG_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table affairs_operate_log");
-		//
-		// db.execSQL(CREATE_MESSAGE_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table message");
-		//
-		// db.execSQL(CREATE_PHONE_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table phone");
-		//
-		// db.execSQL(CREATE_CONFERENCE_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table conference");
-		// db.execSQL(CREATE_CONFERENCE_PERSON_TABLE_SQL);
-		// Log.v(LOG_TAG, "SQLite: onCreate table conference_person");
+		db.execSQL(SQL_AFFAIRINFO_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table AFFAIRINFO");
+		Log.v(LOG_TAG, SQL_AFFAIRINFO_CREATE_TABLE);
+		db.execSQL(SQL_POD_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table POD");
+		Log.v(LOG_TAG, SQL_POD_CREATE_TABLE);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.v(LOG_TAG, "SQLite: onUpgrade");
-
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.ORG_NODE_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.ORG_NODE_STAFF_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.ORG_STAFF_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " + DBConstants.CONTACT_TABLE_NAME);
-		//
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.CUSTOMER_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.CUSTOMER_CONTACT_TABLE_NAME);
-		//
-		// db.execSQL("DROP TABLE IF EXISTS " + DBConstants.AFFAIRS_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.PERSON_ON_DUTY_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.AFFAIR_ATTACHMENT_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.FEEDBACK_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.FEEDBACK_ATTACHMENT_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.AFFAIR_OPERATE_LOG_TABLE_NAME);
-		//
-		// db.execSQL("DROP TABLE IF EXISTS " + DBConstants.MESSAGE_TABLE_NAME);
-		//
-		// db.execSQL("DROP TABLE IF EXISTS " + DBConstants.PHONE_TABLE_NAME);
-		//
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.CONFERENCE_TABLE_NAME);
-		// db.execSQL("DROP TABLE IF EXISTS " +
-		// DBConstants.CONFERENCE_PERSON_TABLE_NAME);
-
-		onCreate(db);
-
-	}
-
-	/** close cursor */
-	protected void closeCursor(Cursor cursor) {
-		cursor.close();
 	}
 
 }

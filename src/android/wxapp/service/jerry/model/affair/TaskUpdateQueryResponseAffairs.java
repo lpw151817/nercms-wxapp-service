@@ -2,33 +2,11 @@ package android.wxapp.service.jerry.model.affair;
 
 import java.util.List;
 
-public class CreateTaskRequest {
-	String uid, ic, t, sid, d, topic, bt, et, ct, lot, lotime, up;
+public class TaskUpdateQueryResponseAffairs {
+	String aid, t, sid, d, topic, bt, et, ct, lot, lotime, up;
 	List<CreateTaskRequestAttachment> att;
 	List<CreateTaskRequestIds> rids;
 	List<CreateTaskRequestIds> pod;
-
-	public CreateTaskRequest(String uid, String ic, String t, String sid, String d, String topic,
-			String bt, String et, String ct, String lot, String lotime, String up,
-			List<CreateTaskRequestAttachment> att, List<CreateTaskRequestIds> rids,
-			List<CreateTaskRequestIds> pod) {
-		super();
-		this.uid = uid;
-		this.ic = ic;
-		this.t = t;
-		this.sid = sid;
-		this.d = d;
-		this.topic = topic;
-		this.bt = bt;
-		this.et = et;
-		this.ct = ct;
-		this.lot = lot;
-		this.lotime = lotime;
-		this.up = up;
-		this.att = att;
-		this.rids = rids;
-		this.pod = pod;
-	}
 
 	public List<CreateTaskRequestIds> getPod() {
 		return pod;
@@ -38,20 +16,12 @@ public class CreateTaskRequest {
 		this.pod = pod;
 	}
 
-	public String getUid() {
-		return uid;
+	public List<CreateTaskRequestIds> getRids() {
+		return rids;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	public String getIc() {
-		return ic;
-	}
-
-	public void setIc(String ic) {
-		this.ic = ic;
+	public void setRids(List<CreateTaskRequestIds> rids) {
+		this.rids = rids;
 	}
 
 	public String getT() {
@@ -134,15 +104,6 @@ public class CreateTaskRequest {
 		this.up = up;
 	}
 
-
-	public List<CreateTaskRequestIds> getRids() {
-		return rids;
-	}
-
-	public void setRids(List<CreateTaskRequestIds> rids) {
-		this.rids = rids;
-	}
-
 	public List<CreateTaskRequestAttachment> getAtt() {
 		return att;
 	}
@@ -151,8 +112,37 @@ public class CreateTaskRequest {
 		this.att = att;
 	}
 
-	public CreateTaskRequest() {
+
+	public TaskUpdateQueryResponseAffairs(String aid, String t, String sid, String d, String topic,
+			String bt, String et, String ct, String lot, String lotime, String up,
+			List<CreateTaskRequestAttachment> att, List<CreateTaskRequestIds> rids,
+			List<CreateTaskRequestIds> pod) {
 		super();
+		this.aid = aid;
+		this.t = t;
+		this.sid = sid;
+		this.d = d;
+		this.topic = topic;
+		this.bt = bt;
+		this.et = et;
+		this.ct = ct;
+		this.lot = lot;
+		this.lotime = lotime;
+		this.up = up;
+		this.att = att;
+		this.rids = rids;
+		this.pod = pod;
 	}
 
+	public String getAid() {
+		return aid;
+	}
+
+	public void setAid(String aid) {
+		this.aid = aid;
+	}
+
+	public TaskUpdateQueryResponseAffairs() {
+		super();
+	}
 }

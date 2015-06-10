@@ -33,6 +33,8 @@ import android.wxapp.service.jerry.model.gps.GpsUploadRequest;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
 import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
 import android.wxapp.service.model.AffairModel;
+import android.wxapp.service.thread.SaveAffairThread;
+import android.wxapp.service.thread.SaveAffairUpdateThread;
 import android.wxapp.service.thread.ThreadManager;
 import android.wxapp.service.util.Constant;
 import android.wxapp.service.util.MyJsonParseUtil;
@@ -131,50 +133,58 @@ public class AffairRequest extends BaseRequest {
 	 * 判断返回的s值是否需要进行再次调用
 	 * 
 	 * @param context
-	 * @param ic
 	 * @param count
 	 *            标记是第几次查询数据，用于分页请求数据。请求需要维护count值
 	 * @return
 	 */
-	public JsonObjectRequest getAffairUpdateRequest(final Context c, String ic, String count) {
+	public JsonObjectRequest getAffairUpdateRequest(final Context c, String count) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null || getLastAffairUpdateTime(c) == null)
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		TaskUpdateQueryRequest params = new TaskUpdateQueryRequest(getUserId(c), ic,
-				getLastAffairUpdateTime(c), count);
+		String lastUpdateTime = getLastAffairUpdateTime(c);
+		if (lastUpdateTime == null)
+			lastUpdateTime = System.currentTimeMillis() + "";
+		TaskUpdateQueryRequest params = new TaskUpdateQueryRequest(getUserId(c), getUserIc(c),
+				lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_LIST
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				System.out.println(arg0.toString());
+				Log.e("Response", arg0.toString());
 				try {
 					// 表示已经没有更多的数据需要再次进行请求
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						TaskUpdateQueryResponse r = gson.fromJson(arg0.toString(),
 								TaskUpdateQueryResponse.class);
-						// TODO 进行数据库的操作,保存数据
-
+						// 进行数据库的操作,保存数据
+						new SaveAffairUpdateThread(r, new AffairDao(c));
 						// 更新本地时间戳
 						MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
-								System.currentTimeMillis());
+								r.getTsp());
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.UPDATE_TASK_LIST_REQUEST_SUCCESS, r,
 								Contants.METHOD_AFFAIRS_UPDATE_LIST);
 					}
 					// 还有更多的数据需要进行请求
+					// 废弃。服务器直接一次性返回。。。。。。
 					else if (arg0.getString("s").equals(Contants.RESULT_MORE)) {
-						TaskUpdateQueryResponse r = gson.fromJson(arg0.toString(),
-								TaskUpdateQueryResponse.class);
-						// TODO 保存此次数据
 
-						// 将返回结果返回给handler进行ui处理
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.UPDATE_TASK_LIST_REQUEST_SUCCESS, r,
-								Contants.METHOD_AFFAIRS_UPDATE_LIST);
+						Log.v("AffairRequest", "getAffairUpdateRequest() 废弃接口");
+
+						// TaskUpdateQueryResponse r =
+						// gson.fromJson(arg0.toString(),
+						// TaskUpdateQueryResponse.class);
+						// // 保存此次数据
+						// new SaveAffairUpdateThread(r, new AffairDao(c));
+						// // 将返回结果返回给handler进行ui处理
+						// MessageHandlerManager.getInstance().sendMessage(
+						// Constant.UPDATE_TASK_LIST_REQUEST_SUCCESS, r,
+						// Contants.METHOD_AFFAIRS_UPDATE_LIST);
+
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
@@ -237,7 +247,6 @@ public class AffairRequest extends BaseRequest {
 		//
 		// @Override
 		// public void onErrorResponse(VolleyError error) {
-		// // TODO Auto-generated method stub
 		//
 		// }
 		// });
@@ -281,7 +290,7 @@ public class AffairRequest extends BaseRequest {
 	 */
 	public JsonObjectRequest getCreateAffairRequest(Context c, String ic, String t, String sid,
 			String d, String topic, String bt, String et, String ct, String lot, String lotime,
-			String up, List<String> ats, List<String> us, String[] rids) {
+			String up, List<String> ats, List<String> us, String[] rids, String[] pods) {
 		// 如果为获取到用户的id，则直接返回
 		if (getUserId(c) == null || (ats.size() != us.size()))
 			return null;
@@ -293,11 +302,15 @@ public class AffairRequest extends BaseRequest {
 		for (String s : rids) {
 			l2.add(new CreateTaskRequestIds(s));
 		}
+		List<CreateTaskRequestIds> l3 = new ArrayList<CreateTaskRequestIds>();
+		for (String s : pods) {
+			l3.add(new CreateTaskRequestIds(s));
+		}
 		CreateTaskRequest params = new CreateTaskRequest(getUserId(c), ic, t, sid, d, topic, bt, et, ct,
-				lot, lotime, up, l, l2);
+				lot, lotime, up, l, l2, l3);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_ADDAFFAIR
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
@@ -682,12 +695,12 @@ public class AffairRequest extends BaseRequest {
 		QueryAffairListRequest params = new QueryAffairListRequest(getUserId(c), ic, sor, t, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_LIST
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				System.out.println(arg0.toString());
+				Log.e("Response", arg0.toString());
 				try {
 					// 表示已经没有更多的数据需要再次进行请求
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {

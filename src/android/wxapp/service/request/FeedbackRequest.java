@@ -105,12 +105,12 @@ public class FeedbackRequest extends BaseRequest {
 				at, au, ut, l);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_FEEDBACK_SEND
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				System.out.println(arg0.toString());
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						TaskFeedbackResponse r = gson.fromJson(arg0.toString(),
@@ -229,12 +229,12 @@ public class FeedbackRequest extends BaseRequest {
 		FeedbackUpdateQueryRequest params = new FeedbackUpdateQueryRequest(getUserId(context), ic, aid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_FEEDBACK_QUERY
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				System.out.println(arg0.toString());
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						FeedbackUpdateQueryResponse r = gson.fromJson(arg0.toString(),

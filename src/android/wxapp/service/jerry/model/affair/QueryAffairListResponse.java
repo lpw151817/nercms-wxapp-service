@@ -4,16 +4,10 @@ import java.util.List;
 
 public class QueryAffairListResponse {
 	String s;
-	List<QueryAffairListResponseIds> aids;
+	List<QueryAffairListResponseAffairs> affairs;
 
 	public QueryAffairListResponse() {
 		super();
-	}
-
-	public QueryAffairListResponse(String s, List<QueryAffairListResponseIds> aids) {
-		super();
-		this.s = s;
-		this.aids = aids;
 	}
 
 	public String getS() {
@@ -24,11 +18,19 @@ public class QueryAffairListResponse {
 		this.s = s;
 	}
 
-	public List<QueryAffairListResponseIds> getAids() {
-		return aids;
+	public List<QueryAffairListResponseAffairs> getAffairs() {
+		return affairs;
 	}
 
-	public void setAids(List<QueryAffairListResponseIds> aids) {
-		this.aids = aids;
+	public void setAffairs(List<QueryAffairListResponseAffairs> affairs) {
+		this.affairs = affairs;
 	}
+
+	public QueryAffairListResponse(String s, List<QueryAffairListResponseAffairs> affairs) {
+		super();
+		this.s = s;
+		this.affairs = affairs;
+	}
+
+
 }

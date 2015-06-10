@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.util.Log;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.gps.GpsInfo;
 import android.wxapp.service.jerry.model.gps.GpsUploadRequest;
@@ -66,11 +67,12 @@ public class GpsRequest extends BaseRequest {
 		GpsUploadRequest params = new GpsUploadRequest(getUserId(c), identifyCode, gson.toJson(g));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_UPLOAD
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
@@ -115,11 +117,12 @@ public class GpsRequest extends BaseRequest {
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
 				+ Contants.METHOD_GPS_QUERY_LAST_PERSONAL_GPS + Contants.PARAM_NAME
 				+ super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryLastPersonalGpsResponse r = gson.fromJson(arg0.toString(),
@@ -168,11 +171,12 @@ public class GpsRequest extends BaseRequest {
 		QueryLastGpssRequest params = new QueryLastGpssRequest(getUserId(c), identifyCode, idList);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_LAST_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryLastGpssResponse r = gson.fromJson(arg0.toString(),
@@ -217,11 +221,12 @@ public class GpsRequest extends BaseRequest {
 		QueryPersonalGpssRequest params = new QueryPersonalGpssRequest(getUserId(c), identifyCode, cid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_PERSONAL_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryPersonalGpssReponse r = gson.fromJson(arg0.toString(),
@@ -270,11 +275,12 @@ public class GpsRequest extends BaseRequest {
 		QueryGpssRequest params = new QueryGpssRequest(getUserId(c), identifyCode, l);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_GPSS
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryGpssResponse r = gson.fromJson(arg0.toString(), QueryGpssResponse.class);

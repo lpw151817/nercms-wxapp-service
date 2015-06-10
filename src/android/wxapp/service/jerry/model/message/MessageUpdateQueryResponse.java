@@ -4,19 +4,8 @@ import java.util.List;
 
 public class MessageUpdateQueryResponse {
 	String s;
-	List<MessageUpdateQueryResponseIds> mids;
+	List<MessageUpdateQueryResponseMessages> ms;
 	String tsp;
-
-	public MessageUpdateQueryResponse(String s, List<MessageUpdateQueryResponseIds> mids, String tsp) {
-		super();
-		this.s = s;
-		this.mids = mids;
-		this.tsp = tsp;
-	}
-
-	public MessageUpdateQueryResponse() {
-		super();
-	}
 
 	public String getS() {
 		return s;
@@ -26,12 +15,12 @@ public class MessageUpdateQueryResponse {
 		this.s = s;
 	}
 
-	public List<MessageUpdateQueryResponseIds> getMids() {
-		return mids;
+	public List<MessageUpdateQueryResponseMessages> getMs() {
+		return ms;
 	}
 
-	public void setMids(List<MessageUpdateQueryResponseIds> mids) {
-		this.mids = mids;
+	public void setMs(List<MessageUpdateQueryResponseMessages> ms) {
+		this.ms = ms;
 	}
 
 	public String getTsp() {
@@ -40,6 +29,17 @@ public class MessageUpdateQueryResponse {
 
 	public void setTsp(String tsp) {
 		this.tsp = tsp;
+	}
+
+	public MessageUpdateQueryResponse(String s, List<MessageUpdateQueryResponseMessages> ms, String tsp) {
+		super();
+		this.s = s;
+		this.ms = ms;
+		this.tsp = tsp;
+	}
+
+	public MessageUpdateQueryResponse() {
+		super();
 	}
 
 }

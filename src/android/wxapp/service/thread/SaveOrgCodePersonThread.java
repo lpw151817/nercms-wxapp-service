@@ -26,14 +26,18 @@ public class SaveOrgCodePersonThread extends Thread {
 	public void run() {
 		Log.v("SaveOrgCodePersonThread", "saving data");
 		if (this.dao.saveOrgCodePerson(this.data)) {
-			// 通知UI线程刷新界面
-			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_ORG_PERSON_SUCCESS, TAG);
+			// // 通知UI线程刷新界面
+			// MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_ORG_PERSON_SUCCESS,
+			// TAG);
 			// 保存时间戳
 			MySharedPreference.save(context, MySharedPreference.LAST_UPDATE_ORGPERSON_TIMESTAMP,
 					data.getUt());
+			Log.v("SaveOrgCodePersonThread", "saving data success!");
 		} else {
-			// 通知UI线程刷新界面
-			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_ORG_PERSON_FAIL, TAG);
+			// // 通知UI线程刷新界面
+			// MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_ORG_PERSON_FAIL,
+			// TAG);
+			Log.v("SaveOrgCodePersonThread", "saving data fail!");
 		}
 	}
 }

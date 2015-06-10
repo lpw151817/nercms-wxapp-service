@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 import android.wxapp.service.dao.DAOFactory;
 import android.wxapp.service.dao.PersonDao;
 import android.wxapp.service.handler.MessageHandlerManager;
@@ -437,11 +438,12 @@ public class PersonRequest extends BaseRequest {
 		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						ModifyCustomerResponse r = gson.fromJson(arg0.toString(),
@@ -476,21 +478,21 @@ public class PersonRequest extends BaseRequest {
 	 * @param c
 	 * @return
 	 */
-	public JsonObjectRequest getOrgCode(final Context c) {
+	public JsonObjectRequest getOrgCodeUpdate(final Context c) {
 		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		String orgCodeUptateTime = MySharedPreference.get(c,
-				MySharedPreference.LAST_UPDATE_ORGCODE_TIMESTAMP, null);
+		String orgCodeUptateTime = getLastOrgUpdateTime(c);
 		if (orgCodeUptateTime == null)
 			orgCodeUptateTime = System.currentTimeMillis() + "";
 		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCodeUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
@@ -527,28 +529,28 @@ public class PersonRequest extends BaseRequest {
 	 * @param c
 	 * @return
 	 */
-	public JsonObjectRequest getOrgCodePerson(final Context c) {
+	public JsonObjectRequest getOrgCodePersonUpdate(final Context c) {
 		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		String orgPersonUptateTime = MySharedPreference.get(c,
-				MySharedPreference.LAST_UPDATE_ORGPERSON_TIMESTAMP, null);
+		String orgPersonUptateTime = getLastOrgPersonUpdateTime(c);
 		if (orgPersonUptateTime == null)
 			orgPersonUptateTime = System.currentTimeMillis() + "";
 		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), getUserIc(c),
 				orgPersonUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetOrgCodePersonResponse r = gson.fromJson(arg0.toString(),
 								GetOrgCodePersonResponse.class);
 						// 进行数据库的添加,并返回handler到ui线程进行操作
-						new SaveOrgCodePersonThread(c, r);
+						new SaveOrgCodePersonThread(c, r).run();
 
 						// MessageHandlerManager.getInstance().sendMessage(
 						// Constant.QUERY_ORG_PERSON_REQUEST_SUCCESS, r,
@@ -581,11 +583,12 @@ public class PersonRequest extends BaseRequest {
 		LoginRequest lr = new LoginRequest(aliasName, identifyCode, imsi);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGIN
 				+ Contants.PARAM_NAME + super.gson.toJson(lr);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
@@ -673,11 +676,12 @@ public class PersonRequest extends BaseRequest {
 		LogoutRequest params = new LogoutRequest(getUserId(c), getUserIc(c));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						LogoutResponse r = gson.fromJson(arg0.toString(), LogoutResponse.class);
@@ -721,11 +725,12 @@ public class PersonRequest extends BaseRequest {
 		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), getUserIc(c), personId);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						GetPersonInfoResponse r = gson.fromJson(arg0.toString(),
@@ -790,11 +795,12 @@ public class PersonRequest extends BaseRequest {
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
 				+ Contants.METHOD_PERSON_ADD_PERSON_CONTACTS + Contants.PARAM_NAME
 				+ super.gson.toJson(params);
-		System.out.println(this.url);
+		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						AddPersonContactResponse r = gson.fromJson(arg0.toString(),
@@ -912,6 +918,7 @@ public class PersonRequest extends BaseRequest {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				ChangePwdResponse r = gson.fromJson(arg0.toString(), ChangePwdResponse.class);
 				if (r.getS().equals(Contants.RESULT_SUCCESS)) {
 					// 通知界面

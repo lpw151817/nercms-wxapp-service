@@ -1,23 +1,23 @@
 package android.wxapp.service.jerry.model.feedback;
 
 public class TaskFeedbackRequestIds {
-String uid;
+	String rid;
 
-public String getUid() {
-	return uid;
-}
+	public TaskFeedbackRequestIds(String rid) {
+		super();
+		this.rid = rid;
+	}
 
-public void setUid(String uid) {
-	this.uid = uid;
-}
+	public String getRid() {
+		return rid;
+	}
 
-public TaskFeedbackRequestIds(String uid) {
-	super();
-	this.uid = uid;
-}
+	public void setRid(String rid) {
+		this.rid = rid;
+	}
 
-public TaskFeedbackRequestIds() {
-	super();
-}
+	public TaskFeedbackRequestIds() {
+		super();
+	}
 
 }

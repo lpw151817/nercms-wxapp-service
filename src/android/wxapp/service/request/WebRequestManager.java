@@ -47,14 +47,14 @@ public class WebRequestManager {
 		queue.add(new PersonRequest().logOut(context));
 	}
 
-	// 获取所有的组织结点
-	public void getOrgCode() {
-		queue.add(new PersonRequest().getOrgCode(this.context));
+	// 获取需要更新的组织结点
+	public void getOrgCodeUpdate() {
+		queue.add(new PersonRequest().getOrgCodeUpdate(this.context));
 	}
 
-	// 获取所有的人员信息
-	public void getOrgPerson() {
-		queue.add(new PersonRequest().getOrgCodePerson(this.context));
+	// 获取需要更新的人员信息
+	public void getOrgPersonUpdate() {
+		queue.add(new PersonRequest().getOrgCodePersonUpdate(this.context));
 	}
 
 	// 查询对应person id的用户信息
@@ -102,6 +102,11 @@ public class WebRequestManager {
 	// Affair Model
 	//
 
+	// 获取任务更新
+	public void getAffairUpdate(String count) {
+		queue.add(new AffairRequest().getAffairUpdateRequest(context, count));
+	}
+
 	// 创建新事务
 	public void sendAffair(String ic, String t, String sid, String d, String topic, String bt,
 			String et, String ct, String lot, String lotime, String up, List<String> ats,
@@ -120,28 +125,21 @@ public class WebRequestManager {
 	}
 
 	// 完成事务
-	public void endAffair(String ic, String affairID) {
+	public void endAffair(String affairID) {
 		// queue.add(new AffairRequest().getEndTaskRequest(context, ic,
 		// affairID, null));
 	}
 
-	// ！！！！获取任务更新 逻辑需要调整
-	public void getAffairUpdate(String ic, String count) {
-		// queue.add(new GetAffairUpdateRequest(context).getRequest());
-		// queue.add(new AffairRequest().getAffairUpdateRequest(context, ic,
-		// count));
-	}
-
 	// 发送新反馈
-	public void sendFeedback(Context context, String ic, String sid, String st, String c, String at,
-			String au, String ut, String[] rids) {
+	public void sendFeedback(Context context, String sid, String st, String c, String at, String au,
+			String ut, String[] rids) {
 		// queue.add(new FeedbackRequest().sendFeedbackRequest(context, ic, sid,
 		// st, 4 + "", c, at, au, ut,
 		// rids));
 	}
 
 	// 查询反馈详情
-	public void getFeedbackInfo(String ic, String aid) {
+	public void getFeedbackInfo(String aid) {
 		// queue.add(new FeedbackRequest().getFeedbackInfoRequest(context, ic,
 		// aid));
 	}
