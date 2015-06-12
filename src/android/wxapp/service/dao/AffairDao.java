@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import android.R.id;
 import android.content.ContentValues;
 import android.content.Context;
@@ -76,6 +79,35 @@ public class AffairDao extends BaseDAO {
 		for (CreateTaskRequestIds item : affairInfo.getRids()) {
 			saveReceiver(affairInfo.getAid(), item.getRid(), affairInfo.getUp());
 		}
+	}
+
+	public QueryAffairInfoResponse getAffairInfoByAid(String aid) {
+		db = dbHelper.getReadableDatabase();
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_AFFIARINFO + " where "
+				+ DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + " = " + aid, null);
+		QueryAffairInfoResponse r = null;
+		if (c.moveToFirst()) {
+			Map<String, List<CreateTaskRequestIds>> ids = getPersonIdByAffairId(aid);
+
+			List<CreateTaskRequestAttachment> attParams = new Gson().fromJson(
+					getData(c, DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT),
+					new TypeToken<List<CreateTaskRequestAttachment>>() {
+					}.getType());
+			r = new QueryAffairInfoResponse("", aid, getData(c, DatabaseHelper.FIELD_AFFIARINFO_TYPE),
+					getData(c, DatabaseHelper.FIELD_AFFIARINFO_SENDERID), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_DES), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_TOPIC), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_CREATETIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_ENDTIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TYPE), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_UPDATETIME), attParams, ids.get("2"),
+					ids.get("1"));
+		}
+		c.close();
+		return r;
+
 	}
 
 	/**
@@ -352,6 +384,10 @@ public class AffairDao extends BaseDAO {
 			String aid = getData(c, DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID);
 			// 获取事务id的负责人和抄送人
 			Map<String, List<CreateTaskRequestIds>> idMap = getPersonIdByAffairId(aid);
+			List<CreateTaskRequestAttachment> paramAtt = new Gson().fromJson(
+					getData(c, DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT),
+					new TypeToken<List<CreateTaskRequestAttachment>>() {
+					}.getType());
 			result.add(new QueryAffairListResponseAffairs(aid, getData(c,
 					DatabaseHelper.FIELD_AFFIARINFO_TYPE), getData(c,
 					DatabaseHelper.FIELD_AFFIARINFO_SENDERID), getData(c,
@@ -362,13 +398,27 @@ public class AffairDao extends BaseDAO {
 					DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME), getData(c,
 					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TYPE), getData(c,
 					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), json2List(
-					getData(c, DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT),
-					CreateTaskRequestAttachment.class), idMap.get("2"), idMap.get("1")));
+					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), paramAtt, idMap.get("2"), idMap
+					.get("1")));
 		}
 		c.close();
 		return result;
 
+	}
+
+	/**
+	 * 更新事务状态为已读
+	 * 
+	 * @param affairID
+	 * 
+	 * @return 修改成功返回true
+	 */
+	public boolean updateAffairIsRead(String affairID) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_AFFIARINFO_READTIME, System.currentTimeMillis());
+		return db.update(DatabaseHelper.TABLE_AFFIARINFO, values,
+				DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + "= ?", new String[] { affairID }) > 0;
 	}
 
 	/**
@@ -411,11 +461,14 @@ public class AffairDao extends BaseDAO {
 		if (c.moveToFirst()) {
 			String r = getData(c, DatabaseHelper.FIELD_AFFIARINFO_READTIME);
 			if (r == null || r == "") {
+				c.close();
 				return false;
 			} else {
+				c.close();
 				return true;
 			}
 		} else {
+			c.close();
 			return true;
 		}
 	}
@@ -446,33 +499,6 @@ public class AffairDao extends BaseDAO {
 		// dbHelper.closeCursor(cursor);
 		// }
 		// return affairs;
-		return null;
-	}
-
-	/**
-	 * 根据事务ID查找单个事务
-	 * 
-	 * @param affairID
-	 * @return 事务
-	 */
-	public AffairModel getAffairById(String affairID) {
-		// Cursor cursor = null;
-		// try {
-		// SQLiteDatabase db = dbHelper.getReadableDatabase();
-		// cursor = db.query(DBConstants.AFFAIRS_TABLE_NAME,
-		// DBConstants.AFFAIR_ALL_COLUMNS,
-		// "affair_id = ?", new String[] { affairID }, null, null, null);
-		// if (cursor.moveToFirst()) {
-		// return createAffairFromCursor(cursor);
-		// } else {
-		// return null;
-		// }
-		//
-		// } finally {
-		// if (cursor != null)
-		// dbHelper.closeCursor(cursor);
-		// }
-
 		return null;
 	}
 
@@ -549,19 +575,6 @@ public class AffairDao extends BaseDAO {
 		// } else {
 		// Log.i(TAG, "任务已标记为延误!");
 		// }
-	}
-
-	/**
-	 * 更新事务状态为已读
-	 * 
-	 * @param affairID
-	 */
-	public void updateAffairIsRead(String affairID) {
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// ContentValues values = new ContentValues();
-		// values.put("is_read", Constant.READ);
-		// db.update(DBConstants.AFFAIRS_TABLE_NAME, values, "affair_id = ?",
-		// new String[] { affairID });
 	}
 
 	// ---------------------------------------------------------------------

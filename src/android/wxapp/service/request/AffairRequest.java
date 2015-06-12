@@ -160,10 +160,8 @@ public class AffairRequest extends BaseRequest {
 						TaskUpdateQueryResponse r = gson.fromJson(arg0.toString(),
 								TaskUpdateQueryResponse.class);
 						// 进行数据库的操作,保存数据
-						new SaveAffairUpdateThread(r, new AffairDao(c));
-						// 更新本地时间戳
-						MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
-								r.getTsp());
+						new SaveAffairUpdateThread(c, r, new AffairDao(c)).run();
+
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.UPDATE_TASK_LIST_REQUEST_SUCCESS, r,

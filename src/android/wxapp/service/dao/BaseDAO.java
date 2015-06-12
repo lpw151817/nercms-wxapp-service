@@ -27,8 +27,4 @@ public class BaseDAO {
 
 	}
 
-	protected <T> List<T> json2List(String js, Class<T> t) {
-		return new Gson().fromJson(js, new TypeToken<List<T>>() {
-		}.getType());
-	}
 }

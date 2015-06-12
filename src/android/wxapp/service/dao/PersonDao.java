@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -167,16 +168,18 @@ public class PersonDao extends BaseDAO {
 	 * @param userid
 	 * @return
 	 */
-	public GetPersonInfoResponse getOrgPersonInfo(String userid) {
+	public GetPersonInfoResponse getPersonInfo(String userid) {
+
 		db = dbHelper.getReadableDatabase();
+		GetPersonInfoResponse result = null;
 		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_ORG_PERSON + " where "
 				+ DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + userid, null);
 		if (c.moveToFirst()) {
-			return new GetPersonInfoResponse("", getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME),
-					"", "", "", null);
-		} else {
-			return null;
+			String temp = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME);
+			result = new GetPersonInfoResponse("", temp, "", "", "", null);
 		}
+		c.close();
+		return result;
 	}
 
 	/**
@@ -211,18 +214,25 @@ public class PersonDao extends BaseDAO {
 	public GetPersonInfoResponse getCustomer() {
 		db = dbHelper.getReadableDatabase();
 		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MY_INFO, null);
-		if (c.getCount() == 0) {
+		if (c.getCount() <= 0) {
 			c.close();
 			return null;
 		} else {
-			GetPersonInfoResponse r = new GetPersonInfoResponse(0 + "", getData(c,
-					DatabaseHelper.FIELD_MY_INFO_USERNAME),
-					getData(c, DatabaseHelper.FIELD_MY_INFO_NAME), getData(c,
-							DatabaseHelper.FIELD_MY_INFO_DES), getData(c,
-							DatabaseHelper.FIELD_MY_INFO_REMARK), json2List(
-							getData(c, DatabaseHelper.FIELD_MY_INFO_CONTACTS), Contacts.class));
+			if (c.moveToFirst()) {
+				String temp = getData(c, DatabaseHelper.FIELD_MY_INFO_CONTACTS);
+				List<Contacts> paramContacts = new Gson().fromJson(temp,
+						new TypeToken<List<Contacts>>() {
+						}.getType());
+				GetPersonInfoResponse r = new GetPersonInfoResponse(0 + "", getData(c,
+						DatabaseHelper.FIELD_MY_INFO_USERNAME), getData(c,
+						DatabaseHelper.FIELD_MY_INFO_NAME),
+						getData(c, DatabaseHelper.FIELD_MY_INFO_DES), getData(c,
+								DatabaseHelper.FIELD_MY_INFO_REMARK), paramContacts);
+				c.close();
+				return r;
+			}
 			c.close();
-			return r;
+			return null;
 		}
 	}
 
@@ -805,35 +815,6 @@ public class PersonDao extends BaseDAO {
 		// } else {
 		// return null;
 		// }
-		// } finally {
-		// if (cursor != null) {
-		// dbHelper.closeCursor(cursor);
-		// }
-		// }
-		return null;
-	}
-
-	// 2014-7-31
-	/**
-	 * 根据人员ID得到人员名字（用于仅需要名字显示的场景）
-	 * 
-	 * @param personID
-	 * @return
-	 */
-	public String getPersonNameByID(String personID) {
-		// Cursor cursor = null;
-		// try {
-		// db = dbHelper.getReadableDatabase();
-		// cursor = db.rawQuery("SELECT name " + " FROM org_staff " +
-		// " WHERE contact_id = ?",
-		// new String[] { personID });
-		//
-		// if (cursor.moveToFirst()) {
-		// return cursor.getString(0);
-		// } else {
-		// return null;
-		// }
-		//
 		// } finally {
 		// if (cursor != null) {
 		// dbHelper.closeCursor(cursor);
