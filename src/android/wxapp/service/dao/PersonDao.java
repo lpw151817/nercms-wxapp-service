@@ -16,6 +16,7 @@ import android.wxapp.service.jerry.model.person.Contacts;
 import android.wxapp.service.jerry.model.person.GetOrgCodePersonResponse;
 import android.wxapp.service.jerry.model.person.GetOrgCodeResponse;
 import android.wxapp.service.jerry.model.person.GetPersonInfoResponse;
+import android.wxapp.service.jerry.model.person.Org;
 import android.wxapp.service.jerry.model.person.OrgInfo;
 import android.wxapp.service.jerry.model.person.OrgPersonInfo;
 import android.wxapp.service.model.ContactModel;
@@ -235,6 +236,48 @@ public class PersonDao extends BaseDAO {
 			return null;
 		}
 	}
+
+	// /////////////////以下用于组织结构树使用//////////////////////////
+	public List<Org> getOrg2() {
+		List<Org> result = new ArrayList<Org>();
+		result.addAll(getAllOrgs());
+		result.addAll(getAllPersons());
+		return result;
+	}
+
+	private List<Org> getAllOrgs() {
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		// SELECT * from OrgNode WHERE org_code LIKE '_';
+		Cursor c = db.rawQuery("SELECT * from " + DatabaseHelper.TABLE_ORG_CODE, null);
+		List<Org> r = new ArrayList<Org>();
+		while (c.moveToNext()) {
+			String name = getData(c, DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION);
+			String org_code = getData(c, DatabaseHelper.FIELD_ORG_CODE_ORG_CODE);
+			if (org_code.length() == 1)
+				r.add(new Org("o" + org_code, 0 + "", name));
+			else
+				r.add(new Org("o" + org_code, "o" + org_code.substring(0, org_code.length() - 1), name));
+		}
+		c.close();
+		return r;
+	}
+
+	private List<Org> getAllPersons() {
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		// SELECT * from OrgNode WHERE org_code LIKE '_';
+		Cursor c = db.rawQuery("SELECT * from " + DatabaseHelper.TABLE_ORG_PERSON, null);
+		List<Org> r = new ArrayList<Org>();
+		while (c.moveToNext()) {
+			String orgcode = getData(c, DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE);
+			String name = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME);
+			String uid = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID);
+			r.add(new Org("p" + uid, "o" + orgcode, name));
+		}
+		c.close();
+		return r;
+	}
+
+	// ///////////////////////////////////////////
 
 	/**
 	 * 以下四个均为添加联系人数据（4个表）到数据库
