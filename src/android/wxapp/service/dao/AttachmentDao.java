@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.wxapp.service.jerry.model.affair.CreateTaskRequestAttachment;
 import android.wxapp.service.model.AffairAttachModel;
 import android.wxapp.service.model.FeedbackAttachModel;
 
@@ -24,19 +25,13 @@ public class AttachmentDao extends BaseDAO {
 	 * @param attachment
 	 * @return
 	 */
-	public boolean saveAttachment(AffairAttachModel attachment) {
-		// ContentValues values = createContentValues(attachment);
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// long id = db.insertOrThrow(DBConstants.AFFAIR_ATTACHMENT_TABLE_NAME,
-		// null, values);
-		// if (id == -1) {
-		// Log.i(TAG, "添加任务附件失败!");
-		// return false;
-		// } else {
-		// Log.i(TAG, "添加任务附件成功!");
-		// return true;
-		// }
-		return false;
+	public boolean saveAttachment(CreateTaskRequestAttachment attachment) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_ATTACHMENT_TYPE, attachment.getAt());
+		values.put(DatabaseHelper.FIELD_ATTACHMENT_URL, attachment.getU());
+		long i = db.insert(DatabaseHelper.TABLE_ATTACHMENT, null, values);
+		return i > 0;
 	}
 
 	/**

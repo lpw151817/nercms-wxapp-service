@@ -108,14 +108,11 @@ public class WebRequestManager {
 	}
 
 	// 创建新事务
-	public void sendAffair(String ic, String t, String sid, String d, String topic, String bt,
-			String et, String ct, String lot, String lotime, String up, List<String> ats,
-			List<String> us, String[] rids) {
-		// // 添加到RequestQueue
-		// // queue.add(new SendAffairRequest(affair).getRequest());
-		// queue.add(new AffairRequest().getCreateAffairRequest(context, ic, t,
-		// sid, d, topic, bt, et, ct,
-		// lot, lotime, up, ats, us, rids));
+	public void sendAffair(String t, String d, String topic, String bt, String et, String ct,
+			String lot, String lotime, String up, List<String> ats, List<String> us, List<String> rids,
+			List<String> pods) {
+		queue.add(new AffairRequest().getCreateAffairRequest(context, t, d, topic, bt, et, ct, lot,
+				lotime, up, ats, us, rids, pods));
 	}
 
 	// 修改任务完成时间
@@ -151,10 +148,9 @@ public class WebRequestManager {
 	}
 
 	// 发送新消息
-	public void sendMessage(String ic, String t, String sid, String[] rids, String st, String c,
+	public void sendMessage(String t, String sid, String[] rids, String st, String c,
 			String at, String au, String ut) {
-		// queue.add(new MessageRequest().sendMessageRequest(context, ic, t,
-		// sid, rids, st, c, at, au, ut));
+		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rids, st, c, at, au, ut));
 	}
 
 	// 获取新消息

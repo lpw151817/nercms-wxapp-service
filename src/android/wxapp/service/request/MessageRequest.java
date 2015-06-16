@@ -16,6 +16,7 @@ import android.wxapp.service.jerry.model.message.MessageUpdateQueryRequest;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
 import android.wxapp.service.jerry.model.message.QueryContactPersonMessageRequest;
 import android.wxapp.service.jerry.model.message.QueryContactPersonMessageResponse;
+import android.wxapp.service.jerry.model.message.QueryContactPersonMessageResponseIds;
 import android.wxapp.service.jerry.model.message.ReceiveMessageRequest;
 import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.jerry.model.message.SendMessageRequest;
@@ -23,6 +24,7 @@ import android.wxapp.service.jerry.model.message.SendMessageRequestIds;
 import android.wxapp.service.jerry.model.message.SendMessageResponse;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
 import android.wxapp.service.model.MessageModel;
+import android.wxapp.service.thread.SaveMessageThread;
 import android.wxapp.service.thread.ThreadManager;
 import android.wxapp.service.util.Constant;
 import android.wxapp.service.util.MyJsonParseUtil;
@@ -48,33 +50,6 @@ public class MessageRequest extends BaseRequest {
 	// 6.receiveMessage
 	//
 	// ======================================================
-
-	// private Context context;
-	// /**
-	// * 用户id
-	// */
-	// private String userID;
-	// /**
-	// * 最后更新时间
-	// */
-	// private String lastUpdateTime;
-	// /**
-	// *
-	// */
-	// private String updateRequestString = null;
-	//
-	// private MessageModel message = null;
-	// private String sendRequestString = null;
-	//
-	// // 获取新消息的构造函数
-	// public MessageRequest(Context context) {
-	// this.context = context;
-	// }
-	//
-	// // 发送新消息的构造函数
-	// public MessageRequest(MessageModel message) {
-	// this.message = message;
-	// }
 
 	public MessageRequest() {
 
@@ -212,17 +187,17 @@ public class MessageRequest extends BaseRequest {
 	 *            更新时间
 	 * @return
 	 */
-	public JsonObjectRequest sendMessageRequest(Context context, String ic, String t, String sid,
+	public JsonObjectRequest sendMessageRequest(final Context context, String t, String sid,
 			String[] rids, String st, String c, String at, String au, String ut) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(context) == null)
+		if (getUserId(context) == null || getUserIc(context) == null)
 			return null;
 		List<SendMessageRequestIds> l = new ArrayList<SendMessageRequestIds>();
 		for (int i = 0; i < rids.length; i++) {
 			l.add(new SendMessageRequestIds(rids[i]));
 		}
-		SendMessageRequest params = new SendMessageRequest(getUserId(context), ic, t, sid, l, st, c, at,
-				au, ut);
+		final SendMessageRequest params = new SendMessageRequest(getUserId(context), getUserIc(context),
+				t, sid, l, st, c, at, au, ut);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_SEND
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -232,9 +207,17 @@ public class MessageRequest extends BaseRequest {
 			public void onResponse(JSONObject arg0) {
 				System.out.println(arg0.toString());
 				try {
-					// 表示已经没有更多的数据需要再次进行请求
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						SendMessageResponse r = gson.fromJson(arg0.toString(), SendMessageResponse.class);
+						// 进行数据库的insert
+						List<QueryContactPersonMessageResponseIds> ids = new ArrayList<QueryContactPersonMessageResponseIds>();
+						for (SendMessageRequestIds sendMessageRequestIds : params.getRids()) {
+							ids.add(new QueryContactPersonMessageResponseIds(sendMessageRequestIds
+									.getRid()));
+						}
+						new SaveMessageThread(context, r.getMid(), new ReceiveMessageResponse("", params
+								.getT(), params.getSid(), ids, params.getSt(), params.getC(), params
+								.getAt(), params.getAu(), params.getUt(), null)).run();
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.SEND_MESSAGE_REQUEST_SUCCESS, r, Contants.METHOD_MESSAGE_SEND);

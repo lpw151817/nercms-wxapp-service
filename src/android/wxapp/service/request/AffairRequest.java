@@ -47,72 +47,6 @@ import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 public class AffairRequest extends BaseRequest {
-
-	// private Context context;
-	// /**
-	// * // 待编辑的事务ID
-	// */
-	// private String affairID;
-	// /**
-	// * // 待发送创建事务模型
-	// */
-	// private AffairModel affair;
-	// /**
-	// * // 创建事务请求字符串
-	// */
-	// private String createAffairString = null;
-	// /**
-	// * // 登录用户ID
-	// */
-	// private String userID;
-	// /**
-	// * // 上一次更新事务的时间
-	// */
-	// private String lastUpdateTime;
-	// /**
-	// * // 获取事务更新请求字符串
-	// */
-	// private String getAffairUpdateString = "";
-	// /**
-	// * // 修改后的任务完成时间
-	// */
-	// private String modifiedEndTime;
-	// /**
-	// * // 任务完成请求字符串
-	// */
-	// private String endTaskRequestString = null;
-	// /**
-	// * // 修改任务结束时间请求字符串
-	// */
-	// private String modifyEndTimeString = null;
-
-	public AffairRequest() {
-	}
-
-	// // 获取任务更新构造函数
-	// public AffairRequest(Context context) {
-	// this.context = context;
-	// }
-	//
-	// // 创建新任务构造函数
-	// public AffairRequest(AffairModel affair) {
-	// this.affair = affair;
-	// }
-	//
-	// // 完成任务的构造函数
-	// public AffairRequest(Context context, String affairID) {
-	// this.context = context;
-	// this.affairID = affairID;
-	// }
-	//
-	// // 修改任务完成时间构造函数
-	// public AffairRequest(Context context, String affairID, String
-	// modifiedEndTime) {
-	// this.context = context;
-	// this.affairID = affairID;
-	// this.modifiedEndTime = modifiedEndTime;
-	// }
-
 	// ======================================================
 	//
 	// JerryLiu 2015.5.22
@@ -126,6 +60,10 @@ public class AffairRequest extends BaseRequest {
 	// 7.queryAffairInfo
 	//
 	// ======================================================
+
+	public AffairRequest() {
+		super();
+	}
 
 	/**
 	 * 获取事务更新 JERRY 5.23
@@ -286,11 +224,12 @@ public class AffairRequest extends BaseRequest {
 	 *            接受者的id数组
 	 * @return
 	 */
-	public JsonObjectRequest getCreateAffairRequest(Context c, String ic, String t, String sid,
-			String d, String topic, String bt, String et, String ct, String lot, String lotime,
-			String up, List<String> ats, List<String> us, String[] rids, String[] pods) {
+	public JsonObjectRequest getCreateAffairRequest(final Context c, final String t, final String d,
+			final String topic, final String bt, final String et, final String ct, final String lot,
+			final String lotime, final String up, final List<String> ats, final List<String> us,
+			final List<String> rids, final List<String> pods) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null || (ats.size() != us.size()))
+		if (getUserId(c) == null || (ats.size() != us.size()) || getUserIc(c) == null)
 			return null;
 		List<CreateTaskRequestAttachment> l = new ArrayList<CreateTaskRequestAttachment>();
 		for (int i = 0; i < us.size(); i++) {
@@ -304,8 +243,8 @@ public class AffairRequest extends BaseRequest {
 		for (String s : pods) {
 			l3.add(new CreateTaskRequestIds(s));
 		}
-		CreateTaskRequest params = new CreateTaskRequest(getUserId(c), ic, t, sid, d, topic, bt, et, ct,
-				lot, lotime, up, l, l2, l3);
+		final CreateTaskRequest params = new CreateTaskRequest(getUserId(c), getUserIc(c), t,
+				getUserId(c), d, topic, bt, et, ct, lot, lotime, up, l, l2, l3);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_ADDAFFAIR
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		Log.e("URL", this.url);
@@ -316,6 +255,24 @@ public class AffairRequest extends BaseRequest {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						CreateTaskResponse r = gson.fromJson(arg0.toString(), CreateTaskResponse.class);
+
+						// DB insert
+						List<CreateTaskRequestAttachment> att = new ArrayList<CreateTaskRequestAttachment>();
+						for (int i = 0; i < ats.size(); i++) {
+							att.add(new CreateTaskRequestAttachment(ats.get(i), us.get(i)));
+						}
+						List<CreateTaskRequestIds> ids1 = new ArrayList<CreateTaskRequestIds>();
+						for (int i = 0; i < rids.size(); i++) {
+							ids1.add(new CreateTaskRequestIds(rids.get(i)));
+						}
+						List<CreateTaskRequestIds> ids2 = new ArrayList<CreateTaskRequestIds>();
+						for (int i = 0; i < pods.size(); i++) {
+							ids2.add(new CreateTaskRequestIds(rids.get(i)));
+						}
+						new SaveAffairThread(c, new QueryAffairInfoResponse("", r.getAid(), t,
+								getUserId(c), d, topic, bt, et, ct, lot, lotime, up, att, ids1, ids2))
+								.run();
+
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.CREATE_AFFAIR_REQUEST_SUCCESS, r,
@@ -339,82 +296,6 @@ public class AffairRequest extends BaseRequest {
 				arg0.printStackTrace();
 			}
 		});
-
-		// /* 发送事务 */
-		// // 创建包含JSON对象的请求地址
-		// StringBuilder requestParams = new StringBuilder();
-		// requestParams.append("{\"aid\":\"" + affair.getAffairID() + "\",");
-		// requestParams.append("\"type\":\"" + affair.getType() + "\",");
-		// requestParams.append("\"sid\":\"" + affair.getSponsorID() + "\",");
-		// requestParams.append("\"pid\":\"" + affair.getPerson().getPersonID()
-		// + "\",");
-		// requestParams.append("\"from\":\"" + Constant.MOBILE + "\",");
-		// requestParams.append("\"tit\":\"" + affair.getTitle() + "\",");
-		// requestParams.append("\"dpt\":\"" + affair.getDescription() + "\",");
-		// requestParams.append("\"bt\":\"" + affair.getBeginTime() + "\",");
-		// requestParams.append("\"et\":\"" + affair.getEndTime() + "\",");
-		// // requestParams.append("\"status\":\"" + affair.getStatus() +
-		// "\",");
-		// // //status在创建事务时默认为1，无须传值到服务器
-		// requestParams.append("\"remark\":\"" + "m\","); // remark默认置为空
-		//
-		// if (affair.getAttachments() != null) { // 有附件
-		// requestParams.append("\"attr\":[");
-		// for (int i = 0; i < affair.getAttachments().size(); i++) {
-		// requestParams.append("{\"atype\":\""
-		// + affair.getAttachments().get(i).getAttachmentType() + "\",");
-		// requestParams.append("\"name\":\"" +
-		// affair.getAttachments().get(i).getAttachmentURL()
-		// + "\"}");
-		// if (i < affair.getAttachments().size() - 1) {
-		// requestParams.append(",");
-		// }
-		// }
-		// requestParams.append("]}");
-		// } else { // 无附件
-		// requestParams.append("\"attr\":[]}");
-		// }
-		//
-		// Log.i("test", Constant.SERVER_BASE_URL + Constant.CREATE_TASK_URL +
-		// requestParams.toString());
-		// try {
-		// createAffairString = Constant.SERVER_BASE_URL +
-		// Constant.CREATE_TASK_URL
-		// + URLEncoder.encode(requestParams.toString(), "UTF-8");
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		//
-		// // 向服务器发送请求
-		// JsonObjectRequest sendAffairRequest = new
-		// JsonObjectRequest(createAffairString, null,
-		// new Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// // 发送成功，判断服务器是否返回成功，并通知Handler返回消息
-		// Log.i("sendAffairRequest", response.toString());
-		//
-		// try {
-		// if (response.getString("success").equals("0")) {
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.CREATE_AFFAIR_REQUEST_SUCCESS, response, "TaskAdd");
-		// }
-		// } catch (JSONException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// // 发送失败，通知Handler错误信息
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.CREATE_AFFAIR_REQUEST_FAIL, error.getMessage(), "TaskAdd");
-		// }
-		// });
-		//
-		// return sendAffairRequest;
 	}
 
 	/**

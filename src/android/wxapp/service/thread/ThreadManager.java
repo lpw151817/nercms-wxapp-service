@@ -48,24 +48,23 @@ public class ThreadManager {
 	 * 
 	 * @param affair
 	 */
-	public void startSaveAffairThread(ArrayList<AffairModel> affairList,
-			boolean isSend, Context context) {
+	public void startSaveAffairThread(ArrayList<AffairModel> affairList, boolean isSend, Context context) {
 
-		if (saveAffairThread == null) {
-			// 新建线程
-			Log.v("ThreadManager", "新建保存事务线程");
-			saveAffairThread = new SaveAffairThread(context, affairList);
-			saveAffairThread.setIsSend(isSend);
-			saveAffairThread.start();
-		} else {
-			synchronized (saveAffairThread) {
-				// 唤醒线程
-				Log.v("ThreadManager", "唤醒保存事务线程");
-				saveAffairThread.addAffair(affairList);
-				saveAffairThread.setIsSend(isSend);
-				saveAffairThread.notify();
-			}
-		}
+		// if (saveAffairThread == null) {
+		// // 新建线程
+		// Log.v("ThreadManager", "新建保存事务线程");
+		// saveAffairThread = new SaveAffairThread(context, affairList);
+		// saveAffairThread.setIsSend(isSend);
+		// saveAffairThread.start();
+		// } else {
+		// synchronized (saveAffairThread) {
+		// // 唤醒线程
+		// Log.v("ThreadManager", "唤醒保存事务线程");
+		// saveAffairThread.addAffair(affairList);
+		// saveAffairThread.setIsSend(isSend);
+		// saveAffairThread.notify();
+		// }
+		// }
 	}
 
 	/**
@@ -75,8 +74,8 @@ public class ThreadManager {
 	 * @param isSend
 	 * @param context
 	 */
-	public void startSaveFeedbackThread(ArrayList<FeedbackModel> feedbackList,
-			boolean isSend, Context context) {
+	public void startSaveFeedbackThread(ArrayList<FeedbackModel> feedbackList, boolean isSend,
+			Context context) {
 		if (saveFeedbackThread == null) {
 			Log.v("ThreadManager", "新建保存反馈线程");
 			saveFeedbackThread = new SaveFeedbackThread(context, feedbackList);
@@ -99,21 +98,21 @@ public class ThreadManager {
 	 * @param isSend
 	 * @param context
 	 */
-	public void startSaveMessageThread(ArrayList<MessageModel> messageList,
-			boolean isSend, Context context) {
-		if (saveMessageThread == null) {
-			Log.v("ThreadManager", "新建保存消息线程");
-			saveMessageThread = new SaveMessageThread(context, messageList);
-			saveMessageThread.setIsSend(isSend);
-			saveMessageThread.start();
-		} else {
-			synchronized (saveMessageThread) {
-				Log.v("ThreadManager", "唤醒保存消息线程");
-				saveMessageThread.addMessage(messageList);
-				saveMessageThread.setIsSend(isSend);
-				saveMessageThread.notify();
-			}
-		}
+	public void startSaveMessageThread(ArrayList<MessageModel> messageList, boolean isSend,
+			Context context) {
+//		if (saveMessageThread == null) {
+//			Log.v("ThreadManager", "新建保存消息线程");
+//			saveMessageThread = new SaveMessageThread(context, messageList);
+//			saveMessageThread.setIsSend(isSend);
+//			saveMessageThread.start();
+//		} else {
+//			synchronized (saveMessageThread) {
+//				Log.v("ThreadManager", "唤醒保存消息线程");
+//				saveMessageThread.addMessage(messageList);
+//				saveMessageThread.setIsSend(isSend);
+//				saveMessageThread.notify();
+//			}
+//		}
 	}
 
 	/**
@@ -122,11 +121,9 @@ public class ThreadManager {
 	 * @param resultJsonObject
 	 * @param context
 	 */
-	public void startSaveAllPersonThread(JSONObject resultJsonObject,
-			Context context) {
+	public void startSaveAllPersonThread(JSONObject resultJsonObject, Context context) {
 
-		SaveAllPersonThread saveAllPersonThread = new SaveAllPersonThread(
-				resultJsonObject, context);
+		SaveAllPersonThread saveAllPersonThread = new SaveAllPersonThread(resultJsonObject, context);
 		saveAllPersonThread.start();
 	}
 
@@ -134,16 +131,16 @@ public class ThreadManager {
 	 * 停止消息保存线程
 	 */
 	public void stopSaveMessageThread() {
-		saveMessageThread.setFlag(false);
-		synchronized (saveMessageThread) {
-			saveMessageThread.notify();
-		}
-		try {
-			saveMessageThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		saveMessageThread = null;
+		// saveMessageThread.setFlag(false);
+		// synchronized (saveMessageThread) {
+		// saveMessageThread.notify();
+		// }
+		// try {
+		// saveMessageThread.join();
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// saveMessageThread = null;
 	}
 
 	/**
@@ -166,16 +163,16 @@ public class ThreadManager {
 	 * 停止事务保存线程
 	 */
 	public void stopSaveAffairThread() {
-		saveAffairThread.setFlag(false);
-		synchronized (saveAffairThread) {
-			saveAffairThread.notify();
-		}
-		try {
-			saveAffairThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		saveAffairThread = null;
+		// saveAffairThread.setFlag(false);
+		// synchronized (saveAffairThread) {
+		// saveAffairThread.notify();
+		// }
+		// try {
+		// saveAffairThread.join();
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// saveAffairThread = null;
 	}
 
 	// ------------------以下为测试方法------------------------------------

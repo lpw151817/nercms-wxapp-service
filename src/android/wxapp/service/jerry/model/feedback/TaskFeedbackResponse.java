@@ -1,23 +1,32 @@
 package android.wxapp.service.jerry.model.feedback;
 
 public class TaskFeedbackResponse {
-String s;
+	String s, mid;
 
-public String getS() {
-	return s;
-}
+	public TaskFeedbackResponse(String s, String mid) {
+		super();
+		this.s = s;
+		this.mid = mid;
+	}
 
-public void setS(String s) {
-	this.s = s;
-}
+	public String getMid() {
+		return mid;
+	}
 
-public TaskFeedbackResponse(String s) {
-	super();
-	this.s = s;
-}
+	public void setMid(String mid) {
+		this.mid = mid;
+	}
 
-public TaskFeedbackResponse() {
-	super();
-}
+	public String getS() {
+		return s;
+	}
+
+	public void setS(String s) {
+		this.s = s;
+	}
+
+	public TaskFeedbackResponse() {
+		super();
+	}
 
 }

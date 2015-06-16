@@ -1,18 +1,13 @@
 package com.imooc.treeview.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
-	public Node() {
-	}
+import android.os.Parcel;
+import android.os.Parcelable;
 
-	public Node(String id, String pId, String name) {
-		this.id = id;
-		this.pId = pId;
-		this.name = name;
-	}
-
+public class Node implements Serializable {
 	private String id;
 	/**
 	 * 跟节点的pid=0
@@ -31,6 +26,15 @@ public class Node {
 
 	private Node parent;
 	private List<Node> children = new ArrayList<Node>();
+
+	public Node() {
+	}
+
+	public Node(String id, String pId, String name) {
+		this.id = id;
+		this.pId = pId;
+		this.name = name;
+	}
 
 	public String getId() {
 		return id;
@@ -142,4 +146,75 @@ public class Node {
 				+ isExpand + ", icon=" + icon + "]";
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((pId == null) ? 0 : pId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node other = (Node) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (pId == null) {
+			if (other.pId != null)
+				return false;
+		} else if (!pId.equals(other.pId))
+			return false;
+		return true;
+	}
+
+	// @Override
+	// public int describeContents() {
+	// return 0;
+	// }
+	//
+	// public static final Parcelable.Creator<Node> CREATOR = new
+	// Creator<Node>() {
+	// @Override
+	// public Node[] newArray(int size) {
+	// return new Node[size];
+	// }
+	//
+	// @Override
+	// public Node createFromParcel(Parcel in) {
+	// return new Node(in);
+	// }
+	// };
+	//
+	// @Override
+	// public void writeToParcel(Parcel dest, int flags) {
+	// dest.writeTypedList(children);
+	// dest.writeInt(icon);
+	// dest.writeString(id);
+	// // true 1
+	// dest.writeByte((byte) (isExpand ? 1 : 0));
+	// dest.writeInt(level);
+	// dest.writeString(name);
+	// dest.writeValue(parent);
+	// dest.writeString(pId);
+	// }
+	//
+	// public Node(Parcel in) {
+	// // this.children=in.readTypedList(list, c);
+	// }
 }

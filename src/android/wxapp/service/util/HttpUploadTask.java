@@ -44,19 +44,15 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 
 	@Override
 	protected String doInBackground(String... params) {
-		// TODO Auto-generated method stub
 		String result = "文件上传失败";
 		try {
 			result = post(params[0], params[1]);
 			return result;
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
@@ -67,8 +63,8 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 	 * 
 	 * @param?uploadUrl?服务器端接收地址????? ?@return?String?????? ?
 	 */
-	public String post(String pathToOurFile, String urlServer)
-			throws ClientProtocolException, IOException, JSONException {
+	public String post(String pathToOurFile, String urlServer) throws ClientProtocolException,
+			IOException, JSONException {
 		String result = null;
 		if (!URLUtil.isNetworkUrl(urlServer)) {
 			result = "服务器地址无效";
@@ -77,8 +73,7 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 
 		HttpClient httpclient = new DefaultHttpClient();
 		// 设置通信协议版本
-		httpclient.getParams().setParameter(
-				CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
 		HttpPost httppost = new HttpPost(urlServer);
 		File file = new File(pathToOurFile);
@@ -86,15 +81,14 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 		// MultipartEntity mpEntity = new MultipartEntity(); //文件传输
 		FileBody cbFile = new FileBody(file);
 
-		CustomMultipartEntity multipartContent = new CustomMultipartEntity(
-				new ProgressListener() {
-					@Override
-					public void transferred(long num) {
-						// TODO Auto-generated method stub
-						publishProgress((int) ((num / (float) totalSize) * 100));
-					}
+		CustomMultipartEntity multipartContent = new CustomMultipartEntity(new ProgressListener() {
+			@Override
+			public void transferred(long num) {
+				// TODO Auto-generated method stub
+				publishProgress((int) ((num / (float) totalSize) * 100));
+			}
 
-				});
+		});
 
 		multipartContent.addPart("data", cbFile);
 		totalSize = multipartContent.getContentLength();
@@ -126,15 +120,13 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
 		if (result.equals("success")) {
-			MessageHandlerManager.getInstance()
-					.sendMessage(Constant.FILE_UPLOAD_SUCCESS,
+			MessageHandlerManager.getInstance().sendMessage(Constant.FILE_UPLOAD_SUCCESS,
 					context.getClass().getSimpleName());
 			if (mytext != null) {
 				mytext.setText("附件上传成功");
 			}
 		} else {
-			MessageHandlerManager.getInstance().sendMessage(
-					Constant.FILE_UPLOAD_FAIL,
+			MessageHandlerManager.getInstance().sendMessage(Constant.FILE_UPLOAD_FAIL,
 					context.getClass().getSimpleName());
 			if (mytext != null) {
 				mytext.setText("附件上传失败");

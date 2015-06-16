@@ -1,12 +1,20 @@
 package android.wxapp.service.dao;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.reflect.TypeToken;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract.Contacts.Data;
 import android.util.Log;
+import android.wxapp.service.jerry.model.affair.QueryAffairInfoResponse;
+import android.wxapp.service.jerry.model.message.QueryContactPersonMessageResponseIds;
+import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.model.MessageModel;
 import android.wxapp.service.util.Constant;
 
@@ -24,34 +32,76 @@ public class MessageDao extends BaseDAO {
 	 * @param message
 	 * @return
 	 */
-	public boolean saveMessage(MessageModel message) {
-		// Cursor cursor = null;
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// try {
-		// cursor = db.rawQuery(
-		// "SELECT COUNT(*) FROM message WHERE message_id = ?",
-		// new String[] { message.getMessageID() });
-		// cursor.moveToFirst();
-		// if (cursor.getInt(0) == 0) { // 该消息不存在，保存之
-		// ContentValues values = createContentValues(message);
-		// long id = db.insert(DBConstants.MESSAGE_TABLE_NAME, null,
-		// values);
-		// if (id == -1) {
-		// Log.i(TAG, "创建消息失败!");
-		// return false;
-		// } else {
-		// Log.i(TAG, "创建消息成功!");
-		// return true;
-		// }
-		// } else { // 该消息已存在，不保存
-		// Log.i(TAG, "不保存重复消息");
-		// return false;
-		// }
-		// } finally {
-		// if (cursor != null)
-		// dbHelper.closeCursor(cursor);
-		// }
-		return false;
+	public boolean saveMessage(String mid, ReceiveMessageResponse message) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE, message.getAt());
+		values.put(DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL, message.getAu());
+		values.put(DatabaseHelper.FIELD_MESSAGE_CONTENT, message.getC());
+		values.put(DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID, mid);
+		// gson
+		values.put(DatabaseHelper.FIELD_MESSAGE_RELATION_ID, gson.toJson(message.getRids()));
+		values.put(DatabaseHelper.FIELD_MESSAGE_SEND_TIME, message.getSt());
+		values.put(DatabaseHelper.FIELD_MESSAGE_SENDER_ID, message.getSid());
+		values.put(DatabaseHelper.FIELD_MESSAGE_TYPE, message.getT());
+		values.put(DatabaseHelper.FIELD_MESSAGE_UPDATE_TIME, message.getUt());
+		long i = db.insert(DatabaseHelper.TABLE_MESSAGE, null, values);
+		return i > 0;
+	}
+
+	/**
+	 * 查询聊天记录
+	 * 
+	 * @param sid
+	 * @param rid
+	 * @return
+	 */
+	public List<ReceiveMessageResponse> getMessageBySidAndRid(String sid, String rid) {
+		db = dbHelper.getReadableDatabase();
+		List<QueryContactPersonMessageResponseIds> temp = new ArrayList<QueryContactPersonMessageResponseIds>();
+		temp.add(new QueryContactPersonMessageResponseIds(rid));
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where (("
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + sid + ") and ("
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + gson.toJson(temp) + "'))", null);
+		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
+		while (c.moveToNext()) {
+			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					sid, temp, getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
+		}
+		c.close();
+		return result;
+	}
+
+	/**
+	 * 根据mid查询消息
+	 * 
+	 * @param mid
+	 * @return
+	 */
+	public ReceiveMessageResponse getMessageByMid(String mid) {
+		db = dbHelper.getReadableDatabase();
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where "
+				+ DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID + " = " + mid, null);
+		ReceiveMessageResponse result = null;
+		if (c.moveToFirst()) {
+			List<QueryContactPersonMessageResponseIds> temp = gson.fromJson(
+					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
+					new TypeToken<List<QueryContactPersonMessageResponseIds>>() {
+					}.getType());
+			result = new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), temp, getData(c,
+							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), "");
+		}
+		c.close();
+		return result;
 	}
 
 	public boolean isMessageExist(String messageID) {

@@ -57,16 +57,6 @@ public class MessageModel {
 		this.isRead = isRead;
 	}
 
-	/** ±£´æ **/
-	public boolean save(Context context) {
-		MessageDao dao = null;
-		dao = daoFactory.getMessageDao(context);
-		try {
-			return dao.saveMessage(this);
-		} finally {
-		}
-	}
-
 	public int getIsGroup() {
 		return isGroup;
 	}

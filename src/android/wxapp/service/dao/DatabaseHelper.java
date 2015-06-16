@@ -22,7 +22,11 @@ import android.util.Log;
  * )
  * <p>
  * person_on_duty(id,affair_id,person_id,type(1:责任人，2:抄送人),update_time)
- * 
+ * <p>
+ * attachment(id,attachment_id,type(1：文本 2：图片3：录像4：录音5：GPS),url)
+ * <p>
+ * message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
+ * attachment_url,update_time)
  * 
  * @author JerryLiu
  * @time 2015-6-1
@@ -108,8 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ FIELD_AFFIARINFO_LAST_OPERATE_TYPE + " text," + FIELD_AFFIARINFO_LAST_OPERATE_TIME
 			+ " text," + FIELD_AFFIARINFO_UPDATETIME + " text," + FIELD_AFFIARINFO_ATTACHMENT + " text)";
 
-	// 表名 affiar *
-	// person_on_duty(id,affair_id,person_id,type(1:责任人，2:抄送人),update_time)
+	// 表名 affiar
 	public static final String TABLE_PERSON_ON_DUTY = "person_on_duty";
 	// 字段
 	public static final String FIELD_POD_ID = "id";
@@ -122,6 +125,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String SQL_POD_CREATE_TABLE = "create table " + TABLE_PERSON_ON_DUTY + " ("
 			+ FIELD_POD_ID + " integer primary key autoincrement, " + FIELD_POD_AID + " text,"
 			+ FIELD_POD_PID + " text," + FIELD_POD_TYPE + " text," + FIELD_POD_UT + " text)";
+
+	// 表名 attachment
+	public static final String TABLE_ATTACHMENT = "attachment";
+	// 字段
+	public static final String FIELD_ATTACHMENT_ID = "id";
+	public static final String FIELD_ATTACHMENT_ATTACHMENT_ID = "attachment_id";
+	// (1：文本 2：图片3：录像4：录音5：GPS)
+	public static final String FIELD_ATTACHMENT_TYPE = "type";
+	public static final String FIELD_ATTACHMENT_URL = "url";
+	// 创建表的SQL
+	public static final String SQL_ATTACHMENT_CREATE_TABLE = "create table " + TABLE_ATTACHMENT + " ("
+			+ FIELD_ATTACHMENT_ID + " integer primary key autoincrement, "
+			+ FIELD_ATTACHMENT_ATTACHMENT_ID + " text," + FIELD_ATTACHMENT_TYPE + " text,"
+			+ FIELD_ATTACHMENT_URL + " text)";
+
+	// message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
+	// * attachment_url,update_time)
+	// 表名 attachment
+	public static final String TABLE_MESSAGE = "message";
+	// 字段
+	public static final String FIELD_MESSAGE_ID = "id";
+	public static final String FIELD_MESSAGE_MESSAGE_ID = "mid";
+	// 消息类型0.普通个人聊天消息1.基本群组消息 2.非基本群组消息3.会议记录消息 4.事务反馈消息
+	public static final String FIELD_MESSAGE_TYPE = "type";
+	public static final String FIELD_MESSAGE_SENDER_ID = "sender_id";
+	public static final String FIELD_MESSAGE_RELATION_ID = "relation_id";
+	public static final String FIELD_MESSAGE_SEND_TIME = "send_time";
+	public static final String FIELD_MESSAGE_CONTENT = "content";
+	// (1：文本 2：图片3：录像4：录音5：GPS)
+	public static final String FIELD_MESSAGE_ATTACHMENT_TYPE = "attachment_type";
+	public static final String FIELD_MESSAGE_ATTACHMENT_URL = "attachment_url";
+	public static final String FIELD_MESSAGE_UPDATE_TIME = "update_time";
+	// 创建表的SQL
+	public static final String SQL_MESSAGE_CREATE_TABLE = "create table " + TABLE_MESSAGE + " ("
+			+ FIELD_MESSAGE_ID + " integer primary key autoincrement, " + FIELD_MESSAGE_MESSAGE_ID
+			+ " text," + FIELD_MESSAGE_TYPE + " text," + FIELD_MESSAGE_SENDER_ID + " text,"
+			+ FIELD_MESSAGE_RELATION_ID + " text," + FIELD_MESSAGE_SEND_TIME + " text,"
+			+ FIELD_MESSAGE_CONTENT + " text," + FIELD_MESSAGE_ATTACHMENT_TYPE + " text,"
+			+ FIELD_MESSAGE_ATTACHMENT_URL + " text," + FIELD_MESSAGE_UPDATE_TIME + " text)";
+
 	// //////////////////////
 
 	// // 事务相关数据表名
@@ -306,6 +349,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_POD_CREATE_TABLE);
 		Log.v(LOG_TAG, "SQLite: onCreate table POD");
 		Log.v(LOG_TAG, SQL_POD_CREATE_TABLE);
+		db.execSQL(SQL_ATTACHMENT_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table ATTACHMENT");
+		Log.v(LOG_TAG, SQL_ATTACHMENT_CREATE_TABLE);
+		db.execSQL(SQL_MESSAGE_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table MESSAGE");
+		Log.v(LOG_TAG, SQL_MESSAGE_CREATE_TABLE);
 	}
 
 	@Override

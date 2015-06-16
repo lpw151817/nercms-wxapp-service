@@ -89,7 +89,7 @@ public class AffairDao extends BaseDAO {
 		if (c.moveToFirst()) {
 			Map<String, List<CreateTaskRequestIds>> ids = getPersonIdByAffairId(aid);
 
-			List<CreateTaskRequestAttachment> attParams = new Gson().fromJson(
+			List<CreateTaskRequestAttachment> attParams = gson.fromJson(
 					getData(c, DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT),
 					new TypeToken<List<CreateTaskRequestAttachment>>() {
 					}.getType());
