@@ -78,8 +78,6 @@ public class Constant {
 	public static final int MODIFY_TASK_REQUEST_SUCCESS = 204;
 	// 结束任务请求失败
 	public static final int MODIFY_TASK_REQUEST_FAIL = 205;
-	// 新任务保存完成通知
-	public static final int SAVE_TASK_SUCCESS = 206;
 	// 更新任务列表成功
 	public static final int UPDATE_TASK_LIST_REQUEST_SUCCESS = 207;
 	// 更新任务列表失败
@@ -100,6 +98,10 @@ public class Constant {
 	public static final int QUERY_TASK_INFO_REQUEST_SUCCESS = 215;
 	// 请求任务详情失败
 	public static final int QUERY_TASK_INFO_REQUEST_FAIL = 216;
+	// 保存任务成功
+	public static final int SAVE_TASK_SUCCESS = 217;
+	// 保存任务失败
+	public static final int SAVE_TASK_FAIL = 218;
 
 	// Feedback jerry 5.23
 	// 发送反馈请求成功
@@ -118,8 +120,6 @@ public class Constant {
 	public static final int SEND_MESSAGE_REQUEST_SUCCESS = 400;
 	// 发送消息请求失败
 	public static final int SEND_MESSAGE_REQUEST_FAIL = 401;
-	// 新消息保存完成通知
-	public static final int SAVE_MESSAGE_SUCCESS = 402;
 	// 更新消息请求成功
 	public static final int UPDATE_MESSAGE_REQUEST_SUCCESS = 403;
 	// 更新消息请求失败
@@ -132,6 +132,10 @@ public class Constant {
 	public static final int QUERY_MESSAGE_INFO_REQUEST_SUCCESS = 407;
 	// 查询最近联系人消息请求失败
 	public static final int QUERY_MESSAGE_INFO_REQUEST_FAIL = 408;
+	// 保存消息成功
+	public static final int SAVE_MESSAGE_SUCCESS = 409;
+	// 保存消息失败
+	public static final int SAVE_MESSAGE_FAIL = 410;
 
 	// Attachment
 	// 附件下载成功

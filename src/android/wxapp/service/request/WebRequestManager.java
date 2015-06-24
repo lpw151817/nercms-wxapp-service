@@ -148,15 +148,18 @@ public class WebRequestManager {
 	}
 
 	// 发送新消息
-	public void sendMessage(String t, String sid, String[] rids, String st, String c,
-			String at, String au, String ut) {
+	public void sendMessage(String t, String sid, String[] rids, String st, String c, String at,
+			String au, String ut) {
 		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rids, st, c, at, au, ut));
 	}
 
 	// 获取新消息
-	public void getMessageUpdate(String ic, String count) {
-		// queue.add(new MessageRequest().getMessageUpdateRequest(context, ic,
-		// count));
+	public void getMessageUpdate(String count) {
+		queue.add(new MessageRequest().getMessageUpdateRequest(context, count));
+	}
+
+	public void getMessage(String mid) {
+
 	}
 
 	public void sendCrashReport(JsonObjectRequest request) {

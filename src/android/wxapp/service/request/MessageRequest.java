@@ -25,6 +25,7 @@ import android.wxapp.service.jerry.model.message.SendMessageResponse;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
 import android.wxapp.service.model.MessageModel;
 import android.wxapp.service.thread.SaveMessageThread;
+import android.wxapp.service.thread.SaveMessageUpdateThread;
 import android.wxapp.service.thread.ThreadManager;
 import android.wxapp.service.util.Constant;
 import android.wxapp.service.util.MyJsonParseUtil;
@@ -66,12 +67,17 @@ public class MessageRequest extends BaseRequest {
 	 *            标记是第几次查询数据，用于分页请求数据。请求需要维护count值
 	 * @return
 	 */
-	public JsonObjectRequest getMessageUpdateRequest(final Context c, String ic, String count) {
+	public JsonObjectRequest getMessageUpdateRequest(final Context c, String count) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null || getLastMessageUpdateTime(c) == null)
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		MessageUpdateQueryRequest params = new MessageUpdateQueryRequest(getUserId(c), ic,
-				getLastMessageUpdateTime(c), count);
+		String tempLastMessageUpdateTime;
+		if (getLastMessageUpdateTime(c) == null)
+			tempLastMessageUpdateTime = "";
+		else
+			tempLastMessageUpdateTime = getLastMessageUpdateTime(c);
+		MessageUpdateQueryRequest params = new MessageUpdateQueryRequest(getUserId(c), getUserIc(c),
+				tempLastMessageUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_UPDATE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -85,8 +91,8 @@ public class MessageRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						MessageUpdateQueryResponse r = gson.fromJson(arg0.toString(),
 								MessageUpdateQueryResponse.class);
-						// TODO 进行数据库的操作,保存数据
-
+						// 进行数据库的操作,保存数据
+						new SaveMessageUpdateThread(c, r).run();
 						// 更新本地时间戳
 						MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_MESSAGE_TIMESTAMP,
 								System.currentTimeMillis());
@@ -99,8 +105,8 @@ public class MessageRequest extends BaseRequest {
 					else if (arg0.getString("s").equals(Contants.RESULT_MORE)) {
 						MessageUpdateQueryResponse r = gson.fromJson(arg0.toString(),
 								MessageUpdateQueryResponse.class);
-						// TODO 保存此次数据
-
+						// 进行数据库的操作,保存数据
+						new SaveMessageUpdateThread(c, r).run();
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.UPDATE_MESSAGE_REQUEST_SUCCESS, r,

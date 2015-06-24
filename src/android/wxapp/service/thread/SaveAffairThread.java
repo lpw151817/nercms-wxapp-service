@@ -19,11 +19,15 @@ import android.wxapp.service.util.MySharedPreference;
 public class SaveAffairThread extends Thread {
 	Context c;
 	QueryAffairInfoResponse data;
+	public static final String TAG = "SaveAffairThread";
 
 	@Override
 	public void run() {
 		AffairDao affairDao = new AffairDao(c);
-		affairDao.saveAffairInfo(this.data);
+		if (affairDao.saveAffairInfo(this.data)) {
+			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_SUCCESS, TAG);
+		} else
+			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_FAIL, TAG);
 		super.run();
 	}
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import android.content.ContentValues;
@@ -13,6 +14,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.ContactsContract.Contacts.Data;
 import android.util.Log;
 import android.wxapp.service.jerry.model.affair.QueryAffairInfoResponse;
+import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
+import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponseMessages;
 import android.wxapp.service.jerry.model.message.QueryContactPersonMessageResponseIds;
 import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.model.MessageModel;
@@ -49,8 +52,20 @@ public class MessageDao extends BaseDAO {
 		return i > 0;
 	}
 
+	public boolean saveMessageUpdate(MessageUpdateQueryResponse message) {
+		for (MessageUpdateQueryResponseMessages item : message.getMs()) {
+			if (saveMessage(item.getMid(), new ReceiveMessageResponse("", item.getT(), item.getSid(),
+					item.getRids(), item.getSt(), item.getC(), item.getAt(), item.getAu(), item.getUt(),
+					"")))
+				continue;
+			else
+				return false;
+		}
+		return true;
+	}
+
 	/**
-	 * 查询聊天记录
+	 * 根据发送id和接收id查询聊天记录
 	 * 
 	 * @param sid
 	 * @param rid
@@ -102,6 +117,99 @@ public class MessageDao extends BaseDAO {
 		}
 		c.close();
 		return result;
+	}
+
+	/**
+	 * 查询聊天记录
+	 *
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public List<ReceiveMessageResponse> getMessageRecord(String uid) {
+		db = dbHelper.getReadableDatabase();
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + "where "
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + uid, null);
+		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
+		while (c.moveToNext()) {
+			List<QueryContactPersonMessageResponseIds> tempRids = new Gson().fromJson(
+					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
+					new TypeToken<List<QueryContactPersonMessageResponseIds>>() {
+					}.getType());
+			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), tempRids, getData(c,
+							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
+		}
+		c.close();
+		return result;
+	}
+
+	/**
+	 * 根据本人ID，获取本人最近会话列表
+	 * 
+	 * @param userID
+	 * @return
+	 */
+	public ArrayList<MessageModel> getRecentMessageListByUserID(String userID) {
+		// ArrayList<String> idList = new ArrayList<String>();
+		// ArrayList<MessageModel> recentMsgList = new
+		// ArrayList<MessageModel>();
+		// Cursor cursor = null;
+		// Cursor cursor2 = null;
+		// String objectID = null;
+		// try {
+		// SQLiteDatabase db = dbHelper.getReadableDatabase();
+		// cursor = db
+		// .rawQuery(
+		// "SELECT sender_id,receiver_id,message_id,is_group FROM message WHERE sender_id = ? OR receiver_id = ? OR is_group = 1",
+		// new String[] { userID, userID });
+		//
+		// while (cursor.moveToNext()) {
+		//
+		// if (cursor.getInt(3) == 1) { // 为群消息，对象ID为群名
+		// objectID = String.valueOf(cursor.getInt(1));
+		// } else { // 为个人消息
+		// if (Integer.parseInt(userID) == cursor.getInt(0)) { // 用户本人是发送人
+		// objectID = String.valueOf(cursor.getInt(1)); // ,对象ID就是接收人ID
+		// } else if (Integer.parseInt(userID) == cursor.getInt(1)) { // 本人是接收人
+		// objectID = String.valueOf(cursor.getInt(0)); // ，对象ID就是发送人ID
+		// }
+		// }
+		//
+		//
+		// if (objectID != null && !idList.contains(objectID)) //
+		// 每个聊天对象加入对象ID列表一次
+		// idList.add(objectID);
+		// }
+		//
+		// for (int i = 0; i < idList.size(); i++) { //
+		// 根据对象ID列表，找出与该对象最新的一次Message
+		// cursor2 = db
+		// .rawQuery(
+		// "SELECT message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
+		// + " FROM "
+		// + DBConstants.MESSAGE_TABLE_NAME
+		// +
+		// " WHERE (sender_id = ? and receiver_id = ?) or (receiver_id = ? and sender_id = ?) or (receiver_id = ? and is_group = 1) order by send_time desc",
+		// new String[] { idList.get(i), userID,
+		// idList.get(i), userID, idList.get(i) });
+		// cursor2.moveToFirst(); // 只取第一条数据（最新消息）
+		// MessageModel msg = createMessageFromCursor(cursor2);
+		// recentMsgList.add(msg); // 每个对象的最新一次Message进入列表
+		// }
+		//
+		// } finally {
+		// if (cursor != null)
+		// dbHelper.closeCursor(cursor);
+		// if (cursor2 != null)
+		// dbHelper.closeCursor(cursor2);
+		// }
+		// return recentMsgList;
+		return null;
 	}
 
 	public boolean isMessageExist(String messageID) {
@@ -234,70 +342,6 @@ public class MessageDao extends BaseDAO {
 		// dbHelper.closeCursor(cursor);
 		// }
 		// return msgList;
-		return null;
-	}
-
-	/**
-	 * 根据本人ID，获取本人最近会话列表
-	 * 
-	 * @param userID
-	 * @return
-	 */
-	public ArrayList<MessageModel> getRecentMessageListByUserID(String userID) {
-		// ArrayList<String> idList = new ArrayList<String>();
-		// ArrayList<MessageModel> recentMsgList = new
-		// ArrayList<MessageModel>();
-		// Cursor cursor = null;
-		// Cursor cursor2 = null;
-		// String objectID = null;
-		// try {
-		// SQLiteDatabase db = dbHelper.getReadableDatabase();
-		// cursor = db
-		// .rawQuery(
-		// "SELECT sender_id,receiver_id,message_id,is_group FROM message WHERE sender_id = ? OR receiver_id = ? OR is_group = 1",
-		// new String[] { userID, userID });
-		//
-		// while (cursor.moveToNext()) {
-		//
-		// if (cursor.getInt(3) == 1) { // 为群消息，对象ID为群名
-		// objectID = String.valueOf(cursor.getInt(1));
-		// } else { // 为个人消息
-		// if (Integer.parseInt(userID) == cursor.getInt(0)) { // 用户本人是发送人
-		// objectID = String.valueOf(cursor.getInt(1)); // ,对象ID就是接收人ID
-		// } else if (Integer.parseInt(userID) == cursor.getInt(1)) { // 本人是接收人
-		// objectID = String.valueOf(cursor.getInt(0)); // ，对象ID就是发送人ID
-		// }
-		// }
-		//
-		//
-		// if (objectID != null && !idList.contains(objectID)) //
-		// 每个聊天对象加入对象ID列表一次
-		// idList.add(objectID);
-		// }
-		//
-		// for (int i = 0; i < idList.size(); i++) { //
-		// 根据对象ID列表，找出与该对象最新的一次Message
-		// cursor2 = db
-		// .rawQuery(
-		// "SELECT message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
-		// + " FROM "
-		// + DBConstants.MESSAGE_TABLE_NAME
-		// +
-		// " WHERE (sender_id = ? and receiver_id = ?) or (receiver_id = ? and sender_id = ?) or (receiver_id = ? and is_group = 1) order by send_time desc",
-		// new String[] { idList.get(i), userID,
-		// idList.get(i), userID, idList.get(i) });
-		// cursor2.moveToFirst(); // 只取第一条数据（最新消息）
-		// MessageModel msg = createMessageFromCursor(cursor2);
-		// recentMsgList.add(msg); // 每个对象的最新一次Message进入列表
-		// }
-		//
-		// } finally {
-		// if (cursor != null)
-		// dbHelper.closeCursor(cursor);
-		// if (cursor2 != null)
-		// dbHelper.closeCursor(cursor2);
-		// }
-		// return recentMsgList;
 		return null;
 	}
 

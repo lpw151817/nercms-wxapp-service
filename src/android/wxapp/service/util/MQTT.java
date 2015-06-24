@@ -32,7 +32,7 @@ public class MQTT {
 
 	private volatile static MQTT _unique_instance = null;
 
-	public static MQTT get_instance() {
+	public static MQTT get_instance() throws MqttException {
 		if (null == _unique_instance) {
 			synchronized (MQTT.class) {
 				if (null == _unique_instance) {
@@ -46,9 +46,9 @@ public class MQTT {
 
 	private MqttClient _client = null;
 
-	private MQTT() {
+	private MQTT() throws MqttException {
 		// 创建MQTT客户端
-		try {
+//		try {
 			// 创建
 			_client = new MqttClient(SERVER_URL, CLIENT_ID, new MemoryPersistence());
 
@@ -58,11 +58,11 @@ public class MQTT {
 
 			// 初始化，连接及订阅
 			init();
-		} catch (MqttException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.v("MQTT", "create mqtt client error " + e.toString());
-		}
+//		} catch (MqttException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			Log.v("MQTT", "create mqtt client error " + e.toString());
+//		}
 	}
 
 	private final String WILL_TOPIC = "mqtt/errors";

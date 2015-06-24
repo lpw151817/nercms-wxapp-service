@@ -498,10 +498,6 @@ public class PersonRequest extends BaseRequest {
 						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
 						// 进行数据库的添加,并保存时间戳，返回handler到ui线程进行操作
 						new SaveOrgCodeThread(c, r).run();
-
-						// MessageHandlerManager.getInstance().sendMessage(
-						// Constant.QUERY_ORG_NODE_REQUEST_SUCCESS, r,
-						// Contants.METHOD_PERSON_GET_ORG_CODE);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);

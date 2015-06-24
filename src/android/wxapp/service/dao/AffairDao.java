@@ -39,18 +39,29 @@ public class AffairDao extends BaseDAO {
 	 * @param affair
 	 * @return
 	 */
-	public void saveAffairUpdate(TaskUpdateQueryResponse affair) {
+	public boolean saveAffairUpdate(TaskUpdateQueryResponse affair) {
 		db = dbHelper.getWritableDatabase();
-		for (TaskUpdateQueryResponseAffairs item : affair.getAs()) {
-			saveAffairInfo(new QueryAffairInfoResponse("", item.getAid(), item.getT(), item.getSid(),
-					item.getD(), item.getTopic(), item.getBt(), item.getEt(), item.getCt(),
-					item.getLot(), item.getLotime(), item.getUp(), item.getAtt(), item.getRids(),
-					item.getPod()));
+		int i;
+		for (i = 0; i < affair.getAs().size(); i++) {
+			if (saveAffairInfo(new QueryAffairInfoResponse("", affair.getAs().get(i).getAid(), affair
+					.getAs().get(i).getT(), affair.getAs().get(i).getSid(),
+					affair.getAs().get(i).getD(), affair.getAs().get(i).getTopic(), affair.getAs()
+							.get(i).getBt(), affair.getAs().get(i).getEt(), affair.getAs().get(i)
+							.getCt(), affair.getAs().get(i).getLot(), affair.getAs().get(i).getLotime(),
+					affair.getAs().get(i).getUp(), affair.getAs().get(i).getAtt(), affair.getAs().get(i)
+							.getRids(), affair.getAs().get(i).getPod())))
+				continue;
+			else {
+				break;
+			}
 		}
-		Log.v(TAG, "saveAffairUpdate failed");
+		if (i == affair.getAs().size())
+			return true;
+		else
+			return false;
 	}
 
-	public void saveAffairInfo(QueryAffairInfoResponse affairInfo) {
+	public boolean saveAffairInfo(QueryAffairInfoResponse affairInfo) {
 		db = dbHelper.getWritableDatabase();
 		// 插入到TABLE_AFFIARINFO中
 		ContentValues values = new ContentValues();
@@ -66,19 +77,43 @@ public class AffairDao extends BaseDAO {
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_UPDATETIME, affairInfo.getUp());
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT, gson.toJson(affairInfo.getAtt()));
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID, affairInfo.getAid());
-		if (db.insert(DatabaseHelper.TABLE_AFFIARINFO, null, values) == -1) {
-			Log.i(TAG, "存储事务失败!");
-		} else {
-			Log.i(TAG, "存储事务成功!");
-		}
 
 		// 插入人员信息到TABLE_PERSON_ON_DUTY
-		for (CreateTaskRequestIds item : affairInfo.getPod()) {
-			savePersonOnDuty(affairInfo.getAid(), item.getRid(), affairInfo.getUp());
+		boolean isSavePodSuccess = false;
+		boolean isSaveRidSuccess = false;
+
+		int i;
+		for (i = 0; i < affairInfo.getPod().size(); i++) {
+			if (savePersonOnDuty(affairInfo.getAid(), affairInfo.getPod().get(i).getRid(),
+					affairInfo.getUp())) {
+				continue;
+			} else
+				break;
 		}
-		for (CreateTaskRequestIds item : affairInfo.getRids()) {
-			saveReceiver(affairInfo.getAid(), item.getRid(), affairInfo.getUp());
+		if (i == affairInfo.getPod().size()) {
+			isSavePodSuccess = true;
 		}
+		// 归零
+		i = 0;
+		for (i = 0; i < affairInfo.getRids().size(); i++) {
+			if (saveReceiver(affairInfo.getAid(), affairInfo.getRids().get(i).getRid(),
+					affairInfo.getUp())) {
+				continue;
+			} else
+				break;
+		}
+		if (i == affairInfo.getRids().size()) {
+			isSaveRidSuccess = true;
+		}
+		if ((db.insert(DatabaseHelper.TABLE_AFFIARINFO, null, values) == -1) && isSavePodSuccess
+				&& isSaveRidSuccess) {
+			Log.i(TAG, "存储事务失败!");
+			return false;
+		} else {
+			Log.i(TAG, "存储事务成功!");
+			return true;
+		}
+
 	}
 
 	public QueryAffairInfoResponse getAffairInfoByAid(String aid) {
@@ -377,6 +412,7 @@ public class AffairDao extends BaseDAO {
 			}
 		}
 		Log.e("AffairDao SQL", sql);
+		sql += " order by " + DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " DESC";
 		c = db.rawQuery(sql, null);
 		List<QueryAffairListResponseAffairs> result = new ArrayList<QueryAffairListResponseAffairs>();
 		while (c.moveToNext()) {
@@ -419,6 +455,25 @@ public class AffairDao extends BaseDAO {
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_READTIME, System.currentTimeMillis());
 		return db.update(DatabaseHelper.TABLE_AFFIARINFO, values,
 				DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + "= ?", new String[] { affairID }) > 0;
+	}
+
+	/**
+	 * 事务标记为已完成
+	 * 
+	 * @param affairID
+	 * @param completeTime
+	 *            (由服务器端返回得到)
+	 */
+	public boolean updateAffairCompleted(String affairID, String completeTime) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME, completeTime);
+		return db.update(DatabaseHelper.TABLE_AFFIARINFO, values,
+				DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + "= ?", new String[] { affairID }) > 0;
+	}
+
+	public boolean completeAffair(String affairID) {
+		return updateAffairCompleted(affairID, System.currentTimeMillis() + "");
 	}
 
 	/**
@@ -500,31 +555,6 @@ public class AffairDao extends BaseDAO {
 		// }
 		// return affairs;
 		return null;
-	}
-
-	/**
-	 * 事务标记为已完成
-	 * 
-	 * @param affairID
-	 * @param completeTime
-	 *            (由服务器端返回得到)
-	 */
-	public void updateAffairCompleted(String affairID, String completeTime) {
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// ContentValues values = new ContentValues();
-		// values.put("status", DBConstants.AFFAIR_COMPLETED);
-		// values.put("is_read", 0); // 更新为未读
-		// values.put("complete_time", completeTime);
-		// values.put("last_operate_type", 2); // 最后一次操作标记为 2-置完成
-		// values.put("last_operate_time", completeTime); // 最后一次操作时间，等于置完成的时间
-		// int id = db.update(DBConstants.AFFAIRS_TABLE_NAME, values,
-		// "affair_id = ?",
-		// new String[] { affairID });
-		// if (id == -1) {
-		// Log.i(TAG, "任务标记为已完成失败!");
-		// } else {
-		// Log.i(TAG, "任务标记为已完成!");
-		// }
 	}
 
 	/**
