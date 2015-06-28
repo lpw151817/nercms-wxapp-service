@@ -93,9 +93,6 @@ public class MessageRequest extends BaseRequest {
 								MessageUpdateQueryResponse.class);
 						// 进行数据库的操作,保存数据
 						new SaveMessageUpdateThread(c, r).run();
-						// 更新本地时间戳
-						MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_MESSAGE_TIMESTAMP,
-								System.currentTimeMillis());
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.UPDATE_MESSAGE_REQUEST_SUCCESS, r,
@@ -193,17 +190,13 @@ public class MessageRequest extends BaseRequest {
 	 *            更新时间
 	 * @return
 	 */
-	public JsonObjectRequest sendMessageRequest(final Context context, String t, String sid,
-			String[] rids, String st, String c, String at, String au, String ut) {
+	public JsonObjectRequest sendMessageRequest(final Context context, String t, String sid, String rid,
+			String st, String c, String at, String au, String ut) {
 		// 如果为获取到用户的id，则直接返回
 		if (getUserId(context) == null || getUserIc(context) == null)
 			return null;
-		List<SendMessageRequestIds> l = new ArrayList<SendMessageRequestIds>();
-		for (int i = 0; i < rids.length; i++) {
-			l.add(new SendMessageRequestIds(rids[i]));
-		}
 		final SendMessageRequest params = new SendMessageRequest(getUserId(context), getUserIc(context),
-				t, sid, l, st, c, at, au, ut);
+				t, sid, rid, st, c, at, au, ut);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_SEND
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println(this.url);
@@ -216,14 +209,10 @@ public class MessageRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						SendMessageResponse r = gson.fromJson(arg0.toString(), SendMessageResponse.class);
 						// 进行数据库的insert
-						List<QueryContactPersonMessageResponseIds> ids = new ArrayList<QueryContactPersonMessageResponseIds>();
-						for (SendMessageRequestIds sendMessageRequestIds : params.getRids()) {
-							ids.add(new QueryContactPersonMessageResponseIds(sendMessageRequestIds
-									.getRid()));
-						}
 						new SaveMessageThread(context, r.getMid(), new ReceiveMessageResponse("", params
-								.getT(), params.getSid(), ids, params.getSt(), params.getC(), params
-								.getAt(), params.getAu(), params.getUt(), null)).run();
+								.getT(), params.getSid(), params.getRid(), params.getSt(),
+								params.getC(), params.getAt(), params.getAu(), params.getUt(), null))
+								.run();
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.SEND_MESSAGE_REQUEST_SUCCESS, r, Contants.METHOD_MESSAGE_SEND);

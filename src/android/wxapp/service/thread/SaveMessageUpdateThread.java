@@ -6,6 +6,7 @@ import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
 import android.wxapp.service.request.Contants;
 import android.wxapp.service.util.Constant;
+import android.wxapp.service.util.MySharedPreference;
 
 public class SaveMessageUpdateThread extends Thread {
 	Context c;
@@ -22,8 +23,11 @@ public class SaveMessageUpdateThread extends Thread {
 		MessageDao dao = new MessageDao(c);
 		if (dao.saveMessageUpdate(data)) {
 			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_MESSAGE_SUCCESS, TAG);
-		}
-		else MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_MESSAGE_FAIL, TAG);
+			// 更新本地时间戳
+			MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_MESSAGE_TIMESTAMP,
+					System.currentTimeMillis()+"");
+		} else
+			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_MESSAGE_FAIL, TAG);
 		super.run();
 	}
 }

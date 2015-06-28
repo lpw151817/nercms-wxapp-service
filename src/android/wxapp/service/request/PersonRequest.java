@@ -56,95 +56,6 @@ import com.google.gson.GsonBuilder;
  */
 public class PersonRequest extends BaseRequest {
 
-	// private Context context;
-	// /**
-	// * // 用户ID
-	// */
-	// private String personID;
-	// /**
-	// * // 用户登录名
-	// */
-	// private String aliasName;
-	// /**
-	// * // 用户密码
-	// */
-	// private String identifyCode;
-	// /**
-	// * // IMSI号
-	// */
-	// private String imsi;
-	//
-	// /**
-	// * // 待修改的用户新密码
-	// */
-	// private String newIdentifyCode;
-	//
-	// /**
-	// * // 待新建（或编辑）的客户模型
-	// */
-	// private CustomerModel customer;
-	// /**
-	// * // 待新建（或编辑）的客户的联系方式列表
-	// */
-	// private ArrayList<CustomerContactModel> customerContactList = null;
-	//
-	// /**
-	// * // 待删除客户的ID
-	// */
-	// private String customerID;
-	//
-	// /**
-	// * // 新建客户请求字符串
-	// */
-	// private String newCustomerRequestString = null;
-	// /**
-	// * // 删除客户请求字符串
-	// */
-	// private String deleteCustomerRequestString = null;
-	// /**
-	// * // 用户登录验证请求字符串
-	// */
-	// private String loginRequestString = null;
-	// /**
-	// * // 获取所有联系人请求字符串
-	// */
-	// private String getAllPersonRequestString = null;
-	// /**
-	// * // 修改用户密码请求字符串
-	// */
-	// private String changePasswordRequestString = null;
-	// /**
-	// * // 编辑客户信息请求字符串
-	// */
-	// private String modifyCustomerRequeString = null;
-
-	public PersonRequest() {
-
-	}
-
-	// // 编辑客户信息的构造函数
-	// /**
-	// * 新建（或编辑）客户时的构造函数
-	// * <p>
-	// * 说明：新建客户时，输入参数Customer模型中，customerID可为任意int数值，contactID为必填且真实，
-	// * <p>
-	// * 服务器返回ID后，必须setCustomerID后才可开始保存到本地;
-	// * <p>
-	// * 编辑客户信息时，输入参数Customer模型中，customerID和contactID为必填且真实;
-	// * <p>
-	// * 任何时候，输入参数CustomerContactList均可为null，表示该客户无联系方式
-	// *
-	// * @param context
-	// * @param customer
-	// * @param customerContactList
-	// */
-	// public PersonRequest(Context context, CustomerModel customer,
-	// ArrayList<CustomerContactModel> customerContactList) {
-	// this.context = context;
-	// this.customer = customer;
-	// this.customerContactList = customerContactList;
-	// }
-
 	/**
 	 * 得到新建客户的Request
 	 * 
@@ -483,7 +394,8 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		String orgCodeUptateTime = getLastOrgUpdateTime(c);
 		if (orgCodeUptateTime == null)
-			orgCodeUptateTime = System.currentTimeMillis() + "";
+//			 orgCodeUptateTime = System.currentTimeMillis() + "";
+			orgCodeUptateTime = "";
 		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCodeUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
@@ -530,7 +442,8 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		String orgPersonUptateTime = getLastOrgPersonUpdateTime(c);
 		if (orgPersonUptateTime == null)
-			orgPersonUptateTime = System.currentTimeMillis() + "";
+//			 orgPersonUptateTime = System.currentTimeMillis() + "";
+			orgPersonUptateTime = "";
 		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), getUserIc(c),
 				orgPersonUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
@@ -609,57 +522,6 @@ public class PersonRequest extends BaseRequest {
 				arg0.printStackTrace();
 			}
 		});
-		// loginRequestString = Constant.SERVER_BASE_URL + Constant.LOGIN_URL +
-		// "?param={\"i\":\""
-		// + aliasName + "\",\"c\":\"" + identifyCode + "\",\"s\":\"" + imsi +
-		// "\"}";
-		// Log.v("LoginRequest", loginRequestString);
-		// try {
-		// loginRequestString = Constant.SERVER_BASE_URL
-		// + Constant.LOGIN_URL
-		// + "?param="
-		// + URLEncoder.encode("{\"i\":\"" + aliasName + "\",\"c\":\"" +
-		// identifyCode
-		// + "\",\"s\":\"" + imsi + "\"}", "UTF-8");
-		// } catch (UnsupportedEncodingException e1) {
-		// e1.printStackTrace();
-		// }
-		//
-		// JsonObjectRequest loginRequest = new
-		// JsonObjectRequest(loginRequestString, null,
-		// new Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		//
-		// try {
-		// if (response.getString("success").equals("0")) {
-		// // 登录验证成功,保存用户ID
-		// String id = response.getString("id");
-		// Log.i("LoginRequest", response.toString());
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.LOGIN_REQUEST_SUCCESS, id, "Login");
-		// } else if (response.getString("success").equals("1")) {
-		// // 登录验证失败
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.LOGIN_REQUEST_FAIL, "Login");
-		// }
-		// } catch (JSONException e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// for (int i = 0; i < error.getStackTrace().length; i++) {
-		// Log.i("LoginRequest", error.getStackTrace()[i].toString());
-		// }
-		// }
-		// });
-		//
-		// return loginRequest;
 
 	}
 

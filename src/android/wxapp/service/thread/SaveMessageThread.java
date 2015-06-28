@@ -8,6 +8,7 @@ import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.model.MessageModel;
 import android.wxapp.service.util.Constant;
+import android.wxapp.service.util.MySharedPreference;
 
 public class SaveMessageThread extends Thread {
 
@@ -24,7 +25,13 @@ public class SaveMessageThread extends Thread {
 
 	@Override
 	public void run() {
-		new MessageDao(context).saveMessage(mid, data);
+
+		if (new MessageDao(context).saveMessage(mid, data)) {
+			MySharedPreference.save(context, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
+					System.currentTimeMillis() + "");
+		} else {
+
+		}
 		super.run();
 	}
 	// private Context context = null;

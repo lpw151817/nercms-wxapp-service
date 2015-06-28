@@ -148,9 +148,9 @@ public class WebRequestManager {
 	}
 
 	// 发送新消息
-	public void sendMessage(String t, String sid, String[] rids, String st, String c, String at,
+	public void sendMessage(String t, String sid, String rid, String st, String c, String at,
 			String au, String ut) {
-		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rids, st, c, at, au, ut));
+		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rid, st, c, at, au, ut));
 	}
 
 	// 获取新消息

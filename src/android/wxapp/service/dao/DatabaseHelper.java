@@ -11,7 +11,7 @@ import android.util.Log;
  * <p>
  * org_code(id,org_code,description);
  * <p>
- * org_code_person(id,user_id,user_name,org_code);
+ * org_code_person(id,user_id,user_name,org_code,remark,contacts);
  * <p>
  * myinfo(id,user_name,name,description,remark,contacts);
  * <p>
@@ -60,9 +60,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String FIELD_ORG_PERSON_ORG_CODE = "org_code";
 	public static final String FIELD_ORG_PERSON_USER_ID = "user_id";
 	public static final String FIELD_ORG_PERSON_USER_NAME = "user_name";
+	public static final String FIELD_ORG_PERSON_REMARK = "remark";
+	public static final String FIELD_ORG_PERSON_CONTACTS = "contacts";
 	public static final String SQL_ORG_PERSON_CREATE_TABLE = "create table " + TABLE_ORG_PERSON + " ("
 			+ FIELD_ORG_PERSON_ID + " integer primary key autoincrement, " + FIELD_ORG_PERSON_USER_ID
-			+ " text," + FIELD_ORG_PERSON_ORG_CODE + " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
+			+ " text," + FIELD_ORG_PERSON_ORG_CODE + " text," + FIELD_ORG_PERSON_REMARK + " text,"
+			+ FIELD_ORG_PERSON_CONTACTS + " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
 
 	// ±íÃû myinfo
 	public static final String TABLE_MY_INFO = "myinfo";

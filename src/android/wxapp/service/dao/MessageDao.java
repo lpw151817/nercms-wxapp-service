@@ -43,7 +43,7 @@ public class MessageDao extends BaseDAO {
 		values.put(DatabaseHelper.FIELD_MESSAGE_CONTENT, message.getC());
 		values.put(DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID, mid);
 		// gson
-		values.put(DatabaseHelper.FIELD_MESSAGE_RELATION_ID, gson.toJson(message.getRids()));
+		values.put(DatabaseHelper.FIELD_MESSAGE_RELATION_ID, message.getRid());
 		values.put(DatabaseHelper.FIELD_MESSAGE_SEND_TIME, message.getSt());
 		values.put(DatabaseHelper.FIELD_MESSAGE_SENDER_ID, message.getSid());
 		values.put(DatabaseHelper.FIELD_MESSAGE_TYPE, message.getT());
@@ -53,9 +53,9 @@ public class MessageDao extends BaseDAO {
 	}
 
 	public boolean saveMessageUpdate(MessageUpdateQueryResponse message) {
-		for (MessageUpdateQueryResponseMessages item : message.getMs()) {
+		for (MessageUpdateQueryResponseMessages item : message.getMids()) {
 			if (saveMessage(item.getMid(), new ReceiveMessageResponse("", item.getT(), item.getSid(),
-					item.getRids(), item.getSt(), item.getC(), item.getAt(), item.getAu(), item.getUt(),
+					item.getRid(), item.getSt(), item.getC(), item.getAt(), item.getAu(), item.getUt(),
 					"")))
 				continue;
 			else
@@ -73,15 +73,13 @@ public class MessageDao extends BaseDAO {
 	 */
 	public List<ReceiveMessageResponse> getMessageBySidAndRid(String sid, String rid) {
 		db = dbHelper.getReadableDatabase();
-		List<QueryContactPersonMessageResponseIds> temp = new ArrayList<QueryContactPersonMessageResponseIds>();
-		temp.add(new QueryContactPersonMessageResponseIds(rid));
 		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where (("
 				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + sid + ") and ("
-				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + gson.toJson(temp) + "'))", null);
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + rid + "'))", null);
 		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
 		while (c.moveToNext()) {
 			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					sid, temp, getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
+					sid, rid, getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
@@ -103,12 +101,9 @@ public class MessageDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID + " = " + mid, null);
 		ReceiveMessageResponse result = null;
 		if (c.moveToFirst()) {
-			List<QueryContactPersonMessageResponseIds> temp = gson.fromJson(
-					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
-					new TypeToken<List<QueryContactPersonMessageResponseIds>>() {
-					}.getType());
 			result = new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), temp, getData(c,
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
@@ -132,12 +127,9 @@ public class MessageDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + uid, null);
 		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
 		while (c.moveToNext()) {
-			List<QueryContactPersonMessageResponseIds> tempRids = new Gson().fromJson(
-					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
-					new TypeToken<List<QueryContactPersonMessageResponseIds>>() {
-					}.getType());
 			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), tempRids, getData(c,
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,

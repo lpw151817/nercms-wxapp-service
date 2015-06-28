@@ -29,6 +29,8 @@ import android.wxapp.service.jerry.model.affair.QueryAffairListRequest;
 import android.wxapp.service.jerry.model.affair.QueryAffairListResponse;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
+import android.wxapp.service.jerry.model.affair.UpdateAffairReadTimeRequest;
+import android.wxapp.service.jerry.model.affair.UpdateAffairReadTimeResponse;
 import android.wxapp.service.jerry.model.gps.GpsUploadRequest;
 import android.wxapp.service.jerry.model.normal.NormalServerResponse;
 import android.wxapp.service.jerry.model.person.ModifyCustomerResponse;
@@ -81,7 +83,8 @@ public class AffairRequest extends BaseRequest {
 			return null;
 		String lastUpdateTime = getLastAffairUpdateTime(c);
 		if (lastUpdateTime == null)
-			lastUpdateTime = System.currentTimeMillis() + "";
+			// lastUpdateTime = System.currentTimeMillis() + "";
+			lastUpdateTime = "";
 		TaskUpdateQueryRequest params = new TaskUpdateQueryRequest(getUserId(c), getUserIc(c),
 				lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_LIST
@@ -705,4 +708,46 @@ public class AffairRequest extends BaseRequest {
 	// return affairList;
 	// }
 
+	public JsonObjectRequest updateAffairReadtime(Context c, String aid) {
+		if (getUserIc(c) == null || getUserId(c) == null)
+			return null;
+		UpdateAffairReadTimeRequest params = new UpdateAffairReadTimeRequest(getUserId(c), getUserIc(c),
+				aid, System.currentTimeMillis() + "");
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_READTIME
+				+ Contants.PARAM_NAME + super.gson.toJson(params);
+		System.out.println("request>>>>>>" + this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println("response>>>>>>>" + arg0.toString());
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						UpdateAffairReadTimeResponse r = gson.fromJson(arg0.toString(),
+								UpdateAffairReadTimeResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.UPDATE_TASK_READTIME_SUCCESS, r,
+								Contants.METHOD_AFFAIRS_UPDATE_READTIME);
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.UPDATE_TASK_READTIME_FAIL, r,
+								Contants.METHOD_AFFAIRS_UPDATE_READTIME);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		});
+
+	}
 }

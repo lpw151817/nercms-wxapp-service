@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MessageUpdateQueryResponse {
 	String s;
-	List<MessageUpdateQueryResponseMessages> ms;
+	List<MessageUpdateQueryResponseMessages> mids;
 	String tsp;
 
 	public String getS() {
@@ -15,12 +15,19 @@ public class MessageUpdateQueryResponse {
 		this.s = s;
 	}
 
-	public List<MessageUpdateQueryResponseMessages> getMs() {
-		return ms;
+	public MessageUpdateQueryResponse(String s, List<MessageUpdateQueryResponseMessages> mids, String tsp) {
+		super();
+		this.s = s;
+		this.mids = mids;
+		this.tsp = tsp;
 	}
 
-	public void setMs(List<MessageUpdateQueryResponseMessages> ms) {
-		this.ms = ms;
+	public List<MessageUpdateQueryResponseMessages> getMids() {
+		return mids;
+	}
+
+	public void setMids(List<MessageUpdateQueryResponseMessages> mids) {
+		this.mids = mids;
 	}
 
 	public String getTsp() {
@@ -28,13 +35,6 @@ public class MessageUpdateQueryResponse {
 	}
 
 	public void setTsp(String tsp) {
-		this.tsp = tsp;
-	}
-
-	public MessageUpdateQueryResponse(String s, List<MessageUpdateQueryResponseMessages> ms, String tsp) {
-		super();
-		this.s = s;
-		this.ms = ms;
 		this.tsp = tsp;
 	}
 

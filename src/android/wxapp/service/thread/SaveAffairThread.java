@@ -26,6 +26,8 @@ public class SaveAffairThread extends Thread {
 		AffairDao affairDao = new AffairDao(c);
 		if (affairDao.saveAffairInfo(this.data)) {
 			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_SUCCESS, TAG);
+			MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
+					System.currentTimeMillis() + "");
 		} else
 			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_FAIL, TAG);
 		super.run();

@@ -132,6 +132,8 @@ public class PersonDao extends BaseDAO {
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_USER_ID, item.getUid());
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_USER_NAME, item.getUn());
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE, item.getOc());
+			v.put(DatabaseHelper.FIELD_ORG_PERSON_CONTACTS, gson.toJson(item.getContacts()));
+			v.put(DatabaseHelper.FIELD_ORG_PERSON_REMARK, item.getR());
 			i = db.insertOrThrow(DatabaseHelper.TABLE_ORG_PERSON, null, v);
 			if (i == -1) {
 				Log.i(TAG, "存储机构节点人员表失败!");
@@ -156,8 +158,30 @@ public class PersonDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE + " = ?", new String[] { oc });
 		List<OrgPersonInfo> result = new ArrayList<OrgPersonInfo>();
 		while (c.moveToNext()) {
+			List<Contacts> tempContacts = gson.fromJson(
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_CONTACTS),
+					new TypeToken<List<Contacts>>() {
+					}.getType());
 			result.add(new OrgPersonInfo(getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID), getData(c,
-					DatabaseHelper.FIELD_ORG_PERSON_USER_NAME), oc));
+					DatabaseHelper.FIELD_ORG_PERSON_USER_NAME), oc, getData(c,
+					DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts));
+		}
+		c.close();
+		return result;
+	}
+
+	public String getOrgByPersonId(String uid) {
+		db = dbHelper.getReadableDatabase();
+		// 选出对应uid的oc
+		String sql = "select * from " + DatabaseHelper.TABLE_ORG_CODE + " where "
+				+ DatabaseHelper.FIELD_ORG_CODE_ORG_CODE + "= (select "
+				+ DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE + " from " + DatabaseHelper.TABLE_ORG_PERSON
+				+ " where " + DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + uid + " )";
+		Log.e("PersonDao SQL", sql);
+		Cursor c = db.rawQuery(sql, null);
+		String result = "";
+		if (c.moveToFirst()) {
+			result = getData(c, DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION);
 		}
 		c.close();
 		return result;
@@ -170,7 +194,6 @@ public class PersonDao extends BaseDAO {
 	 * @return
 	 */
 	public GetPersonInfoResponse getPersonInfo(String userid) {
-
 		db = dbHelper.getReadableDatabase();
 		GetPersonInfoResponse result = null;
 		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_ORG_PERSON + " where "
@@ -285,6 +308,7 @@ public class PersonDao extends BaseDAO {
 	 * @param orgNode
 	 * @return
 	 */
+	@Deprecated
 	public boolean saveOrgNode(OrgNodeModel orgNode) {
 		// ContentValues values = createContentValues(orgNode);
 		// db = dbHelper.getWritableDatabase();
@@ -300,6 +324,7 @@ public class PersonDao extends BaseDAO {
 		return false;
 	}
 
+	@Deprecated
 	public boolean saveOrgNodeStaff(OrgNodeStaffModel orgNodeStaff) {
 		// ContentValues values = createContentValues(orgNodeStaff);
 		// db = dbHelper.getWritableDatabase();
@@ -315,6 +340,7 @@ public class PersonDao extends BaseDAO {
 		return false;
 	}
 
+	@Deprecated
 	public boolean saveOrgStaff(OrgStaffModel orgStaff) {
 		// ContentValues values = createContentValues(orgStaff);
 		// db = dbHelper.getWritableDatabase();
@@ -330,6 +356,7 @@ public class PersonDao extends BaseDAO {
 		return false;
 	}
 
+	@Deprecated
 	public boolean saveContact(ContactModel contact) {
 		// ContentValues values = createContentValues(contact);
 		// db = dbHelper.getWritableDatabase();
@@ -350,6 +377,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public boolean isDBTNull() {
 		// Cursor cursor = null;
 		// try {
@@ -377,6 +405,7 @@ public class PersonDao extends BaseDAO {
 	 * @param customer
 	 * @return
 	 */
+	@Deprecated
 	public boolean modifyCostomer(CustomerModel customer) {
 		// ContentValues values = createContentValues(customer);
 		// db = dbHelper.getWritableDatabase();
@@ -403,6 +432,7 @@ public class PersonDao extends BaseDAO {
 	 * @param customerContact
 	 * @return
 	 */
+	@Deprecated
 	public boolean saveCustomerContact(CustomerContactModel customerContact) {
 		// ContentValues values = createContentValues(customerContact);
 		// db = dbHelper.getWritableDatabase();
@@ -423,6 +453,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public boolean cleanAllPersonInfo() {
 
 		// // 清空联系相关 4+2 表的数据SQL语句
@@ -493,6 +524,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return 机构节点模型列表
 	 */
+	@Deprecated
 	public ArrayList<OrgNodeModel> getAllOrgNode() {
 		// ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		// Cursor cursor = null;
@@ -519,6 +551,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return 机构节点模型列表
 	 */
+	@Deprecated
 	public ArrayList<OrgNodeModel> getSecondOrgNode() {
 		// ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		// Cursor cursor = null;
@@ -548,6 +581,7 @@ public class PersonDao extends BaseDAO {
 	 *            二级节点代码
 	 * @return 机构节点模型列表
 	 */
+	@Deprecated
 	public ArrayList<OrgNodeModel> getThirdOrgNode(String secondNodeCode) {
 		// ArrayList<OrgNodeModel> orgList = new ArrayList<OrgNodeModel>();
 		// Cursor cursor = null;
@@ -577,6 +611,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public ArrayList<StructuredStaffModel> getSSMFromAll() {
 		// ArrayList<StructuredStaffModel> ssmList = new
 		// ArrayList<StructuredStaffModel>();
@@ -607,6 +642,7 @@ public class PersonDao extends BaseDAO {
 	 *            机构节点代码
 	 * @return SSM列表
 	 */
+	@Deprecated
 	public ArrayList<StructuredStaffModel> getSSMFromOrgCode(String orgCode) {
 		// ArrayList<StructuredStaffModel> ssmList = new
 		// ArrayList<StructuredStaffModel>();
@@ -638,6 +674,7 @@ public class PersonDao extends BaseDAO {
 	 *            SSM模型（不含contactList）
 	 * @return
 	 */
+	@Deprecated
 	public ArrayList<StructuredStaffModel> getSSMWithContactFromAll(
 			ArrayList<StructuredStaffModel> ssmList2) {
 		// ArrayList<StructuredStaffModel> ssmList = ssmList2;
@@ -683,6 +720,7 @@ public class PersonDao extends BaseDAO {
 	 * @param contactID
 	 * @return 联系方式（列表）
 	 */
+	@Deprecated
 	public ArrayList<ContactModel> getContactListByID(String contactID) {
 		// ArrayList<ContactModel> contactList = new ArrayList<ContactModel>();
 		// Cursor cursor = null;
@@ -709,6 +747,7 @@ public class PersonDao extends BaseDAO {
 	 * 
 	 * @return Customer模型列表
 	 */
+	@Deprecated
 	public ArrayList<CustomerModel> getCustomersByUserID(String userID) {
 		// ArrayList<CustomerModel> customerList = new
 		// ArrayList<CustomerModel>();
@@ -738,6 +777,7 @@ public class PersonDao extends BaseDAO {
 	 *            客户ID
 	 * @return 该客户的联系方式列表
 	 */
+	@Deprecated
 	public ArrayList<CustomerContactModel> getCustomerContact(String customerID) {
 		// ArrayList<CustomerContactModel> customerContactList = new
 		// ArrayList<CustomerContactModel>();
@@ -767,6 +807,7 @@ public class PersonDao extends BaseDAO {
 	 * @param customerID
 	 *            客户ID
 	 */
+	@Deprecated
 	public void deleteCustomer(String customerID) {
 		// db = dbHelper.getWritableDatabase();
 		// long id = db.delete(DBConstants.CUSTOMER_TABLE_NAME,
@@ -786,6 +827,7 @@ public class PersonDao extends BaseDAO {
 	 * @param userID
 	 * @return
 	 */
+	@Deprecated
 	public StructuredStaffModel getSSMByID(String userID) {
 		// Cursor cursor = null;
 		// try {
@@ -817,6 +859,7 @@ public class PersonDao extends BaseDAO {
 	 * @param customerID
 	 * @return
 	 */
+	@Deprecated
 	public CustomerModel getCustomerByID(String customerID) {
 		// Cursor cursor = null;
 		// try {
@@ -845,7 +888,7 @@ public class PersonDao extends BaseDAO {
 	 * @param orgID
 	 * @return
 	 */
-
+	@Deprecated
 	public OrgNodeModel getOrgNodeByOrgID(String orgID) {
 		// Cursor cursor = null;
 		// try {

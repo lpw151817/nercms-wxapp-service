@@ -4,27 +4,34 @@ import java.util.List;
 
 public class MessageUpdateQueryResponseMessages {
 	String mid, t, sid;
-	List<QueryContactPersonMessageResponseIds> rids;
+	String rid;
 	String st, c, at, au, ut, ir;
 
 	public MessageUpdateQueryResponseMessages() {
 		super();
 	}
 
-	public MessageUpdateQueryResponseMessages(String mid, String t, String sid,
-			List<QueryContactPersonMessageResponseIds> rids, String st, String c, String at, String au,
-			String ut, String ir) {
+	public MessageUpdateQueryResponseMessages(String mid, String t, String sid, String rid, String st,
+			String c, String at, String au, String ut, String ir) {
 		super();
 		this.mid = mid;
 		this.t = t;
 		this.sid = sid;
-		this.rids = rids;
+		this.rid = rid;
 		this.st = st;
 		this.c = c;
 		this.at = at;
 		this.au = au;
 		this.ut = ut;
 		this.ir = ir;
+	}
+
+	public String getRid() {
+		return rid;
+	}
+
+	public void setRid(String rid) {
+		this.rid = rid;
 	}
 
 	public String getMid() {
@@ -49,14 +56,6 @@ public class MessageUpdateQueryResponseMessages {
 
 	public void setSid(String sid) {
 		this.sid = sid;
-	}
-
-	public List<QueryContactPersonMessageResponseIds> getRids() {
-		return rids;
-	}
-
-	public void setRids(List<QueryContactPersonMessageResponseIds> rids) {
-		this.rids = rids;
 	}
 
 	public String getSt() {

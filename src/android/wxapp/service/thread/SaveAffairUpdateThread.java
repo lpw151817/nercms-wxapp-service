@@ -26,7 +26,8 @@ public class SaveAffairUpdateThread extends Thread {
 
 		if (dao.saveAffairUpdate(data)) {
 			// 更新本地时间戳
-			MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP, data.getTsp());
+			MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
+					System.currentTimeMillis() + "");
 			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_SUCCESS, TAG);
 		} else {
 			MessageHandlerManager.getInstance().sendMessage(Constant.SAVE_TASK_FAIL, TAG);

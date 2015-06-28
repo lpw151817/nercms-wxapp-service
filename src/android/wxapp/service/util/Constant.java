@@ -102,6 +102,10 @@ public class Constant {
 	public static final int SAVE_TASK_SUCCESS = 217;
 	// 保存任务失败
 	public static final int SAVE_TASK_FAIL = 218;
+	// 修改任务已读时间成功
+	public static final int UPDATE_TASK_READTIME_SUCCESS = 219;
+	// 修改任务已读时间失败
+	public static final int UPDATE_TASK_READTIME_FAIL = 220;
 
 	// Feedback jerry 5.23
 	// 发送反馈请求成功

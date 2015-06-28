@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ReceiveMessageResponse {
 	String s, t, sid;
-	List<QueryContactPersonMessageResponseIds> rids;
+	String rid;
 	String st, c, at, au, ut, ir;
 
 	public String getS() {
@@ -31,12 +31,12 @@ public class ReceiveMessageResponse {
 		this.sid = sid;
 	}
 
-	public List<QueryContactPersonMessageResponseIds> getRids() {
-		return rids;
+	public String getRid() {
+		return rid;
 	}
 
-	public void setRids(List<QueryContactPersonMessageResponseIds> rids) {
-		this.rids = rids;
+	public void setRid(String rid) {
+		this.rid = rid;
 	}
 
 	public String getSt() {
@@ -87,14 +87,13 @@ public class ReceiveMessageResponse {
 		this.ir = ir;
 	}
 
-	public ReceiveMessageResponse(String s, String t, String sid,
-			List<QueryContactPersonMessageResponseIds> rids, String st, String c, String at, String au,
-			String ut, String ir) {
+	public ReceiveMessageResponse(String s, String t, String sid, String rid, String st, String c,
+			String at, String au, String ut, String ir) {
 		super();
 		this.s = s;
 		this.t = t;
 		this.sid = sid;
-		this.rids = rids;
+		this.rid = rid;
 		this.st = st;
 		this.c = c;
 		this.at = at;
