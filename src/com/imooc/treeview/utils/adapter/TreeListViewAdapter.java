@@ -2,20 +2,21 @@ package com.imooc.treeview.utils.adapter;
 
 import java.util.List;
 
+import android.R.integer;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.imooc.treeview.utils.Node;
 import com.imooc.treeview.utils.TreeHelper;
 
-public abstract class TreeListViewAdapter<T> extends BaseAdapter
-{
+public abstract class TreeListViewAdapter<T> extends BaseAdapter {
 	protected Context mContext;
 	protected List<Node> mAllNodes;
 	protected List<Node> mVisibleNodes;
@@ -29,22 +30,27 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 	 * @author zhy
 	 * 
 	 */
-	public interface OnTreeNodeClickListener
-	{
+	public interface OnTreeNodeClickListener {
 		void onClick(Node node, int position);
 	}
 
-	private OnTreeNodeClickListener mListener;
+	public interface onTreeNodeLongClickListener {
+		void onLongClick(Node node, int position);
+	}
 
-	public void setOnTreeNodeClickListener(OnTreeNodeClickListener mListener)
-	{
+	private OnTreeNodeClickListener mListener;
+	private onTreeNodeLongClickListener longClickListener;
+
+	public void setOnTreeNodeClickListener(OnTreeNodeClickListener mListener) {
 		this.mListener = mListener;
 	}
 
-	public TreeListViewAdapter(ListView tree, Context context, List<T> datas,
-			int defaultExpandLevel) throws IllegalArgumentException,
-			IllegalAccessException
-	{
+	public void setOnTreeNodeLongClickListener(onTreeNodeLongClickListener listener) {
+		this.longClickListener = listener;
+	}
+
+	public TreeListViewAdapter(ListView tree, Context context, List<T> datas, int defaultExpandLevel)
+			throws IllegalArgumentException, IllegalAccessException {
 		mContext = context;
 		mInflater = LayoutInflater.from(mContext);
 		mAllNodes = TreeHelper.getSortedNodes(datas, defaultExpandLevel);
@@ -52,16 +58,12 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 
 		mTree = tree;
 
-		mTree.setOnItemClickListener(new OnItemClickListener()
-		{
+		mTree.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id)
-			{
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				expandOrCollapse(position);
 
-				if (mListener != null)
-				{
+				if (mListener != null) {
 					mListener.onClick(mVisibleNodes.get(position), position);
 				}
 
@@ -69,6 +71,15 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 
 		});
 
+		mTree.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				if (longClickListener != null)
+					longClickListener.onLongClick(mVisibleNodes.get(position), position);
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -76,11 +87,9 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 	 * 
 	 * @param position
 	 */
-	private void expandOrCollapse(int position)
-	{
+	private void expandOrCollapse(int position) {
 		Node n = mVisibleNodes.get(position);
-		if (n != null)
-		{
+		if (n != null) {
 			if (n.isLeaf())
 				return;
 			n.setExpand(!n.isExpand());
@@ -90,26 +99,22 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 	}
 
 	@Override
-	public int getCount()
-	{
+	public int getCount() {
 		return mVisibleNodes.size();
 	}
 
 	@Override
-	public Object getItem(int position)
-	{
+	public Object getItem(int position) {
 		return mVisibleNodes.get(position);
 	}
 
 	@Override
-	public long getItemId(int position)
-	{
+	public long getItemId(int position) {
 		return position;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
-	{
+	public View getView(int position, View convertView, ViewGroup parent) {
 		Node node = mVisibleNodes.get(position);
 		convertView = getConvertView(node, position, convertView, parent);
 		// 设置内边距
@@ -117,7 +122,6 @@ public abstract class TreeListViewAdapter<T> extends BaseAdapter
 		return convertView;
 	}
 
-	public abstract View getConvertView(Node node, int position,
-			View convertView, ViewGroup parent);
+	public abstract View getConvertView(Node node, int position, View convertView, ViewGroup parent);
 
 }

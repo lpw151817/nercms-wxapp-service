@@ -12,6 +12,11 @@ public class Org {
 	@TreeNodeLabel
 	String Title;
 
+	@Override
+	public String toString() {
+		return "Org [id=" + id + ", pid=" + pid + ", Title=" + Title + "]";
+	}
+
 	public String getId() {
 		return id;
 	}

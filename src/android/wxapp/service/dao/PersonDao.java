@@ -202,9 +202,13 @@ public class PersonDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + userid, null);
 		if (c.moveToFirst()) {
 			String temp = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME);
+			List<Contacts> tempContacts = gson.fromJson(
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_CONTACTS),
+					new TypeToken<List<Contacts>>() {
+					}.getType());
 			result = new GetPersonInfoResponse("", temp,
 					getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME), "", getData(c,
-							DatabaseHelper.FIELD_ORG_PERSON_REMARK), null);
+							DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts);
 		}
 		c.close();
 		return result;
@@ -296,7 +300,7 @@ public class PersonDao extends BaseDAO {
 		List<Org> r = new ArrayList<Org>();
 		while (c.moveToNext()) {
 			String orgcode = getData(c, DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE);
-			String name = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME);
+			String name = getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME);
 			String uid = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID);
 			r.add(new Org("p" + uid, "o" + orgcode, name));
 		}

@@ -27,6 +27,20 @@ public class Node implements Serializable {
 	private Node parent;
 	private List<Node> children = new ArrayList<Node>();
 
+	/**
+	 * 判断parent是否为我的父亲
+	 * 
+	 * @param parent
+	 *            带匹配的父亲结点
+	 * @return 是父亲结点返回true
+	 */
+	public boolean isThisParent(Node parent) {
+		if (this.getpId().startsWith(parent.getId()))
+			return true;
+		else
+			return false;
+	}
+
 	public Node() {
 	}
 
@@ -142,8 +156,7 @@ public class Node implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Node [id=" + id + ", pId=" + pId + ", name=" + name + ", level=" + level + ", isExpand="
-				+ isExpand + ", icon=" + icon + "]";
+		return "Node [id=" + id + ", pId=" + pId + ", name=" + name + "]";
 	}
 
 	@Override
@@ -151,8 +164,6 @@ public class Node implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((pId == null) ? 0 : pId.hashCode());
 		return result;
 	}
 
@@ -170,51 +181,7 @@ public class Node implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (pId == null) {
-			if (other.pId != null)
-				return false;
-		} else if (!pId.equals(other.pId))
-			return false;
 		return true;
 	}
 
-	// @Override
-	// public int describeContents() {
-	// return 0;
-	// }
-	//
-	// public static final Parcelable.Creator<Node> CREATOR = new
-	// Creator<Node>() {
-	// @Override
-	// public Node[] newArray(int size) {
-	// return new Node[size];
-	// }
-	//
-	// @Override
-	// public Node createFromParcel(Parcel in) {
-	// return new Node(in);
-	// }
-	// };
-	//
-	// @Override
-	// public void writeToParcel(Parcel dest, int flags) {
-	// dest.writeTypedList(children);
-	// dest.writeInt(icon);
-	// dest.writeString(id);
-	// // true 1
-	// dest.writeByte((byte) (isExpand ? 1 : 0));
-	// dest.writeInt(level);
-	// dest.writeString(name);
-	// dest.writeValue(parent);
-	// dest.writeString(pId);
-	// }
-	//
-	// public Node(Parcel in) {
-	// // this.children=in.readTypedList(list, c);
-	// }
 }
