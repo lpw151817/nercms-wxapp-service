@@ -11,7 +11,7 @@ import android.util.Log;
  * <p>
  * org_code(id,org_code,description);
  * <p>
- * org_code_person(id,user_id,user_name,org_code,remark,contacts);
+ * org_code_person(id,user_id,user_name,org_code,remark,contacts,name);
  * <p>
  * myinfo(id,user_name,name,description,remark,contacts);
  * <p>
@@ -26,7 +26,7 @@ import android.util.Log;
  * attachment(id,attachment_id,type(1：文本 2：图片3：录像4：录音5：GPS),url)
  * <p>
  * message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
- * attachment_url,update_time)
+ * attachment_url,update_time,isread)
  * 
  * @author JerryLiu
  * @time 2015-6-1
@@ -62,10 +62,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String FIELD_ORG_PERSON_USER_NAME = "user_name";
 	public static final String FIELD_ORG_PERSON_REMARK = "remark";
 	public static final String FIELD_ORG_PERSON_CONTACTS = "contacts";
+	public static final String FIELD_ORG_PERSON_NAME = "name";
 	public static final String SQL_ORG_PERSON_CREATE_TABLE = "create table " + TABLE_ORG_PERSON + " ("
 			+ FIELD_ORG_PERSON_ID + " integer primary key autoincrement, " + FIELD_ORG_PERSON_USER_ID
 			+ " text," + FIELD_ORG_PERSON_ORG_CODE + " text," + FIELD_ORG_PERSON_REMARK + " text,"
-			+ FIELD_ORG_PERSON_CONTACTS + " text," + FIELD_ORG_PERSON_USER_NAME + " text)";
+			+ FIELD_ORG_PERSON_CONTACTS + " text," + FIELD_ORG_PERSON_USER_NAME + " text, "
+			+ FIELD_ORG_PERSON_NAME + " text)";
 
 	// 表名 myinfo
 	public static final String TABLE_MY_INFO = "myinfo";
@@ -160,13 +162,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String FIELD_MESSAGE_ATTACHMENT_TYPE = "attachment_type";
 	public static final String FIELD_MESSAGE_ATTACHMENT_URL = "attachment_url";
 	public static final String FIELD_MESSAGE_UPDATE_TIME = "update_time";
+	public static final String FIELD_MESSAGE_READTIME = "readtime";
 	// 创建表的SQL
 	public static final String SQL_MESSAGE_CREATE_TABLE = "create table " + TABLE_MESSAGE + " ("
 			+ FIELD_MESSAGE_ID + " integer primary key autoincrement, " + FIELD_MESSAGE_MESSAGE_ID
 			+ " text," + FIELD_MESSAGE_TYPE + " text," + FIELD_MESSAGE_SENDER_ID + " text,"
 			+ FIELD_MESSAGE_RELATION_ID + " text," + FIELD_MESSAGE_SEND_TIME + " text,"
 			+ FIELD_MESSAGE_CONTENT + " text," + FIELD_MESSAGE_ATTACHMENT_TYPE + " text,"
-			+ FIELD_MESSAGE_ATTACHMENT_URL + " text," + FIELD_MESSAGE_UPDATE_TIME + " text)";
+			+ FIELD_MESSAGE_ATTACHMENT_URL + " text," + FIELD_MESSAGE_UPDATE_TIME + " text,"
+			+ FIELD_MESSAGE_READTIME + " text)";
 
 	// //////////////////////
 

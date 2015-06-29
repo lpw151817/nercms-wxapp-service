@@ -3,8 +3,16 @@ package android.wxapp.service.jerry.model.person;
 import java.util.List;
 
 public class OrgPersonInfo {
-	String uid, un, oc, r;
+	String uid, un, oc, r, n;
 	List<Contacts> contacts;
+
+	public String getN() {
+		return n;
+	}
+
+	public void setN(String n) {
+		this.n = n;
+	}
 
 	public String getOc() {
 		return oc;
@@ -30,12 +38,13 @@ public class OrgPersonInfo {
 		this.un = un;
 	}
 
-	public OrgPersonInfo(String uid, String un, String oc, String r, List<Contacts> contacts) {
+	public OrgPersonInfo(String uid, String un, String oc, String r, String n, List<Contacts> contacts) {
 		super();
 		this.uid = uid;
 		this.un = un;
 		this.oc = oc;
 		this.r = r;
+		this.n = n;
 		this.contacts = contacts;
 	}
 

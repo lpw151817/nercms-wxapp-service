@@ -123,8 +123,8 @@ public class WebRequestManager {
 
 	// 完成事务
 	public void endAffair(String affairID) {
-		// queue.add(new AffairRequest().getEndTaskRequest(context, ic,
-		// affairID, null));
+		queue.add(new AffairRequest().getEndTaskRequest(context, affairID, System.currentTimeMillis()
+				+ ""));
 	}
 
 	// 发送新反馈
@@ -148,8 +148,8 @@ public class WebRequestManager {
 	}
 
 	// 发送新消息
-	public void sendMessage(String t, String sid, String rid, String st, String c, String at,
-			String au, String ut) {
+	public void sendMessage(String t, String sid, String rid, String st, String c, String at, String au,
+			String ut) {
 		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rid, st, c, at, au, ut));
 	}
 

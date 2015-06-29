@@ -423,11 +423,11 @@ public class AffairRequest extends BaseRequest {
 	 *            修改后的任务完成时间，暂时为null
 	 * @return
 	 */
-	public JsonObjectRequest getEndTaskRequest(Context c, String ic, String aid, String ct) {
+	public JsonObjectRequest getEndTaskRequest(final Context c, final String aid, final String ct) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null)
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		EndTaskRequest params = new EndTaskRequest(getUserId(c), ic, aid, ct);
+		EndTaskRequest params = new EndTaskRequest(getUserId(c), getUserIc(c), aid, ct);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_END_TASK
 				+ Contants.PARAM_NAME + super.gson.toJson(params);
 		System.out.println("request>>>>>>" + this.url);
@@ -439,6 +439,8 @@ public class AffairRequest extends BaseRequest {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						EndTaskResponse r = gson.fromJson(arg0.toString(), EndTaskResponse.class);
+						// DB update
+						new AffairDao(c).updateAffairCompleted(aid, ct);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.END_TASK_REQUEST_SUCCESS, r, Contants.METHOD_AFFAIRS_END_TASK);
@@ -461,51 +463,6 @@ public class AffairRequest extends BaseRequest {
 			}
 		});
 
-		// endTaskRequestString = Constant.SERVER_BASE_URL +
-		// Constant.END_TASK_URL + "?param={\"aid\":\""
-		// + affairID + "\",\"ct\":\"\"}";
-		// Log.v("endTaskRequest", endTaskRequestString);
-		//
-		// JsonObjectRequest endTaskRequest = new
-		// JsonObjectRequest(endTaskRequestString, null,
-		// new Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// try {
-		// if (response.getString("success").equalsIgnoreCase("0")) {
-		// Log.i("endTaskRequest", response.toString());
-		// Log.v("endTaskRequest", "任务已经置完成");
-		//
-		// // 服务器端置完成成功，下一步手机端数据库更新为已完成
-		// // 获取服务器端返回的事务完成时间
-		// String completeTime = response.getString("ct");
-		// AffairDao dao = DAOFactory.getInstance().getAffairDao(context);
-		// dao.updateAffairCompleted(affairID, completeTime);
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.END_TASK_REQUEST_SUCCESS, "TaskDetail");
-		//
-		// } else {
-		// Log.i("endTaskRequest", response.toString());
-		// Log.v("endTaskRequest", "任务置完成异常");
-		// }
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// Log.e("endTaskRequest", error.toString());
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(Constant.END_TASK_REQUEST_FAIL,
-		// "TaskDetail");
-		// }
-		// });
-		// return endTaskRequest;
 	}
 
 	/**

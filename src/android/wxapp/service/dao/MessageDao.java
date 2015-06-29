@@ -1,16 +1,21 @@
 package android.wxapp.service.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
 import android.provider.ContactsContract.Contacts.Data;
 import android.util.Log;
 import android.wxapp.service.jerry.model.affair.QueryAffairInfoResponse;
@@ -42,7 +47,6 @@ public class MessageDao extends BaseDAO {
 		values.put(DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL, message.getAu());
 		values.put(DatabaseHelper.FIELD_MESSAGE_CONTENT, message.getC());
 		values.put(DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID, mid);
-		// gson
 		values.put(DatabaseHelper.FIELD_MESSAGE_RELATION_ID, message.getRid());
 		values.put(DatabaseHelper.FIELD_MESSAGE_SEND_TIME, message.getSt());
 		values.put(DatabaseHelper.FIELD_MESSAGE_SENDER_ID, message.getSid());
@@ -65,27 +69,155 @@ public class MessageDao extends BaseDAO {
 	}
 
 	/**
-	 * 根据发送id和接收id查询聊天记录
+	 * 查询sid和rid两个人的聊天记录
 	 * 
 	 * @param sid
 	 * @param rid
-	 * @return
+	 * @param type
+	 *            消息类型0.普通个人聊天消息1.基本群组消息 2.非基本群组消息3.会议记录消息 4.事务反馈消息
+	 * @return 按照将序排列
 	 */
-	public List<ReceiveMessageResponse> getMessageBySidAndRid(String sid, String rid) {
+	public List<ReceiveMessageResponse> getMessageBySidAndRid(String sid, String rid, String type) {
 		db = dbHelper.getReadableDatabase();
-		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where (("
-				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + sid + ") and ("
-				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + rid + "'))", null);
+
+		String sql = "select * from " + DatabaseHelper.TABLE_MESSAGE + " where ( ("
+				+ DatabaseHelper.FIELD_MESSAGE_TYPE + " = '" + type + "' ) and (" + "(" + "("
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = '" + sid + "') and ("
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + rid + "')" + ") or (" + "("
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = '" + sid + "') and ("
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = '" + rid + "')" + ")" + ")"
+				+ ") order by " + DatabaseHelper.FIELD_MESSAGE_SEND_TIME + " ASC";
+		Cursor c = db.rawQuery(sql, null);
 		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
 		while (c.moveToNext()) {
 			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					sid, rid, getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
+							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
 							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
 		}
 		c.close();
+		return result;
+	}
+
+	/**
+	 * 获取最近联系人界面的最近联系内容
+	 * 
+	 * @param uid
+	 * @param type
+	 * @return
+	 */
+	public List<Map<String, String>> getLastMessageRecodes(String uid, String type) {
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		List<String> rids = getRecodeIds(uid, type);
+		for (String rid : rids) {
+			result.add(getLastMessageRecode(uid, rid, type));
+		}
+
+		// 按倒序排序！！！
+		Collections.sort(result, new Comparator<Map<String, String>>() {
+
+			@Override
+			public int compare(Map<String, String> lhs, Map<String, String> rhs) {
+				return rhs.get("time").compareTo(lhs.get("time"));
+			}
+		});
+		return result;
+	}
+
+	/**
+	 * 获取uid和rid聊天的最近的记录内容
+	 * 
+	 * @param uid
+	 * @param rid
+	 * @param type
+	 * @return
+	 */
+	public Map<String, String> getLastMessageRecode(String uid, String rid, String type) {
+		Map<String, String> result = new HashMap<String, String>();
+		List<ReceiveMessageResponse> list = getMessageBySidAndRid(uid, rid, type);
+		ReceiveMessageResponse lastMessage = list.get(list.size() - 1);
+		String messageAttachmentType = lastMessage.getAt();
+		String recode = "";
+
+		// 附件类型（当消息为文本消息时该字段为空）（1：文本2：图片3：录像4：录音5：GPS）
+		if (messageAttachmentType.equals("1")) {
+			recode += lastMessage.getC();
+		} else if (messageAttachmentType.equals("2")) {
+			recode += "[图片消息]";
+		} else if (messageAttachmentType.equals("3")) {
+			recode += "[录像消息]";
+		} else if (messageAttachmentType.equals("4")) {
+			recode += "[录音消息]";
+		} else if (messageAttachmentType.equals("5")) {
+			recode += "[GPS消息]";
+		} else {
+			recode += "[消息]";
+		}
+		// 如果发送者为rid
+		if (lastMessage.getSid().equals(rid)) {
+			// TODO 将rid改为对方用户的名字
+			// recode = rid + ":" + recode;
+		} else {
+			recode = "我：" + recode;
+		}
+		result.put("recode", recode);
+		result.put("time", lastMessage.getSt());
+		result.put("uid", uid);
+		result.put("rid", rid);
+		return result;
+	}
+
+	private boolean setIsRead(String mid) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_MESSAGE_READTIME, System.currentTimeMillis());
+		return db.update(DatabaseHelper.TABLE_MESSAGE, values, DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID
+				+ " = ?", new String[] { mid }) > 0;
+	}
+
+	/**
+	 * 查询关于uid用户的所有聊天人的id
+	 * 
+	 * @param uid
+	 * @param type
+	 *            消息类型0.普通个人聊天消息1.基本群组消息 2.非基本群组消息3.会议记录消息 4.事务反馈消息
+	 * @return 返回与uid用户聊过天的所有人的id
+	 */
+	public List<String> getRecodeIds(String uid, String type) {
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		List<String> result = new ArrayList<String>();
+
+		if (type.equals("0")) {
+			// 先查询sendid为uid的消息数据
+			Cursor c1 = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where ( ("
+					+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + uid + " ) and ( "
+					+ DatabaseHelper.FIELD_MESSAGE_TYPE + " = " + type + " ) )", null);
+			while (c1.moveToNext()) {
+				String tempRid = getData(c1, DatabaseHelper.FIELD_MESSAGE_RELATION_ID);
+				if (result.contains(tempRid))
+					continue;
+				else
+					result.add(tempRid);
+			}
+			c1.close();
+
+			Cursor c2 = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where ( ("
+					+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = " + uid + " ) and ( "
+					+ DatabaseHelper.FIELD_MESSAGE_TYPE + " = " + type + " ) )", null);
+			while (c2.moveToNext()) {
+				String tempRid = getData(c2, DatabaseHelper.FIELD_MESSAGE_SENDER_ID);
+				if (result.contains(tempRid))
+					continue;
+				else
+					result.add(tempRid);
+			}
+			c2.close();
+		}
+
 		return result;
 	}
 
@@ -115,27 +247,22 @@ public class MessageDao extends BaseDAO {
 	}
 
 	/**
-	 * 查询聊天记录
-	 *
+	 * 根据本人ID和对话人ID，获取双方消息的未读条数
 	 * 
 	 * @param uid
-	 * @return
+	 * @param rid
+	 * @return 未读消息条数
 	 */
-	public List<ReceiveMessageResponse> getMessageRecord(String uid) {
+	public int getUnreadNumByIDs(String uid, String rid, String type) {
 		db = dbHelper.getReadableDatabase();
-		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + "where "
-				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + uid, null);
-		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
-		while (c.moveToNext()) {
-			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
-		}
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where (("
+				+ DatabaseHelper.FIELD_MESSAGE_READTIME + " = \"\" ) and ("
+				+ DatabaseHelper.FIELD_MESSAGE_TYPE + " = " + type + ") and ((("
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = " + uid + ") and ("
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + rid + ")) or (("
+				+ DatabaseHelper.FIELD_MESSAGE_SENDER_ID + " = " + uid + ") and ("
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = " + rid + "))))", null);
+		int result = c.getCount();
 		c.close();
 		return result;
 	}
@@ -335,33 +462,6 @@ public class MessageDao extends BaseDAO {
 		// }
 		// return msgList;
 		return null;
-	}
-
-	/**
-	 * 根据本人ID和对话人ID，获取双方消息的未读条数
-	 * 
-	 * @param userID
-	 * @param objectID
-	 * @return 未读消息条数
-	 */
-	public int getUnreadNumByIDs(String userID, String objectID) {
-
-		// int num = 0;
-		// Cursor cursor = null;
-		// try {
-		// SQLiteDatabase db = dbHelper.getReadableDatabase();
-		// cursor = db
-		// .rawQuery(
-		// "SELECT COUNT(*) FROM message WHERE ((sender_id = ? and receiver_id = ?) OR (receiver_id = ? and is_group = 1)) AND is_read = 0",
-		// new String[] { objectID, userID, objectID });
-		// cursor.moveToFirst();
-		// num = cursor.getInt(0);
-		// } finally {
-		// if (cursor != null)
-		// dbHelper.closeCursor(cursor);
-		// }
-		// return num;
-		return 0;
 	}
 
 	// ----------------------------------------------------------

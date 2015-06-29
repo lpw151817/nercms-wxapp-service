@@ -134,6 +134,7 @@ public class PersonDao extends BaseDAO {
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE, item.getOc());
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_CONTACTS, gson.toJson(item.getContacts()));
 			v.put(DatabaseHelper.FIELD_ORG_PERSON_REMARK, item.getR());
+			v.put(DatabaseHelper.FIELD_ORG_PERSON_NAME, item.getN());
 			i = db.insertOrThrow(DatabaseHelper.TABLE_ORG_PERSON, null, v);
 			if (i == -1) {
 				Log.i(TAG, "存储机构节点人员表失败!");
@@ -164,6 +165,7 @@ public class PersonDao extends BaseDAO {
 					}.getType());
 			result.add(new OrgPersonInfo(getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID), getData(c,
 					DatabaseHelper.FIELD_ORG_PERSON_USER_NAME), oc, getData(c,
+					DatabaseHelper.FIELD_ORG_PERSON_NAME), getData(c,
 					DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts));
 		}
 		c.close();
@@ -200,7 +202,9 @@ public class PersonDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + userid, null);
 		if (c.moveToFirst()) {
 			String temp = getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME);
-			result = new GetPersonInfoResponse("", temp, "", "", "", null);
+			result = new GetPersonInfoResponse("", temp,
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME), "", getData(c,
+							DatabaseHelper.FIELD_ORG_PERSON_REMARK), null);
 		}
 		c.close();
 		return result;

@@ -16,8 +16,10 @@ public class BaseDAO {
 	protected DatabaseHelper dbHelper;
 	protected SQLiteDatabase db;
 	protected Gson gson;
+	protected Context c;
 
 	protected BaseDAO(Context context) {
+		this.c = context;
 		this.dbHelper = DatabaseHelper.getInstance(context);
 		this.gson = new Gson();
 	}

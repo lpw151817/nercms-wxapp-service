@@ -106,4 +106,9 @@ public class ReceiveMessageResponse {
 		super();
 	}
 
+	@Override
+	public String toString() {
+		return "ReceiveMessageResponse [t=" + t + ", sid=" + sid + ", rid=" + rid + "]";
+	}
+
 }
