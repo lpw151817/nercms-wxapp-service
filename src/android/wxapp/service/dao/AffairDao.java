@@ -1,6 +1,8 @@
 package android.wxapp.service.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -274,23 +276,28 @@ public class AffairDao extends BaseDAO {
 			switch (status) {
 			// doing
 			case 1:
-				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " = \"\" ) and ( "
-						+ DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " < datetime('now')" + ") and ("
-						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" ) and ("
-						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " > datetime('now') ) and ("
-						+ DatabaseHelper.FIELD_AFFIARINFO_SENDERID + " = " + userID + ")" + ")";
+				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " =\"\" )and( "
+						+ DatabaseHelper.FIELD_AFFIARINFO_SENDERID + " = " + userID + " )and( "
+						+ DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " < "
+						+ System.currentTimeMillis() + " )and( "
+						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " > " + System.currentTimeMillis()
+						// TIPS:::::readtime的值可能为null，也可能为""
+						+ ") and (" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null)" + ")";
 				break;
 			// done
 			case 2:
-				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " != \"\""
-						+ " ) and ( " + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" ) and ( "
-						+ DatabaseHelper.FIELD_AFFIARINFO_SENDERID + " = " + userID + ")" + ")";
+				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " != \"\" )and( "
+						+ DatabaseHelper.FIELD_AFFIARINFO_SENDERID + " = " + userID + ")and("
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null)" + ")";
 				break;
 			// delay
 			case 3:
 				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " = \"\" ) and ( "
-						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " < datetime('now')" + " ) and ( "
-						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" ) and ( "
+						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " < " + System.currentTimeMillis()
+						+ " ) and ( " + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null ) and ( "
 						+ DatabaseHelper.FIELD_AFFIARINFO_SENDERID + " = " + userID + ")" + ")";
 				break;
 			default:
@@ -306,24 +313,29 @@ public class AffairDao extends BaseDAO {
 						+ DatabaseHelper.FIELD_POD_AID + " from " + DatabaseHelper.TABLE_PERSON_ON_DUTY
 						+ " where " + DatabaseHelper.FIELD_POD_PID + " = " + userID + " )" + ") and "
 						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " = \"\" and "
-						+ DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " < datetime('now')" + ") and "
-						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\"" + ") and" + "("
-						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " > datetime('now')" + ")" + ")";
+						+ DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " < "
+						+ System.currentTimeMillis() + ") and " + "("
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null) and" + "("
+						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " > " + System.currentTimeMillis()
+						+ ")" + ")";
 				break;
 			case 2:
 				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + " in ( select "
 						+ DatabaseHelper.FIELD_POD_AID + " from " + DatabaseHelper.TABLE_PERSON_ON_DUTY
 						+ " where " + DatabaseHelper.FIELD_POD_PID + " = " + userID + " )" + ") and "
 						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " != \"\"" + ") and "
-						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\"" + ")" + ")";
+						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null)" + ")";
 				break;
 			case 3:
 				sql += "(" + "( " + DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + " in ( select "
 						+ DatabaseHelper.FIELD_POD_AID + " from " + DatabaseHelper.TABLE_PERSON_ON_DUTY
 						+ " where " + DatabaseHelper.FIELD_POD_PID + " = " + userID + " )" + ") and "
 						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME + " = \"\" and "
-						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " < datetime('now')" + ") and "
-						+ "(" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\"" + ")" + ")";
+						+ DatabaseHelper.FIELD_AFFIARINFO_ENDTIME + " < " + System.currentTimeMillis()
+						+ ") and " + "(" + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " = \"\" or "
+						+ DatabaseHelper.FIELD_AFFIARINFO_READTIME + " is null" + ")" + ")";
 				break;
 			default:
 				Log.e(TAG, "getUnreadNumByTypeAndStatus default");
@@ -349,8 +361,7 @@ public class AffairDao extends BaseDAO {
 	 * @param userID
 	 * @return
 	 */
-	public List<QueryAffairListResponseAffairs> getAffairByTypeAndStatus(int type, int status,
-			String userID) {
+	public List<Map<String, Object>> getAffairByTypeAndStatus(int type, int status, String userID) {
 		db = dbHelper.getReadableDatabase();
 		Cursor c = null;
 		String sql = "select * from " + DatabaseHelper.TABLE_AFFIARINFO + " where ";
@@ -418,7 +429,9 @@ public class AffairDao extends BaseDAO {
 		sql += " order by " + DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " DESC";
 		Log.e("AffairDao SQL", sql);
 		c = db.rawQuery(sql, null);
-		List<QueryAffairListResponseAffairs> result = new ArrayList<QueryAffairListResponseAffairs>();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		// List<QueryAffairListResponseAffairs> affairResult = new
+		// ArrayList<QueryAffairListResponseAffairs>();
 		while (c.moveToNext()) {
 			// 事务id
 			String aid = getData(c, DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID);
@@ -428,19 +441,36 @@ public class AffairDao extends BaseDAO {
 					getData(c, DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT),
 					new TypeToken<List<CreateTaskRequestAttachment>>() {
 					}.getType());
-			result.add(new QueryAffairListResponseAffairs(aid, getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_TYPE), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_SENDERID), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_DES), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_TOPIC), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_CREATETIME), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_ENDTIME), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TYPE), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), getData(c,
-					DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), paramAtt, idMap.get("2"), idMap
-					.get("1")));
+			Map<String, Object> item = new HashMap<String, Object>();
+			item.put("time", getData(c, DatabaseHelper.FIELD_AFFIARINFO_READTIME));
+			item.put(
+					"data",
+					new QueryAffairListResponseAffairs(aid, getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_TYPE), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_SENDERID), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_DES), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_TOPIC), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_CREATETIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_ENDTIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_COMPLETETIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TYPE), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), getData(c,
+							DatabaseHelper.FIELD_AFFIARINFO_LAST_OPERATE_TIME), paramAtt,
+							idMap.get("2"), idMap.get("1")));
+			result.add(item);
 		}
+
+		Collections.sort(result, new Comparator<Map<String, Object>>() {
+
+			@Override
+			public int compare(Map<String, Object> lhs, Map<String, Object> rhs) {
+				if (lhs.get("time") == null || lhs.get("time").equals(""))
+					return -1;
+				else
+					return 0;
+			}
+		});
+
 		c.close();
 		return result;
 
