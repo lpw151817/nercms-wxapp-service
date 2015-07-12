@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.provider.MediaStore.Video;
 import android.wxapp.service.AppApplication;
+import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseRids;
 import android.wxapp.service.jerry.model.feedback.TaskFeedbackRequestIds;
 import android.wxapp.service.jerry.model.person.GetPersonInfoRequest;
 import android.wxapp.service.model.AffairModel;
@@ -127,12 +129,13 @@ public class WebRequestManager {
 				+ ""));
 	}
 
+	//
+	// Feedback Model
+	//
+
 	// 发送新反馈
-	public void sendFeedback(Context context, String sid, String st, String c, String at, String au,
-			String ut, String[] rids) {
-		// queue.add(new FeedbackRequest().sendFeedbackRequest(context, ic, sid,
-		// st, 4 + "", c, at, au, ut,
-		// rids));
+	public void sendFeedback(String sid, String rid, String st, String c, String at, String au, String ut) {
+		queue.add(new FeedbackRequest().sendFeedbackRequest(context, sid, st, c, at, au, ut, rid));
 	}
 
 	// 查询反馈详情
@@ -146,6 +149,10 @@ public class WebRequestManager {
 		// queue.add(new GetFeedbackUpdateRequest(context).getRequest());
 		// queue.add(new FeedbackRequest().getFeedbackUpdateRequest());
 	}
+
+	//
+	// Message Model
+	//
 
 	// 发送新消息
 	public void sendMessage(String t, String sid, String rid, String st, String c, String at, String au,
@@ -166,4 +173,28 @@ public class WebRequestManager {
 		// queue.add(request);
 	}
 
+	//
+	// Conference Model
+	//
+
+	// 更新会议
+	public void updateConference(String count) {
+		queue.add(new ConferenceRequest().updateConference(context, count));
+	}
+
+	// 创建会议
+	public void createConference(String n, String sid, String ct, String f, String r,
+			List<ConferenceUpdateQueryResponseRids> rids) {
+		queue.add(new ConferenceRequest().createConference(context, n, sid, ct, f, r, rids));
+	}
+
+	// 开始会议
+	public void startConference(String cid) {
+		queue.add(new ConferenceRequest().startConference(context, cid));
+	}
+
+	// 结束会议
+	public void endConference(String cid) {
+		queue.add(new ConferenceRequest().endConference(context, cid));
+	}
 }

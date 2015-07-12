@@ -193,6 +193,18 @@ public class Constant {
 	// 查询多个人GPS轨迹信息失败
 	public static final int QUERY_GPSS_REQUEST_FAIL = 809;
 
+	// Conference模块
+	public static final int CONFERENCE_UPDATE_SECCESS = 900;
+	public static final int CONFERENCE_UPDATE_FAIL = 801;
+	public static final int CONFERENCE_CREATE_SECCESS = 802;
+	public static final int CONFERENCE_CREATE_FAIL = 803;
+	public static final int CONFERENCE_START_SECCESS = 804;
+	public static final int CONFERENCE_START_FAIL = 805;
+	public static final int CONFERENCE_END_SECCESS = 806;
+	public static final int CONFERENCE_END_FAIL = 807;
+	public static final int CONFERENCE_SAVE_SUCCESS = 808;
+	public static final int CONFERENCE_SAVE_FAIL = 809;
+
 	// 未读状态
 	public static final int UNREAD = 0;
 	// 已读状态

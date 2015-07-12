@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
@@ -232,6 +233,7 @@ public class MessageRequest extends BaseRequest {
 			@Override
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
+				Toast.makeText(context, "服务器连接失败", Toast.LENGTH_LONG).show();
 			}
 		});
 

@@ -16,7 +16,9 @@ import android.util.Log;
 import android.wxapp.service.handler.MessageHandlerManager;
 
 public class MQTT {
-	public static String SERVER_URL = "tcp://202.114.66.77:1883";
+//	public static String SERVER_URL = "tcp://202.114.66.77:1883";
+	
+	public static String SERVER_URL = "tcp://172.16.24.2:1883";
 	// public static String CLIENT_ID = MqttClient.generateClientId();//不可超过23字节
 	public static String CLIENT_ID = ""; // WeiHao：默认为空，具体初始化在用户Login之后进行
 	public final static String SUBSCRIBE_TOPIC_PREFIX = "nercms/schedule/";
@@ -48,21 +50,21 @@ public class MQTT {
 
 	private MQTT() throws MqttException {
 		// 创建MQTT客户端
-//		try {
-			// 创建
-			_client = new MqttClient(SERVER_URL, CLIENT_ID, new MemoryPersistence());
+		// try {
+		// 创建
+		_client = new MqttClient(SERVER_URL, CLIENT_ID, new MemoryPersistence());
 
-			// 设置回调
-			MQTTClientCallback callback = new MQTTClientCallback();
-			_client.setCallback(callback);
+		// 设置回调
+		MQTTClientCallback callback = new MQTTClientCallback();
+		_client.setCallback(callback);
 
-			// 初始化，连接及订阅
-			init();
-//		} catch (MqttException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			Log.v("MQTT", "create mqtt client error " + e.toString());
-//		}
+		// 初始化，连接及订阅
+		init();
+		// } catch (MqttException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// Log.v("MQTT", "create mqtt client error " + e.toString());
+		// }
 	}
 
 	private final String WILL_TOPIC = "mqtt/errors";
@@ -231,6 +233,7 @@ public class MQTT {
 			// 2014-4-21 WeiHao新增：收到新推送通知之后的具体处理
 			// 1. 判断该新推送类型
 			String pushMessage = message.toString();
+			// TODO 拿到Message后进行处理
 			if (pushMessage.contains(":")) {
 				String pushMessageType = pushMessage.substring(0, pushMessage.indexOf(":"));
 				if (pushMessageType.equalsIgnoreCase("Test")) {

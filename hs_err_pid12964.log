@@ -1,0 +1,144 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (javaClasses.cpp:127), pid=12964, tid=14800
+#  fatal error: Invalid layout of preloaded class
+#
+# JRE version:  (8.0_40-b25) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.40-b25 mixed mode windows-amd64 compressed oops)
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000002e5e000):  JavaThread "Unknown thread" [_thread_in_vm, id=14800, stack(0x0000000002d20000,0x0000000002e20000)]
+
+Stack: [0x0000000002d20000,0x0000000002e20000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x32b47a]
+V  [jvm.dll+0x2797f3]
+V  [jvm.dll+0x27a489]
+V  [jvm.dll+0x271726]
+V  [jvm.dll+0x67fd3]
+V  [jvm.dll+0x680c3]
+V  [jvm.dll+0x7d63a]
+V  [jvm.dll+0x7d9a6]
+V  [jvm.dll+0xf2077]
+V  [jvm.dll+0xf2406]
+V  [jvm.dll+0x20f107]
+V  [jvm.dll+0x240d9a]
+V  [jvm.dll+0x15b941]
+C  [javaw.exe+0x217e]
+C  [javaw.exe+0xcd17]
+C  [javaw.exe+0xcdab]
+C  [KERNEL32.DLL+0x13d2]
+C  [ntdll.dll+0x15444]
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+=>0x0000000002e5e000 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=14800, stack(0x0000000002d20000,0x0000000002e20000)]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (10 events):
+Event: 0.050 loading class java/lang/CharSequence done
+Event: 0.050 loading class java/lang/String done
+Event: 0.050 loading class java/lang/Class
+Event: 0.050 loading class java/lang/reflect/AnnotatedElement
+Event: 0.050 loading class java/lang/reflect/AnnotatedElement done
+Event: 0.050 loading class java/lang/reflect/GenericDeclaration
+Event: 0.050 loading class java/lang/reflect/GenericDeclaration done
+Event: 0.050 loading class java/lang/reflect/Type
+Event: 0.050 loading class java/lang/reflect/Type done
+Event: 0.051 loading class java/lang/Class done
+
+
+Dynamic libraries:
+0x00007ff7a9350000 - 0x00007ff7a9387000 	C:\Program Files\Java\jdk1.8.0_40\bin\javaw.exe
+0x00007ff953f80000 - 0x00007ff95412c000 	C:\Windows\SYSTEM32\ntdll.dll
+0x00007ff951b60000 - 0x00007ff951c9e000 	C:\Windows\system32\KERNEL32.DLL
+0x00007ff9511a0000 - 0x00007ff9512b5000 	C:\Windows\system32\KERNELBASE.dll
+0x00007ff94fc70000 - 0x00007ff94fcfe000 	C:\Windows\system32\apphelp.dll
+0x00007ff948710000 - 0x00007ff948763000 	C:\Windows\AppPatch\AppPatch64\AcGenral.DLL
+0x00007ff951ee0000 - 0x00007ff951f8a000 	C:\Windows\system32\msvcrt.dll
+0x00007ff950f70000 - 0x00007ff950f9e000 	C:\Windows\SYSTEM32\SspiCli.dll
+0x00007ff9524d0000 - 0x00007ff952524000 	C:\Windows\system32\SHLWAPI.dll
+0x00007ff953d30000 - 0x00007ff953ea7000 	C:\Windows\system32\USER32.dll
+0x00007ff951600000 - 0x00007ff951794000 	C:\Windows\system32\ole32.dll
+0x00007ff9525e0000 - 0x00007ff953af8000 	C:\Windows\system32\SHELL32.dll
+0x00007ff9506d0000 - 0x00007ff9506f1000 	C:\Windows\SYSTEM32\USERENV.dll
+0x00007ff952530000 - 0x00007ff9525da000 	C:\Windows\system32\ADVAPI32.dll
+0x00007ff943910000 - 0x00007ff94392e000 	C:\Windows\SYSTEM32\MPR.dll
+0x00007ff9517b0000 - 0x00007ff9518f1000 	C:\Windows\system32\RPCRT4.dll
+0x00007ff951ca0000 - 0x00007ff951cf9000 	C:\Windows\SYSTEM32\sechost.dll
+0x00007ff9522b0000 - 0x00007ff9524c1000 	C:\Windows\SYSTEM32\combase.dll
+0x00007ff951900000 - 0x00007ff951a51000 	C:\Windows\system32\GDI32.dll
+0x00007ff9510d0000 - 0x00007ff9510e5000 	C:\Windows\SYSTEM32\profapi.dll
+0x00007ff94f620000 - 0x00007ff94f6d2000 	C:\Windows\SYSTEM32\SHCORE.dll
+0x00007ff951a60000 - 0x00007ff951a96000 	C:\Windows\system32\IMM32.DLL
+0x00007ff952150000 - 0x00007ff9522a2000 	C:\Windows\system32\MSCTF.dll
+0x00007ff94ed90000 - 0x00007ff94f00a000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.9600.17810_none_6240b9c7ecbd0bda\COMCTL32.dll
+0x0000000072900000 - 0x00000000729d2000 	C:\Program Files\Java\jdk1.8.0_40\jre\bin\msvcr100.dll
+0x0000000072070000 - 0x00000000728f3000 	C:\Program Files\Java\jdk1.8.0_40\jre\bin\server\jvm.dll
+0x00007ff946930000 - 0x00007ff946939000 	C:\Windows\SYSTEM32\WSOCK32.dll
+0x00007ff94e800000 - 0x00007ff94e822000 	C:\Windows\SYSTEM32\WINMM.dll
+0x00007ff94e8a0000 - 0x00007ff94e8aa000 	C:\Windows\SYSTEM32\VERSION.dll
+0x00007ff9520e0000 - 0x00007ff9520e7000 	C:\Windows\system32\PSAPI.DLL
+0x00007ff9520f0000 - 0x00007ff95214a000 	C:\Windows\system32\WS2_32.dll
+0x00007ff94e5e0000 - 0x00007ff94e60a000 	C:\Windows\SYSTEM32\WINMMBASE.dll
+0x00007ff953d20000 - 0x00007ff953d29000 	C:\Windows\system32\NSI.dll
+0x00007ff9514a0000 - 0x00007ff9514ef000 	C:\Windows\SYSTEM32\cfgmgr32.dll
+0x00007ff94fee0000 - 0x00007ff94ff08000 	C:\Windows\SYSTEM32\DEVOBJ.dll
+0x0000000072060000 - 0x000000007206f000 	C:\Program Files\Java\jdk1.8.0_40\jre\bin\verify.dll
+0x0000000072030000 - 0x0000000072059000 	C:\Program Files\Java\jdk1.8.0_40\jre\bin\java.dll
+0x0000000072010000 - 0x0000000072026000 	C:\Program Files\Java\jdk1.8.0_40\jre\bin\zip.dll
+0x00007ff935050000 - 0x00007ff9351d9000 	C:\Windows\SYSTEM32\dbghelp.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=GBK -Xbootclasspath:E:\android\sdk\android-sdk-windows\platforms\android-14\android.jar 
+java_command: android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryRequest
+java_class_path (initial): E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\volley.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\android-support-v4.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\universal-image-loader-1.9.2.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\mqtt-client-0.4.0.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\httpmime-4.1.1.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\gson-1.6.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\libs\acra-4.5.0.jar;E:\android\sdk\android-sdk-windows\tools\support\annotations.jar;E:\研究生\lab\Schedule代码打包\nercms-wxapp-service\bin\classes
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_40
+CLASSPATH=.;C:\Program Files\Java\jdk1.8.0_40\lib\dt.jar;C:\Program Files\Java\jdk1.8.0_40\lib\tools.jar;
+PATH=C:/Program Files/Java/jre1.8.0_45/bin/server;C:/Program Files/Java/jre1.8.0_45/bin;C:/Program Files/Java/jre1.8.0_45/lib/amd64;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;E:\Matlab\runtime\win64;E:\Matlab\bin;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files\Java\jdk1.8.0_40\bin;C:\Program Files\Java\jdk1.8.0_40\jre\bin;E:\android\sdk\android-sdk-windows/platform-tools;E:\android\gradle-2.3\bin;E:\android\sdk\android-sdk-windows\tools;E:\Git\bin;C:\Software\eclipse;
+USERNAME=JerryLiu
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 60 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 8.1 , 64 bit Build 9600 (6.3.9600.17415)
+
+CPU:total 4 (2 cores per cpu, 2 threads per core) family 6 model 60 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2
+
+Memory: 4k page, physical 4099400k(681792k free), swap 10663740k(4558464k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.40-b25) for windows-amd64 JRE (1.8.0_40-b25), built on Feb 10 2015 21:53:57 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Sat Jul 11 19:03:19 2015
+elapsed time: 0 seconds (0d 0h 0m 0s)
+

@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.provider.ContactsContract.Contacts.Data;
 import android.util.Log;
+import android.wxapp.service.jerry.model.affair.CreateTaskRequestIds;
 import android.wxapp.service.jerry.model.affair.QueryAffairInfoResponse;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponseMessages;
@@ -25,6 +26,7 @@ import android.wxapp.service.jerry.model.message.QueryContactPersonMessageRespon
 import android.wxapp.service.jerry.model.message.ReceiveMessageResponse;
 import android.wxapp.service.model.MessageModel;
 import android.wxapp.service.util.Constant;
+import android.wxapp.service.util.MySharedPreference;
 
 public class MessageDao extends BaseDAO {
 
@@ -32,6 +34,20 @@ public class MessageDao extends BaseDAO {
 
 	public MessageDao(Context context) {
 		super(context);
+	}
+
+	/**
+	 * 获取对应事务下的反馈消息
+	 * 
+	 * @param aid
+	 *            事务id
+	 * @return
+	 */
+	public List<ReceiveMessageResponse> getFeedback(String aid) {
+		String uid = MySharedPreference.get(c, MySharedPreference.USER_ID, null);
+		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
+		result.addAll(getMessageBySidAndRid(uid, aid, "4"));
+		return result;
 	}
 
 	/**
@@ -78,7 +94,7 @@ public class MessageDao extends BaseDAO {
 	 * @return 按照将序排列
 	 */
 	public List<ReceiveMessageResponse> getMessageBySidAndRid(String sid, String rid, String type) {
-		db = dbHelper.getReadableDatabase();
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
 
 		String sql = "select * from " + DatabaseHelper.TABLE_MESSAGE + " where ( ("
 				+ DatabaseHelper.FIELD_MESSAGE_TYPE + " = '" + type + "' ) and (" + "(" + "("

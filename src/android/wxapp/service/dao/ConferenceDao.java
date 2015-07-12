@@ -1,12 +1,18 @@
 package android.wxapp.service.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract.Contacts.Data;
 import android.util.Log;
+import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponse;
+import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseItem;
+import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseRids;
+import android.wxapp.service.jerry.model.conference.CreateConferenceRequest;
 import android.wxapp.service.model.ConferenceModel;
 
 public class ConferenceDao extends BaseDAO {
@@ -17,18 +23,48 @@ public class ConferenceDao extends BaseDAO {
 		super(context);
 	}
 
-	public boolean saveConference(ConferenceModel con) {
-		// ContentValues values = createContentValues(con);
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// long id = db.insert(DBConstants.CONFERENCE_TABLE_NAME, null, values);
-		// if (id == -1) {
-		// Log.i(TAG, "创建会议失败!");
-		// return false;
-		// } else {
-		// Log.i(TAG, "创建会议成功!");
-		// return true;
-		// }
-		return false;
+	public boolean saveConferenceUpdate(ConferenceUpdateQueryResponse cs) {
+		for (ConferenceUpdateQueryResponseItem item : cs.getCs()) {
+			if (saveConference(item.getCid(), item.getN(), item.getSid(), item.getCt(), item.getF(),
+					item.getSt(), item.getEt(), item.getR(), item.getRids()))
+				continue;
+			else
+				return false;
+		}
+		return true;
+
+	}
+
+	public boolean saveConference(String cid, String n, String sid, String ct, String f, String st,
+			String et, String r, List<ConferenceUpdateQueryResponseRids> rids) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID, cid);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_NAME, n);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_SPONSORID, sid);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_CONVENE_TIME, ct);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_FROM, f);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_START_TIME, st);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_ENDTIME, et);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_REMARK, r);
+		values.put(DatabaseHelper.FIELD_CONFERENCE_RELATIONID, gson.toJson(rids));
+		return db.insert(DatabaseHelper.TABLE_CONFERENCE, null, values) > 0;
+	}
+
+	public boolean startConference(String cid, String starttime) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_CONFERENCE_START_TIME, starttime);
+		return db.update(DatabaseHelper.TABLE_CONFERENCE, values,
+				DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID + " = ?", new String[] { cid }) > 0;
+	}
+
+	public boolean endConference(String cid, String endtime) {
+		db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(DatabaseHelper.FIELD_CONFERENCE_ENDTIME, endtime);
+		return db.update(DatabaseHelper.TABLE_CONFERENCE, values,
+				DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID + " = ?", new String[] { cid }) > 0;
 	}
 
 	public ConferenceModel getConferenceByID(String conferenceID) {
@@ -80,14 +116,19 @@ public class ConferenceDao extends BaseDAO {
 	}
 
 	public void deleteConferenceByID(String conferenceID) {
-		// SQLiteDatabase db = dbHelper.getWritableDatabase();
-		// long id = db.delete(DBConstants.CONFERENCE_TABLE_NAME,
-		// "conference_id = ?", new String[] { conferenceID });
-		// if (id == -1) {
-		// Log.i(TAG, "删除会议失败!");
-		// } else {
-		// Log.i(TAG, "删除会议成功!");
-		// }
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		long id = db.delete(DatabaseHelper.TABLE_CONFERENCE, "conference_id = ?",
+				new String[] { conferenceID });
+		if (id == -1) {
+			Log.i(TAG, "删除会议失败!");
+		} else {
+			Log.i(TAG, "删除会议成功!");
+		}
+	}
+
+	public boolean deleteAll() {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		return db.delete(DatabaseHelper.TABLE_CONFERENCE, null, null) > 0;
 	}
 
 	// -----------------------------------------------------------------------------

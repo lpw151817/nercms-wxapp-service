@@ -1,6 +1,7 @@
 package android.wxapp.service.request;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.wxapp.service.util.MySharedPreference;
 
 import com.google.gson.Gson;
@@ -36,5 +37,14 @@ public class BaseRequest {
 
 	protected String getUserIc(Context context) {
 		return MySharedPreference.get(context, MySharedPreference.USER_IC, null);
+	}
+
+	protected String getLastConferenceUpdateTime(Context c) {
+		return MySharedPreference.get(c, MySharedPreference.LAST_UPDATE_CONFERENCE_TIMESTAMP, null);
+	}
+
+	protected void saveLastConferenceUpdateTime(Context c) {
+		MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_CONFERENCE_TIMESTAMP,
+				System.currentTimeMillis());
 	}
 }

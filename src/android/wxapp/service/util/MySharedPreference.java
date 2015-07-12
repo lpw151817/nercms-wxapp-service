@@ -27,6 +27,8 @@ public class MySharedPreference {
 	public static final String LAST_UPDATE_ORGCODE_TIMESTAMP = "LAST_UPDATE_ORGCODE_TIMESTAMP";
 	// 上次更新orgperson的时间
 	public static final String LAST_UPDATE_ORGPERSON_TIMESTAMP = "LAST_UPDATE_ORGPERSON_TIMESTAMP";
+	// 上次更新conference的时间
+	public static final String LAST_UPDATE_CONFERENCE_TIMESTAMP = "LAST_UPDATE_CONFERENCE_TIMESTAMP";
 
 	// 服务器时间
 	public static final String PREF_LAST_UPDATE_SERVER_TIMESTAMP = "server_timestamp";

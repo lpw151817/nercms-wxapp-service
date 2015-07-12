@@ -213,7 +213,7 @@ public class AffairDao extends BaseDAO {
 	 * 根据AffairId查询出人员信息
 	 * 
 	 * @param aid
-	 * @return < key , value >:<"1",List<String> pod>,<"2",List<String> rids>
+	 * @return < key , value >:<"1",List<CreateTaskRequestIds> pod>,<"2",List<CreateTaskRequestIds> rids>
 	 */
 	public Map<String, List<CreateTaskRequestIds>> getPersonIdByAffairId(String aid) {
 		SQLiteDatabase database = dbHelper.getReadableDatabase();
@@ -426,7 +426,9 @@ public class AffairDao extends BaseDAO {
 				break;
 			}
 		}
-		sql += " order by " + DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " DESC";
+		// 首先按照已读时间倒叙排列，其次按照创建时间排序
+		sql += " order by " + DatabaseHelper.FIELD_AFFIARINFO_READTIME + " , "
+				+ DatabaseHelper.FIELD_AFFIARINFO_CREATETIME + " DESC";
 		Log.e("AffairDao SQL", sql);
 		c = db.rawQuery(sql, null);
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
@@ -460,16 +462,18 @@ public class AffairDao extends BaseDAO {
 			result.add(item);
 		}
 
-		Collections.sort(result, new Comparator<Map<String, Object>>() {
-
-			@Override
-			public int compare(Map<String, Object> lhs, Map<String, Object> rhs) {
-				if (lhs.get("time") == null || lhs.get("time").equals(""))
-					return -1;
-				else
-					return 0;
-			}
-		});
+		// //按已读时间排序
+		// Collections.sort(result, new Comparator<Map<String, Object>>() {
+		//
+		// @Override
+		// public int compare(Map<String, Object> lhs, Map<String, Object> rhs)
+		// {
+		// if (lhs.get("time") == null || lhs.get("time").equals(""))
+		// return -1;
+		// else
+		// return 0;
+		// }
+		// });
 
 		c.close();
 		return result;

@@ -27,6 +27,12 @@ import android.util.Log;
  * <p>
  * message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
  * attachment_url,update_time,isread)
+ * <p>
+ * conference(id,cid,name,sponsor_id,relation_id([ { "rid":"XXXXXXXX" //人员id
+ * "t":"XXXXXXXX" //成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源） }, …
+ * ]),convene_time,from（1：通过手机，2：通过Web（PC或移动终端），3
+ * ：通过PC客户端，4：系统自动处置，5：其他）,start_time(会议实际开始时间),end_time,remark)
+ * 
  * 
  * @author JerryLiu
  * @time 2015-6-1
@@ -145,8 +151,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ FIELD_ATTACHMENT_ATTACHMENT_ID + " text," + FIELD_ATTACHMENT_TYPE + " text,"
 			+ FIELD_ATTACHMENT_URL + " text)";
 
-	// message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
-	// * attachment_url,update_time)
 	// 表名 attachment
 	public static final String TABLE_MESSAGE = "message";
 	// 字段
@@ -172,142 +176,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ FIELD_MESSAGE_ATTACHMENT_URL + " text," + FIELD_MESSAGE_UPDATE_TIME + " text,"
 			+ FIELD_MESSAGE_READTIME + " text)";
 
-	// //////////////////////
-
-	// // 事务相关数据表名
-	// public static final String AFFAIRS_TABLE_NAME = "affairs_info";
-	// public static final String PERSON_ON_DUTY_TABLE_NAME = "person_on_duty";
-	// public static final String AFFAIR_ATTACHMENT_TABLE_NAME =
-	// "affair_attachment";
-	// public static final String FEEDBACK_TABLE_NAME = "affair_feedback";
-	// public static final String FEEDBACK_ATTACHMENT_TABLE_NAME =
-	// "feedback_attachment";
-	// public static final String AFFAIR_OPERATE_LOG_TABLE_NAME =
-	// "affair_operate_log";
-	//
-	// // 消息表名
-	// public static final String MESSAGE_TABLE_NAME = "message";
-	//
-	// // 联系人相关 建表SQL语句
-	// public static final String CREATE_ORG_NODE_TABLE_SQL = "create table "
-	// + DBConstants.ORG_NODE_TABLE_NAME +
-	// " (id integer  primary key autoincrement, "
-	// + "org_code text," + "description text);";
-	//
-	// public static final String CREATE_ORG_NODE_STAFF_TABLE_SQL =
-	// "create table "
-	// + DBConstants.ORG_NODE_STAFF_TABLE_NAME +
-	// " (id integer primary key autoincrement, "
-	// + "org_code text," + "contact_id text," + "sequence text);";
-	//
-	// public static final String CREATE_ORG_STAFF_TABLE_SQL = "create table "
-	// + DBConstants.ORG_STAFF_TABLE_NAME +
-	// " (id integer  primary key autoincrement, "
-	// + "contact_id text," + "name text," + "position text," + "rank text);";
-	//
-	// public static final String CREATE_CONTACT_TABLE_SQL = "create table "
-	// + DBConstants.CONTACT_TABLE_NAME +
-	// " (id integer primary key autoincrement, "
-	// + "contact_id text," + "type integer," + "content text);";
-	//
-	// public static final String CREATE_CUSTOMER_TABLE_SQL = "create table "
-	// + DBConstants.CUSTOMER_TABLE_NAME +
-	// " (id integer primary key autoincrement, "
-	// + "customer_id text," + "name text," + "unit text," + "description text,"
-	// + "contact_id text);";
-	//
-	// public static final String CREATE_CUSTOMER_CONTACT_TABLE_SQL =
-	// "create table "
-	// + DBConstants.CUSTOMER_CONTACT_TABLE_NAME +
-	// " (id integer primary key autoincrement, "
-	// + "customer_id text," + "type integer," + "content text);";
-	//
-	// // 事务相关 建表SQL语句
-	// public static final String CREATE_AFFAIRS_TABLE_SQL =
-	// "create table affairs_info (id integer  primary key autoincrement, "
-	// + "affair_id text, "
-	// + "type integer, "
-	// + "sponsor_id integer, "
-	// + "title text, "
-	// + "description text, "
-	// + "begin_time text, "
-	// + "end_time text, "
-	// + "complete_time text, "
-	// + "last_operate_type integer, "
-	// + "last_operate_time text, "
-	// + "is_read integer, "
-	// + "status integer);";
-	//
-	// public static final String CREATE_PERSON_ON_DUTY_TABLE_SQL =
-	// "create table person_on_duty (id integer  primary key autoincrement, "
-	// + "affair_id text, " + "person_id integer);";
-	//
-	// public static final String CREATE_AFFAIR_ATTACHMENT_TABLE_SQL =
-	// "create table affair_attachment (id integer  primary key autoincrement, "
-	// + "affair_id text, " + "attachment_type integer, " + "url text);";
-	//
-	// public static final String CREATE_AFFAIR_FEEDBACK_TABLE_SQL =
-	// "create table affair_feedback (id integer primary key autoincrement, "
-	// + "feedback_id text, "
-	// + "affair_id text, "
-	// + "person_id integer, "
-	// + "feedback_time text, "
-	// + "content text, " + "is_read integer);";
-	//
-	// public static final String CREATE_FEEDBACK_ATTACHMENT_TABLE_SQL =
-	// "create table feedback_attachment (id integer primary key autoincrement, "
-	// + "feedback_id text, " + "attachment_type integer, " + "url text);";
-	//
-	// public static final String CREATE_AFFAIR_LOG_TABLE_SQL =
-	// "create table affair_operate_log (id integer  primary key autoincrement, "
-	// + "affair_id text, " + "type integer, " + "time_stamp text);";
-	//
-	// // 消息表建表语句
-	// public static final String CREATE_MESSAGE_TABLE_SQL =
-	// "create table message (id integer  primary key autoincrement, "
-	// + "message_id text, "
-	// + "sender_id integer, "
-	// + "receiver_id integer,"
-	// + "send_time text, "
-	// + "content text, "
-	// + "attachment_type integer, "
-	// + "attachment_url text, "
-	// + "is_group integer, " + "is_read integer);";
-	//
-	// // 电话表建表语句
-	// public static final String CREATE_PHONE_TABLE_SQL =
-	// "create table phone (id integer  primary key autoincrement, "
-	// + "phone_id text, "
-	// + "type integer, "
-	// + "caller_id integer, "
-	// + "callee_id integer, "
-	// + "start_time text, "
-	// + "is_answered integer, "
-	// + "end_time text, "
-	// + "duration text, "
-	// + "is_read integer);";
-	//
-	// // 电话表建表语句
-	// public static final String CREATE_CONFERENCE_TABLE_SQL =
-	// "create table conference (id integer  primary key autoincrement, "
-	// + "conference_id text, "
-	// + "conference_name text, "
-	// + "type integer, "
-	// + "sponsor_id integer, "
-	// + "create_time text, "
-	// + "reservation_time text, "
-	// + "start_time text, " + "end_time text, " + "status integer);";
-	//
-	// // 电话表建表语句
-	// public static final String CREATE_CONFERENCE_PERSON_TABLE_SQL =
-	// "create table conference_person (id integer  primary key autoincrement, "
-	// + "conference_id text, "
-	// + "person_id integer, "
-	// + "is_sponsor integer, "
-	// + "is_speaker integer, "
-	// + "is_video_sharer text, "
-	// + "join_time text, "
-	// + "leave_time text);";
+	// 表名 conference
+	public static final String TABLE_CONFERENCE = "conference";
+	// 字段
+	public static final String FIELD_CONFERENCE_ID = "id";
+	public static final String FIELD_CONFERENCE_CONFERENCE_ID = "cid";
+	public static final String FIELD_CONFERENCE_NAME = "name";
+	public static final String FIELD_CONFERENCE_SPONSORID = "sponsor_id";
+	// [ { "rid":"XXXXXXXX" //人员id
+	// "t":"XXXXXXXX" //成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源）
+	// }, … ]
+	public static final String FIELD_CONFERENCE_RELATIONID = "relation_id";
+	public static final String FIELD_CONFERENCE_CONVENE_TIME = "convene_time";
+	// （1：通过手机，2：通过Web（PC或移动终端），3 ：通过PC客户端，4：系统自动处置，5：其他）
+	public static final String FIELD_CONFERENCE_FROM = "from";
+	public static final String FIELD_CONFERENCE_START_TIME = "start_time";
+	public static final String FIELD_CONFERENCE_ENDTIME = "end_time";
+	public static final String FIELD_CONFERENCE_REMARK = "remark";
+	// 创建表的SQL
+	public static final String SQL_CONFERENCE_CREATE_TABLE = "create table " + TABLE_CONFERENCE + " ("
+			+ FIELD_CONFERENCE_ID + " integer primary key autoincrement, "
+			+ FIELD_CONFERENCE_CONFERENCE_ID + " text," + FIELD_CONFERENCE_NAME + " text,"
+			+ FIELD_CONFERENCE_SPONSORID + " text," + FIELD_CONFERENCE_RELATIONID + " text,"
+			+ FIELD_CONFERENCE_CONVENE_TIME + " text," + FIELD_CONFERENCE_FROM + " text,"
+			+ FIELD_CONFERENCE_START_TIME + " text," + FIELD_CONFERENCE_ENDTIME + " text,"
+			+ FIELD_CONFERENCE_REMARK + " text)";
 
 	// 单键处理
 	private volatile static DatabaseHelper _unique_instance = null;
@@ -362,6 +255,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_MESSAGE_CREATE_TABLE);
 		Log.v(LOG_TAG, "SQLite: onCreate table MESSAGE");
 		Log.v(LOG_TAG, SQL_MESSAGE_CREATE_TABLE);
+		db.execSQL(SQL_CONFERENCE_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table CONFERENCE");
+		Log.v(LOG_TAG, SQL_CONFERENCE_CREATE_TABLE);
 	}
 
 	@Override
