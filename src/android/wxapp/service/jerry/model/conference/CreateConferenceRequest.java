@@ -5,7 +5,7 @@ import java.util.List;
 import android.wxapp.service.jerry.model.BaseRequestModel;
 
 public class CreateConferenceRequest extends BaseRequestModel {
-	String n, sid, ct, f, r;
+	String n, sid, ct, f, r, et;
 	List<ConferenceUpdateQueryResponseRids> rids;
 
 	public CreateConferenceRequest() {
@@ -13,14 +13,23 @@ public class CreateConferenceRequest extends BaseRequestModel {
 	}
 
 	public CreateConferenceRequest(String uid, String ic, String n, String sid, String ct, String f,
-			String r, List<ConferenceUpdateQueryResponseRids> rids) {
+			String r, String et, List<ConferenceUpdateQueryResponseRids> rids) {
 		super(uid, ic);
 		this.n = n;
 		this.sid = sid;
 		this.ct = ct;
 		this.f = f;
 		this.r = r;
+		this.et = et;
 		this.rids = rids;
+	}
+
+	public String getEt() {
+		return et;
+	}
+
+	public void setEt(String et) {
+		this.et = et;
 	}
 
 	public String getN() {

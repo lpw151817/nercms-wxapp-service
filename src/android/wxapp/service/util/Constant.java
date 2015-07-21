@@ -192,18 +192,32 @@ public class Constant {
 	public static final int QUERY_GPSS_REQUEST_SECCESS = 808;
 	// 查询多个人GPS轨迹信息失败
 	public static final int QUERY_GPSS_REQUEST_FAIL = 809;
+	public static final int SAVE_GPS_SECCESS = 810;
+	public static final int SAVE_GPS_FAIL = 811;
 
 	// Conference模块
 	public static final int CONFERENCE_UPDATE_SECCESS = 900;
-	public static final int CONFERENCE_UPDATE_FAIL = 801;
-	public static final int CONFERENCE_CREATE_SECCESS = 802;
-	public static final int CONFERENCE_CREATE_FAIL = 803;
-	public static final int CONFERENCE_START_SECCESS = 804;
-	public static final int CONFERENCE_START_FAIL = 805;
-	public static final int CONFERENCE_END_SECCESS = 806;
-	public static final int CONFERENCE_END_FAIL = 807;
-	public static final int CONFERENCE_SAVE_SUCCESS = 808;
-	public static final int CONFERENCE_SAVE_FAIL = 809;
+	public static final int CONFERENCE_UPDATE_FAIL = 901;
+	public static final int CONFERENCE_CREATE_SECCESS = 902;
+	public static final int CONFERENCE_CREATE_FAIL = 903;
+	public static final int CONFERENCE_START_SECCESS = 904;
+	public static final int CONFERENCE_START_FAIL = 905;
+	public static final int CONFERENCE_END_SECCESS = 906;
+	public static final int CONFERENCE_END_FAIL = 907;
+	public static final int CONFERENCE_SAVE_SUCCESS = 908;
+	public static final int CONFERENCE_SAVE_FAIL = 909;
+
+	// Group模块
+	public static final int GROUP_UPDATE_SECCESS = 0;
+	public static final int GROUP_UPDATE_FAIL = 1;
+	public static final int GROUP_CREATE_SECCESS = 2;
+	public static final int GROUP_CREATE_FAIL = 3;
+	public static final int GROUP_MODIFY_SECCESS = 4;
+	public static final int GROUP_MODIFY_FAIL = 5;
+	public static final int GROUP_DELETE_SECCESS = 6;
+	public static final int GROUP_DELETE_FAIL = 7;
+	public static final int GROUP_SAVE_SECCESS = 8;
+	public static final int GROUP_SAVE_FAIL = 9;
 
 	// 未读状态
 	public static final int UNREAD = 0;
@@ -229,7 +243,7 @@ public class Constant {
 	// public static final String FILE_SERVER_FEEDBACK_ATTACH_URL =
 	// "http://192.168.1.100:15005/HFSFileServer/FeedbackAttachments/";
 
-	public static final String SERVER_IP = "192.168.1.100";
+	public static final String SERVER_IP = "202.114.66.77";
 
 	// 文件服务器基址
 	// public static final String FILE_SERVER_BASE_URL =

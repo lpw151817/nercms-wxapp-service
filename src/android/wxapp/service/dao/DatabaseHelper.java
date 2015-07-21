@@ -28,11 +28,16 @@ import android.util.Log;
  * message(id,mid,type,sender_id,relation_id,send_time,content,attachment_type,
  * attachment_url,update_time,isread)
  * <p>
- * conference(id,cid,name,sponsor_id,relation_id([ { "rid":"XXXXXXXX" //人员id
- * "t":"XXXXXXXX" //成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源） }, …
- * ]),convene_time,from（1：通过手机，2：通过Web（PC或移动终端），3
- * ：通过PC客户端，4：系统自动处置，5：其他）,start_time(会议实际开始时间),end_time,remark)
- * 
+ * conference(id,cid,name,sponsor_id,,convene_time,from（1：通过手机，2：通过Web（PC或移动终端），
+ * 3 ：通过PC客户端，4：系统自动处置，5：其他）,start_time(会议实际开始时间),end_time,remark)
+ * <p>
+ * ConferencePerson(id,cid,uid,type//成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源）,
+ * response_time,remark)
+ * <p>
+ * group(id,gid,type（1：基本群组，2：非基本群组）,name,create_time,update_time,rids)
+ * <p>
+ * gps(id,gid,person_id,time,longitude,latitude,gps_type(1:GPS,2:AGPS,3:手台GPS),
+ * accuracy,heigh,speed,update_time)
  * 
  * @author JerryLiu
  * @time 2015-6-1
@@ -40,7 +45,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// 版本
-	public static final int VERSION = 1;
+	public static final int VERSION = 2;
 
 	private static final String LOG_TAG = "DatabaseHelper";
 
@@ -123,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ FIELD_AFFIARINFO_LAST_OPERATE_TYPE + " text," + FIELD_AFFIARINFO_LAST_OPERATE_TIME
 			+ " text," + FIELD_AFFIARINFO_UPDATETIME + " text," + FIELD_AFFIARINFO_ATTACHMENT + " text)";
 
-	// 表名 affiar
+	// 表名 personOnDuty
 	public static final String TABLE_PERSON_ON_DUTY = "person_on_duty";
 	// 字段
 	public static final String FIELD_POD_ID = "id";
@@ -151,7 +156,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			+ FIELD_ATTACHMENT_ATTACHMENT_ID + " text," + FIELD_ATTACHMENT_TYPE + " text,"
 			+ FIELD_ATTACHMENT_URL + " text)";
 
-	// 表名 attachment
+	// 表名 Message
 	public static final String TABLE_MESSAGE = "message";
 	// 字段
 	public static final String FIELD_MESSAGE_ID = "id";
@@ -183,13 +188,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String FIELD_CONFERENCE_CONFERENCE_ID = "cid";
 	public static final String FIELD_CONFERENCE_NAME = "name";
 	public static final String FIELD_CONFERENCE_SPONSORID = "sponsor_id";
-	// [ { "rid":"XXXXXXXX" //人员id
-	// "t":"XXXXXXXX" //成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源）
-	// }, … ]
-	public static final String FIELD_CONFERENCE_RELATIONID = "relation_id";
 	public static final String FIELD_CONFERENCE_CONVENE_TIME = "convene_time";
 	// （1：通过手机，2：通过Web（PC或移动终端），3 ：通过PC客户端，4：系统自动处置，5：其他）
-	public static final String FIELD_CONFERENCE_FROM = "from";
+	public static final String FIELD_CONFERENCE_FROM = "type";
 	public static final String FIELD_CONFERENCE_START_TIME = "start_time";
 	public static final String FIELD_CONFERENCE_ENDTIME = "end_time";
 	public static final String FIELD_CONFERENCE_REMARK = "remark";
@@ -197,10 +198,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String SQL_CONFERENCE_CREATE_TABLE = "create table " + TABLE_CONFERENCE + " ("
 			+ FIELD_CONFERENCE_ID + " integer primary key autoincrement, "
 			+ FIELD_CONFERENCE_CONFERENCE_ID + " text," + FIELD_CONFERENCE_NAME + " text,"
-			+ FIELD_CONFERENCE_SPONSORID + " text," + FIELD_CONFERENCE_RELATIONID + " text,"
-			+ FIELD_CONFERENCE_CONVENE_TIME + " text," + FIELD_CONFERENCE_FROM + " text,"
-			+ FIELD_CONFERENCE_START_TIME + " text," + FIELD_CONFERENCE_ENDTIME + " text,"
-			+ FIELD_CONFERENCE_REMARK + " text)";
+			+ FIELD_CONFERENCE_SPONSORID + " text," + FIELD_CONFERENCE_CONVENE_TIME + " text,"
+			+ FIELD_CONFERENCE_FROM + " text," + FIELD_CONFERENCE_START_TIME + " text,"
+			+ FIELD_CONFERENCE_ENDTIME + " text," + FIELD_CONFERENCE_REMARK + " text)";
+
+	// ConferencePerson(id,cid,uid,type//成员角色（1：发言人，2：收听人，3：视频源，4：发言+视频源）,
+	// response_time,remark)
+	public static final String TABLE_CONFERENCE_PERSON = "ConferencePerson";
+	public static final String FIELD_CONFERENCE_PERSON_ID = "id";
+	public static final String FIELD_CONFERENCE_PERSON_CID = "cid";
+	public static final String FIELD_CONFERENCE_PERSON_UID = "uid";
+	public static final String FIELD_CONFERENCE_PERSON_TYPE = "type";
+	public static final String FIELD_CONFERENCE_PERSON_RESPONSE_TIME = "response_time";
+	public static final String FIELD_CONFERENCE_PERSON_REMARK = "remark";
+	public static final String SQL_CONFERENCE_PERSON_CREATE_TABLE = "create table "
+			+ TABLE_CONFERENCE_PERSON + " (" + FIELD_CONFERENCE_PERSON_ID
+			+ " integer primary key autoincrement, " + FIELD_CONFERENCE_PERSON_CID + " text,"
+			+ FIELD_CONFERENCE_PERSON_UID + " text," + FIELD_CONFERENCE_PERSON_TYPE + " text,"
+			+ FIELD_CONFERENCE_PERSON_RESPONSE_TIME + " text," + FIELD_CONFERENCE_PERSON_REMARK
+			+ " text)";
+
+	// 表名 Group
+	public static final String TABLE_GROUP = "group_table";
+	// 字段
+	public static final String FIELD_GROUP_ID = "id";
+	public static final String FIELD_GROUP_GROUP_ID = "cid";
+	public static final String FIELD_GROUP_TYPE = "type";
+	public static final String FIELD_GROUP_NAME = "name";
+	public static final String FIELD_GROUP_CREATE_TIME = "create_time";
+	public static final String FIELD_GROUP_UPDATE_TIME = "update_time";
+	public static final String FIELD_GROUP_RIDS = "rids";
+	// 创建表的SQL
+	public static final String SQL_GROUP_CREATE_TABLE = "create table " + TABLE_GROUP + " ("
+			+ FIELD_GROUP_ID + " integer primary key autoincrement, " + FIELD_GROUP_GROUP_ID + " text,"
+			+ FIELD_GROUP_TYPE + " text," + FIELD_GROUP_NAME + " text," + FIELD_GROUP_CREATE_TIME
+			+ " text," + FIELD_GROUP_UPDATE_TIME + " text," + FIELD_GROUP_RIDS + " text)";
+
+	// 表名 GPS
+	public static final String TABLE_GPS = "gps_table";
+	// 字段
+	public static final String FIELD_GPS_ID = "id";
+	public static final String FIELD_GPS_GPS_ID = "gid";
+	public static final String FIELD_GPS_PERSON_ID = "person_id";
+	public static final String FIELD_GPS_TIME = "time";
+	public static final String FIELD_GPS_LONG = "longitude";
+	public static final String FIELD_GPS_LAT = "latitude";
+	public static final String FIELD_GPS_TYPE = "type";
+	public static final String FIELD_GPS_ACCURACY = "accuracy";
+	public static final String FIELD_GPS_HEIGHT = "height";
+	public static final String FIELD_GPS_SPEED = "speed";
+	public static final String FIELD_GPS_UPDATE_TIME = "update_time";
+	// 创建表的SQL
+	public static final String SQL_GPS_CREATE_TABLE = "create table " + TABLE_GPS + " (" + FIELD_GPS_ID
+			+ " integer primary key autoincrement, " + FIELD_GPS_GPS_ID + " text," + FIELD_GPS_PERSON_ID
+			+ " text," + FIELD_GPS_TIME + " text," + FIELD_GPS_LONG + " text," + FIELD_GPS_LAT
+			+ " text," + FIELD_GPS_TYPE + " text," + FIELD_GPS_ACCURACY + " text," + FIELD_GPS_HEIGHT
+			+ " text," + FIELD_GPS_SPEED + " text," + FIELD_GPS_UPDATE_TIME + " text)";
 
 	// 单键处理
 	private volatile static DatabaseHelper _unique_instance = null;
@@ -258,6 +311,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_CONFERENCE_CREATE_TABLE);
 		Log.v(LOG_TAG, "SQLite: onCreate table CONFERENCE");
 		Log.v(LOG_TAG, SQL_CONFERENCE_CREATE_TABLE);
+		db.execSQL(SQL_GROUP_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table GROUP");
+		Log.v(LOG_TAG, SQL_GROUP_CREATE_TABLE);
+		db.execSQL(SQL_GPS_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table GPS");
+		Log.v(LOG_TAG, SQL_GPS_CREATE_TABLE);
+		db.execSQL(SQL_CONFERENCE_PERSON_CREATE_TABLE);
+		Log.v(LOG_TAG, "SQLite: onCreate table SQL_CONFERENCE_PERSON_CREATE_TABLE");
+		Log.v(LOG_TAG, SQL_CONFERENCE_PERSON_CREATE_TABLE);
 	}
 
 	@Override

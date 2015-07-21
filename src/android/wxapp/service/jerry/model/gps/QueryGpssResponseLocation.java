@@ -3,27 +3,33 @@ package android.wxapp.service.jerry.model.gps;
 import java.util.List;
 
 public class QueryGpssResponseLocation {
-String cid;
-List<QueryPersonalGpssReponseLocation> i;
-public String getCid() {
-	return cid;
-}
-public void setCid(String cid) {
-	this.cid = cid;
-}
-public List<QueryPersonalGpssReponseLocation> getI() {
-	return i;
-}
-public void setI(List<QueryPersonalGpssReponseLocation> i) {
-	this.i = i;
-}
-public QueryGpssResponseLocation(String cid, List<QueryPersonalGpssReponseLocation> i) {
-	super();
-	this.cid = cid;
-	this.i = i;
-}
-public QueryGpssResponseLocation() {
-	super();
-}
+	String cid;
+	List<QueryPersonalGpssReponseLocationGps> gs;
+
+	public String getCid() {
+		return cid;
+	}
+
+	public void setCid(String cid) {
+		this.cid = cid;
+	}
+
+	public QueryGpssResponseLocation(String cid, List<QueryPersonalGpssReponseLocationGps> gs) {
+		super();
+		this.cid = cid;
+		this.gs = gs;
+	}
+
+	public List<QueryPersonalGpssReponseLocationGps> getGs() {
+		return gs;
+	}
+
+	public void setGs(List<QueryPersonalGpssReponseLocationGps> gs) {
+		this.gs = gs;
+	}
+
+	public QueryGpssResponseLocation() {
+		super();
+	}
 
 }

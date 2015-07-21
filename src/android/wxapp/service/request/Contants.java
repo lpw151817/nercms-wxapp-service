@@ -11,10 +11,8 @@ import java.io.File;
 public class Contants {
 	// TIP：所有的url结尾均带/
 
-	// // 服务器地址
-	// public static final String SERVER_URL = "http://202.114.66.77:8080" +
-	// File.separator;
-	public static final String SERVER_URL = "http://172.16.24.2:8080" + File.separator;
+	// 服务器地址
+	public static final String SERVER_URL = "http://202.114.66.77:8080" + File.separator;
 
 	// 模块名称
 	public static final String MODEL_NAME = "HttpService" + File.separator;
@@ -70,6 +68,7 @@ public class Contants {
 	public static final String METHOD_MESSAGE_DeleteNonbasicGroup = "DeleteNonbasicGroup";
 
 	// GPS模块 Jerry 5.22
+	public static final String METHOD_GPS_UPDAET = "GpsUpdateQuery";
 	public static final String METHOD_GPS_UPLOAD = "GPSUpload";
 	public static final String METHOD_GPS_QUERY_LAST_PERSONAL_GPS = "QueryLastPersonalGPS";
 	public static final String METHOD_GPS_QUERY_LAST_GPSS = "QueryLastGPSs";
@@ -81,6 +80,12 @@ public class Contants {
 	public static final String METHOD_CONFERENCE_CREATE = "CreateConference";
 	public static final String METHOD_CONFERENCE_START = "StartConference";
 	public static final String METHOD_CONFERENCE_END = "EndConference";
+
+	// Group模块 Jerry 5.22
+	public static final String METHOD_GROUP_UPDATE = "GroupUpdateQuery";
+	public static final String METHOD_GROUP_CREATE = "CreateGroup";
+	public static final String METHOD_GROUP_MODIFY = "ModifyGroup";
+	public static final String METHOD_GROUP_DELETE = "DeleteGroup";
 
 	// ====================================以下为旧接口=========================
 	public static final String MODEL_CONTACT = "ContactService" + File.separator;

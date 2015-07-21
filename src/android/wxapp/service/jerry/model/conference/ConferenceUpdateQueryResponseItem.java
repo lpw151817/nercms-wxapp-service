@@ -2,7 +2,7 @@ package android.wxapp.service.jerry.model.conference;
 
 import java.util.List;
 
-public class ConferenceUpdateQueryResponseItem {
+public class ConferenceUpdateQueryResponseItem implements Comparable<ConferenceUpdateQueryResponseItem> {
 	String cid, n, sid, ct, f, st, et, r;
 	List<ConferenceUpdateQueryResponseRids> rids;
 
@@ -94,6 +94,36 @@ public class ConferenceUpdateQueryResponseItem {
 
 	public ConferenceUpdateQueryResponseItem() {
 		super();
+	}
+
+	@Override
+	public int compareTo(ConferenceUpdateQueryResponseItem another) {
+		return another.getCt().compareTo(ct);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cid == null) ? 0 : cid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConferenceUpdateQueryResponseItem other = (ConferenceUpdateQueryResponseItem) obj;
+		if (cid == null) {
+			if (other.cid != null)
+				return false;
+		} else if (!cid.equals(other.cid))
+			return false;
+		return true;
 	}
 
 }

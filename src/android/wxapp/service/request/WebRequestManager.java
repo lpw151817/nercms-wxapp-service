@@ -8,6 +8,7 @@ import android.provider.MediaStore.Video;
 import android.wxapp.service.AppApplication;
 import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseRids;
 import android.wxapp.service.jerry.model.feedback.TaskFeedbackRequestIds;
+import android.wxapp.service.jerry.model.group.GroupUpdateQueryRequestIds;
 import android.wxapp.service.jerry.model.person.GetPersonInfoRequest;
 import android.wxapp.service.model.AffairModel;
 import android.wxapp.service.model.CustomerContactModel;
@@ -183,9 +184,9 @@ public class WebRequestManager {
 	}
 
 	// 创建会议
-	public void createConference(String n, String sid, String ct, String f, String r,
+	public void createConference(String n, String sid, String ct, String f, String r, String et,
 			List<ConferenceUpdateQueryResponseRids> rids) {
-		queue.add(new ConferenceRequest().createConference(context, n, sid, ct, f, r, rids));
+		queue.add(new ConferenceRequest().createConference(context, n, sid, ct, f, r, et, rids));
 	}
 
 	// 开始会议
@@ -196,5 +197,37 @@ public class WebRequestManager {
 	// 结束会议
 	public void endConference(String cid) {
 		queue.add(new ConferenceRequest().endConference(context, cid));
+	}
+
+	//
+	// Group Model
+	//
+
+	// 更新
+	public void getGroupUpdateRequest(String count) {
+		queue.add(new GroupRequest().getGroupUpdateRequest(context, count));
+	}
+
+	public void createGroup(String t, String n, String ct, String ut,
+			List<GroupUpdateQueryRequestIds> rids) {
+		queue.add(new GroupRequest().createGroup(context, t, n, ct, ut, rids));
+	}
+
+	public void modifyGroup(String gid, String t, String n, String ct, String ut,
+			List<GroupUpdateQueryRequestIds> rids) {
+		queue.add(new GroupRequest().modifyGroup(context, gid, t, n, ct, ut, rids));
+	}
+
+	public void deleteGroup(String gid) {
+		queue.add(new GroupRequest().deleteGroup(context, gid));
+	}
+
+	//
+	// GPS Medel
+	//
+
+	// update
+	public void getGpsUpdateRequest(String count) {
+		queue.add(new GpsRequest().getGroupUpdate(context, count));
 	}
 }

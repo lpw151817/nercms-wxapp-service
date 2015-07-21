@@ -14,6 +14,16 @@ public class GpsInfo {
 	private float mSpeed;
 	// Ê±´Á
 	private long mTime;
+	// ¸ß¶È
+	private float mHeight;
+
+	public float getmHeight() {
+		return mHeight;
+	}
+
+	public void setmHeight(float mHeight) {
+		this.mHeight = mHeight;
+	}
 
 	public double getmLongitude() {
 		return mLongitude;
@@ -77,7 +87,5 @@ public class GpsInfo {
 	public GpsInfo() {
 		super();
 	}
-	
-	
 
 }

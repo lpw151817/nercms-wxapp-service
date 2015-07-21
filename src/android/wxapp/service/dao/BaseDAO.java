@@ -26,7 +26,6 @@ public class BaseDAO {
 
 	protected String getData(Cursor c, String colomnName) {
 		return c.getString(c.getColumnIndex(colomnName));
-
 	}
 
 }

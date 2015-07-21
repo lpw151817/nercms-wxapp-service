@@ -1,50 +1,50 @@
 package android.wxapp.service.jerry.model.gps;
 
 public class QueryLastPersonalGpsResponse {
-String s,cid,g,o;
+	String s, gid, g, o;
 
-public String getS() {
-	return s;
-}
+	public String getS() {
+		return s;
+	}
 
-public void setS(String s) {
-	this.s = s;
-}
+	public void setS(String s) {
+		this.s = s;
+	}
 
-public String getCid() {
-	return cid;
-}
+	public String getG() {
+		return g;
+	}
 
-public void setCid(String cid) {
-	this.cid = cid;
-}
+	public void setG(String g) {
+		this.g = g;
+	}
 
-public String getG() {
-	return g;
-}
+	public String getO() {
+		return o;
+	}
 
-public void setG(String g) {
-	this.g = g;
-}
+	public void setO(String o) {
+		this.o = o;
+	}
 
-public String getO() {
-	return o;
-}
+	public QueryLastPersonalGpsResponse() {
+		super();
+	}
 
-public void setO(String o) {
-	this.o = o;
-}
+	public QueryLastPersonalGpsResponse(String s, String gid, String g, String o) {
+		super();
+		this.s = s;
+		this.gid = gid;
+		this.g = g;
+		this.o = o;
+	}
 
-public QueryLastPersonalGpsResponse(String s, String cid, String g, String o) {
-	super();
-	this.s = s;
-	this.cid = cid;
-	this.g = g;
-	this.o = o;
-}
+	public String getGid() {
+		return gid;
+	}
 
-public QueryLastPersonalGpsResponse() {
-	super();
-}
+	public void setGid(String gid) {
+		this.gid = gid;
+	}
 
 }

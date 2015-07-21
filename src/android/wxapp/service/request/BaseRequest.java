@@ -43,8 +43,11 @@ public class BaseRequest {
 		return MySharedPreference.get(c, MySharedPreference.LAST_UPDATE_CONFERENCE_TIMESTAMP, null);
 	}
 
-	protected void saveLastConferenceUpdateTime(Context c) {
-		MySharedPreference.save(c, MySharedPreference.LAST_UPDATE_CONFERENCE_TIMESTAMP,
-				System.currentTimeMillis());
+	protected String getLastGroupUpdateTime(Context c) {
+		return MySharedPreference.get(c, MySharedPreference.LAST_UPDATE_GROUP_TIMESTAMP, null);
+	}
+
+	protected String getLastGpsUpdateTime(Context c) {
+		return MySharedPreference.get(c, MySharedPreference.LAST_UPDATE_GPS_TIMESTAMP, null);
 	}
 }
