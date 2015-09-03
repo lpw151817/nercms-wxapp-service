@@ -102,7 +102,7 @@ public class FeedbackRequest extends BaseRequest {
 		TaskFeedbackRequest params = new TaskFeedbackRequest(getUserId(context), getUserIc(context),
 				4 + "", sid, st, c, at, au, ut, rid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_FEEDBACK_SEND
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -231,7 +231,7 @@ public class FeedbackRequest extends BaseRequest {
 			return null;
 		FeedbackUpdateQueryRequest params = new FeedbackUpdateQueryRequest(getUserId(context), ic, aid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_FEEDBACK_QUERY
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 

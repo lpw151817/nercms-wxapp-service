@@ -13,6 +13,8 @@ import android.wxapp.service.dao.ConferenceDao;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
+import android.wxapp.service.jerry.model.conference.ConferenceQueryRequest;
+import android.wxapp.service.jerry.model.conference.ConferenceQueryResponse;
 import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryRequest;
 import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponse;
 import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseRids;
@@ -54,7 +56,7 @@ public class ConferenceRequest extends BaseRequest {
 		ConferenceUpdateQueryRequest params = new ConferenceUpdateQueryRequest(getUserId(c),
 				getUserIc(c), lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_CONFERENCE_UPDATE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -123,7 +125,7 @@ public class ConferenceRequest extends BaseRequest {
 		CreateConferenceRequest params = new CreateConferenceRequest(getUserId(c), getUserIc(c), n, sid,
 				ct, f, r, et, rids);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_CONFERENCE_CREATE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -177,7 +179,7 @@ public class ConferenceRequest extends BaseRequest {
 		StartConferenceRequest params = new StartConferenceRequest(getUserId(c), getUserIc(c), cid,
 				starttime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_CONFERENCE_START
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -230,7 +232,7 @@ public class ConferenceRequest extends BaseRequest {
 		final String endtime = System.currentTimeMillis() + "";
 		EndConferenceRequest params = new EndConferenceRequest(getUserId(c), getUserIc(c), cid, endtime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_CONFERENCE_END
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -253,6 +255,52 @@ public class ConferenceRequest extends BaseRequest {
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(Constant.CONFERENCE_END_FAIL, r,
 								Contants.METHOD_CONFERENCE_END);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+				Toast.makeText(c, "服务器连接失败", Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	public JsonObjectRequest getConference(final Context c, final String cid) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(c) == null || getUserIc(c) == null)
+			return null;
+		ConferenceQueryRequest params = new ConferenceQueryRequest(getUserId(c), getUserIc(c), cid);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_CONFERENCE_QUERY
+				+ Contants.PARAM_NAME + parase2Json(params);
+		Log.e("URL", this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						ConferenceQueryResponse r = gson.fromJson(arg0.toString(),
+								ConferenceQueryResponse.class);
+						// 进行数据库的操作,保存数据
+						if (new ConferenceDao(c).saveConference(cid, r.getN(), r.getSid(), r.getCt(),
+								r.getF(), r.getSt(), r.getEt(), r.getR(), r.getRids())) {
+							// 将返回结果返回给handler进行ui处理
+							MessageHandlerManager.getInstance().sendMessage(
+									Constant.CONFERENCE_QUERY_SECCUESS, r,
+									Contants.METHOD_CONFERENCE_QUERY);
+						}
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(Constant.CONFERENCE_QUERY_FAIL,
+								r, Contants.METHOD_CONFERENCE_QUERY);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

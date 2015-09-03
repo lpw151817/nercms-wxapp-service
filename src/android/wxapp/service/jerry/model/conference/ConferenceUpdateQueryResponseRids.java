@@ -1,6 +1,8 @@
 package android.wxapp.service.jerry.model.conference;
 
-public class ConferenceUpdateQueryResponseRids {
+import java.io.Serializable;
+
+public class ConferenceUpdateQueryResponseRids implements Serializable {
 	String rid, t;
 
 	public ConferenceUpdateQueryResponseRids() {

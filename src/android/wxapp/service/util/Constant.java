@@ -206,6 +206,8 @@ public class Constant {
 	public static final int CONFERENCE_END_FAIL = 907;
 	public static final int CONFERENCE_SAVE_SUCCESS = 908;
 	public static final int CONFERENCE_SAVE_FAIL = 909;
+	public static final int CONFERENCE_QUERY_SECCUESS = 910;
+	public static final int CONFERENCE_QUERY_FAIL = 911;
 
 	// GroupÄ£¿é
 	public static final int GROUP_UPDATE_SECCESS = 0;

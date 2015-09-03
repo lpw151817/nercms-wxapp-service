@@ -57,7 +57,7 @@ public class GroupRequest extends BaseRequest {
 		GroupUpdateQueryRequest params = new GroupUpdateQueryRequest(getUserId(c), getUserIc(c),
 				lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GROUP_UPDATE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -117,7 +117,7 @@ public class GroupRequest extends BaseRequest {
 		CreateGroupRequest params = new CreateGroupRequest(getUserId(c), getUserIc(c), t, n, ct, ut,
 				rids);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GROUP_CREATE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -162,7 +162,7 @@ public class GroupRequest extends BaseRequest {
 		ModifyGroupRequest params = new ModifyGroupRequest(getUserId(c), getUserIc(c), gid, t, n, ct,
 				ut, rids);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GROUP_MODIFY
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -205,7 +205,7 @@ public class GroupRequest extends BaseRequest {
 			return null;
 		DeleteGroupRequest params = new DeleteGroupRequest(getUserId(c), getUserIc(c), gid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GROUP_DELETE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 

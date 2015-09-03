@@ -348,7 +348,7 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -398,7 +398,7 @@ public class PersonRequest extends BaseRequest {
 			orgCodeUptateTime = "";
 		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCodeUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -447,7 +447,7 @@ public class PersonRequest extends BaseRequest {
 		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), getUserIc(c),
 				orgPersonUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_PERSON
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -533,7 +533,7 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		LogoutRequest params = new LogoutRequest(getUserId(c), getUserIc(c));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_LOGOUT
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -582,7 +582,7 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), getUserIc(c), personId);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -652,7 +652,7 @@ public class PersonRequest extends BaseRequest {
 				personId, contacts);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
 				+ Contants.METHOD_PERSON_ADD_PERSON_CONTACTS + Contants.PARAM_NAME
-				+ super.gson.toJson(params);
+				+ parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 

@@ -1,5 +1,7 @@
 package android.wxapp.service.request;
 
+import java.net.URLEncoder;
+
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.wxapp.service.util.MySharedPreference;
@@ -10,6 +12,10 @@ import com.google.gson.GsonBuilder;
 public class BaseRequest {
 	protected Gson gson;
 	protected String url;
+
+	protected String parase2Json(Object o) {
+		return URLEncoder.encode(gson.toJson(o));
+	}
 
 	public BaseRequest() {
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();

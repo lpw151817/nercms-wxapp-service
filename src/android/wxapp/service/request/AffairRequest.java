@@ -3,7 +3,9 @@ package android.wxapp.service.request;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +45,7 @@ import android.wxapp.service.util.Constant;
 import android.wxapp.service.util.MyJsonParseUtil;
 import android.wxapp.service.util.MySharedPreference;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.Response.ErrorListener;
@@ -89,7 +92,7 @@ public class AffairRequest extends BaseRequest {
 		TaskUpdateQueryRequest params = new TaskUpdateQueryRequest(getUserId(c), getUserIc(c),
 				lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_LIST
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -144,53 +147,6 @@ public class AffairRequest extends BaseRequest {
 				arg0.printStackTrace();
 			}
 		});
-
-		// String userID = MySharedPreference.get(context,
-		// MySharedPreference.USER_ID, null);
-		// String lastUpdateTime = MySharedPreference.get(context,
-		// MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
-		// "1398009600");
-		// // try {
-		// getAffairUpdateString = Constant.SERVER_BASE_URL +
-		// Constant.GET_AFFAIR_UPDATE_URL
-		// + "?param={\"cid\":\"" + userID + "\",\"tsp\":\"" + lastUpdateTime +
-		// "\"}";
-		// Log.v("getAffairUpdate", getAffairUpdateString);
-		// // } catch (Exception e) {
-		// // e.printStackTrace();
-		// // }
-		// JsonObjectRequest getAffairUpdateRequest = new
-		// JsonObjectRequest(getAffairUpdateString, null,
-		// new Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// // 判断服务器是否返回成功，并通知Handler返回消息
-		// Log.i("getAffairUpdate", response.toString());
-		// Log.v("getAffairUpdate", "获取任务更新成功");
-		//
-		// ArrayList<AffairModel> affairs = getArrayListFromJson(response);
-		// if (affairs != null) {
-		// Log.v("getAffairUpdate", "跳转事务保存线程之前");
-		// ThreadManager.getInstance().startSaveAffairThread(affairs, false,
-		// context);
-		// } else {
-		// Log.v("getAffairUpdate", "无数据更新");
-		// // 2014-7-23 WeiHao
-		// // 没有数据更新，将
-		// // 更新首次运行标志为“否”
-		// MySharedPreference.save(context, MySharedPreference.IS_FIRST_RUN,
-		// false);
-		// }
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		//
-		// }
-		// });
-		// return getAffairUpdateRequest;
 
 	}
 
@@ -250,7 +206,7 @@ public class AffairRequest extends BaseRequest {
 		final CreateTaskRequest params = new CreateTaskRequest(getUserId(c), getUserIc(c), t,
 				getUserId(c), d, topic, bt, et, ct, lot, lotime, up, l, l2, l3);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_ADDAFFAIR
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -300,7 +256,16 @@ public class AffairRequest extends BaseRequest {
 				arg0.printStackTrace();
 				Toast.makeText(c, "服务器连接失败", Toast.LENGTH_LONG).show();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 	}
 
 	/**
@@ -320,7 +285,7 @@ public class AffairRequest extends BaseRequest {
 			return null;
 		ModifyTaskRequest params = new ModifyTaskRequest(getUserId(c), ic, aid, et);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_MODIFY_TASK
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -354,64 +319,17 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
 
-		// try {
-		// modifyEndTimeString = Constant.SERVER_BASE_URL
-		// + Constant.MODIFY_END_TIME_URL
-		// + "?param="
-		// + URLEncoder.encode("{\"aid\":\"" + affairID + "\",\"met\":\"" +
-		// modifiedEndTime
-		// + "\"}", "UTF-8");
-		// } catch (UnsupportedEncodingException e1) {
-		// e1.printStackTrace();
-		// }
-		// Log.v("ModifyEndTimeRequest", Constant.SERVER_BASE_URL +
-		// Constant.MODIFY_END_TIME_URL
-		// + "?param=" + "{\"aid\":\"" + affairID + "\",\"met\":\"" +
-		// modifiedEndTime + "\"}");
-		//
-		// JsonObjectRequest modifyEndTimeRequest = new
-		// JsonObjectRequest(modifyEndTimeString, null,
-		// new Response.Listener<JSONObject>() {
-		//
-		// @Override
-		// public void onResponse(JSONObject response) {
-		// try {
-		// if (response.getString("success").equalsIgnoreCase("0")) {
-		// Log.i("ModifyEndTimeRequest", response.toString());
-		// Log.v("ModifyEndTimeRequest", "任务完成时间已修改");
-		//
-		// // 服务器端置修改时间成功，下一步手机端数据库更新完成时间
-		// // 获取服务器端返回的最后一次操作时间
-		// String lastOperateTime = response.getString("lotm");
-		// AffairDao dao = DAOFactory.getInstance().getAffairDao(context);
-		// dao.updateAffairEndTime(affairID, modifiedEndTime, lastOperateTime);
-		//
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.MODIFY_TASK_REQUEST_SUCCESS, "TaskDetail");
-		//
-		// } else {
-		// Log.i("ModifyEndTimeRequest", response.toString());
-		// Log.v("ModifyEndTimeRequest", "修改任务完成时间异常");
-		// }
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }, new Response.ErrorListener() {
-		//
-		// @Override
-		// public void onErrorResponse(VolleyError error) {
-		// // 通知界面
-		// MessageHandlerManager.getInstance().sendMessage(
-		// Constant.MODIFY_TASK_REQUEST_FAIL, "TaskDetail");
-		// }
-		// });
-		//
-		// return modifyEndTimeRequest;
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
+
 	}
 
 	/**
@@ -431,7 +349,7 @@ public class AffairRequest extends BaseRequest {
 			return null;
 		EndTaskRequest params = new EndTaskRequest(getUserId(c), getUserIc(c), aid, ct);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_END_TASK
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -463,7 +381,16 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 
 	}
 
@@ -480,7 +407,7 @@ public class AffairRequest extends BaseRequest {
 			return null;
 		QueryAffairCountRequest params = new QueryAffairCountRequest(getUserId(c), ic);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_COUNT
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -513,7 +440,16 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 	}
 
 	/**
@@ -535,7 +471,7 @@ public class AffairRequest extends BaseRequest {
 			return null;
 		QueryAffairListRequest params = new QueryAffairListRequest(getUserId(c), ic, sor, t, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_LIST
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -582,7 +518,16 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 	}
 
 	/**
@@ -594,13 +539,13 @@ public class AffairRequest extends BaseRequest {
 	 *            任务id
 	 * @return
 	 */
-	public JsonObjectRequest queryAffairInfo(Context c, String ic, String aid) {
+	public JsonObjectRequest queryAffairInfo(final Context c, String aid) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(c) == null)
+		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		QueryAffairInfoRequest params = new QueryAffairInfoRequest(getUserId(c), ic, aid);
+		QueryAffairInfoRequest params = new QueryAffairInfoRequest(getUserId(c), getUserIc(c), aid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_QUERY_INFO
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -611,10 +556,13 @@ public class AffairRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryAffairInfoResponse r = gson.fromJson(arg0.toString(),
 								QueryAffairInfoResponse.class);
-						// 将返回结果返回给handler进行ui处理
-						MessageHandlerManager.getInstance().sendMessage(
-								Constant.QUERY_TASK_INFO_REQUEST_SUCCESS, r,
-								Contants.METHOD_AFFAIRS_QUERY_INFO);
+						// 　db insert
+						if (new AffairDao(c).saveAffairInfo(r)) {
+							// 将返回结果返回给handler进行ui处理
+							MessageHandlerManager.getInstance().sendMessage(
+									Constant.QUERY_TASK_INFO_REQUEST_SUCCESS, r,
+									Contants.METHOD_AFFAIRS_QUERY_INFO);
+						}
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
@@ -633,39 +581,18 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 
 	}
-
-	// /**
-	// * 服务器反馈Json解析成Affair列表
-	// *
-	// * @param resultJsonObject
-	// * @return
-	// * @deprecated
-	// */
-	// private ArrayList<AffairModel> getArrayListFromJson(JSONObject
-	// resultJsonObject) {
-	// String updateTimeStamp = null;
-	// ArrayList<AffairModel> affairList = null;
-	// if (resultJsonObject != null) {
-	// affairList = null;
-	// affairList = MyJsonParseUtil.getAffairList(resultJsonObject);
-	// if (affairList == null) {
-	// return null;
-	// }
-	// updateTimeStamp = MyJsonParseUtil.getUpdateTimeStamp(resultJsonObject);
-	//
-	// // 更新最后一次更新任务的时戳
-	// if (updateTimeStamp != null) {
-	// MySharedPreference.save(context,
-	// MySharedPreference.LAST_UPDATE_TASK_TIMESTAMP,
-	// updateTimeStamp);
-	// }
-	// }
-	//
-	// return affairList;
-	// }
 
 	public JsonObjectRequest updateAffairReadtime(Context c, String aid) {
 		if (getUserIc(c) == null || getUserId(c) == null)
@@ -673,7 +600,7 @@ public class AffairRequest extends BaseRequest {
 		UpdateAffairReadTimeRequest params = new UpdateAffairReadTimeRequest(getUserId(c), getUserIc(c),
 				aid, System.currentTimeMillis() + "");
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_READTIME
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -706,7 +633,16 @@ public class AffairRequest extends BaseRequest {
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
 			}
-		});
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
 
 	}
 }

@@ -1,6 +1,8 @@
 package android.wxapp.service.jerry.model.affair;
 
-public class CreateTaskRequestAttachment {
+import java.io.Serializable;
+
+public class CreateTaskRequestAttachment implements Serializable{
 String at,u;
 
 public String getAt() {

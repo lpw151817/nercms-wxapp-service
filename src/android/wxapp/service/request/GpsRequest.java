@@ -72,7 +72,7 @@ public class GpsRequest extends BaseRequest {
 		// 将gps信息直接打包成json传输，之后需要将gps信息进行压缩处理
 		GpsUploadRequest params = new GpsUploadRequest(getUserId(c), getUserIc(c), gson.toJson(g));
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_UPLOAD
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -123,7 +123,7 @@ public class GpsRequest extends BaseRequest {
 				id);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
 				+ Contants.METHOD_GPS_QUERY_LAST_PERSONAL_GPS + Contants.PARAM_NAME
-				+ super.gson.toJson(params);
+				+ parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -177,7 +177,7 @@ public class GpsRequest extends BaseRequest {
 		}
 		QueryLastGpssRequest params = new QueryLastGpssRequest(getUserId(c), getUserIc(c), idList);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_LAST_GPSS
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -227,7 +227,7 @@ public class GpsRequest extends BaseRequest {
 			return null;
 		QueryPersonalGpssRequest params = new QueryPersonalGpssRequest(getUserId(c), getUserIc(c), cid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_PERSONAL_GPSS
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -281,7 +281,7 @@ public class GpsRequest extends BaseRequest {
 		}
 		QueryGpssRequest params = new QueryGpssRequest(getUserId(c), getUserIc(c), l);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_QUERY_GPSS
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -323,7 +323,7 @@ public class GpsRequest extends BaseRequest {
 		GpsUpdateQueryRequest params = new GpsUpdateQueryRequest(getUserId(c), getUserIc(c),
 				lastUpdateTime, count);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_GPS_UPDAET
-				+ Contants.PARAM_NAME + super.gson.toJson(params);
+				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 

@@ -146,7 +146,7 @@ public class GroupDao extends BaseDAO {
 	public List<Org> queryMyAllGroups2(String type, String uid) {
 		db = dbHelper.getReadableDatabase();
 		List<Org> result = new ArrayList<Org>();
-		result.add(new Org("g2", "0", "群组"));
+		result.add(new Org("g", "0", "群组"));
 		String sql = "select * from " + DatabaseHelper.TABLE_GROUP;
 		if (type != null && !type.equals("")) {
 			sql += " where " + DatabaseHelper.FIELD_GROUP_TYPE + " = " + type;
@@ -155,7 +155,7 @@ public class GroupDao extends BaseDAO {
 		Cursor c = db.rawQuery(sql, null);
 		if (uid == null || uid.equals("")) {
 			while (c.moveToNext()) {
-				result.add(new Org("g" + getData(c, DatabaseHelper.FIELD_GROUP_GROUP_ID), "g2", getData(
+				result.add(new Org("g" + getData(c, DatabaseHelper.FIELD_GROUP_GROUP_ID), "g", getData(
 						c, DatabaseHelper.FIELD_GROUP_NAME)));
 			}
 		} else {
@@ -165,7 +165,7 @@ public class GroupDao extends BaseDAO {
 						new TypeToken<List<GroupUpdateQueryRequestIds>>() {
 						}.getType());
 				if (rids.contains(new GroupUpdateQueryRequestIds(uid)))
-					result.add(new Org("g" + getData(c, DatabaseHelper.FIELD_GROUP_GROUP_ID), "g2",
+					result.add(new Org("g" + getData(c, DatabaseHelper.FIELD_GROUP_GROUP_ID), "g",
 							getData(c, DatabaseHelper.FIELD_GROUP_NAME)));
 			}
 		}

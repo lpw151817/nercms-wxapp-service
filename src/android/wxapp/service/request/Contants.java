@@ -80,6 +80,7 @@ public class Contants {
 	public static final String METHOD_CONFERENCE_CREATE = "CreateConference";
 	public static final String METHOD_CONFERENCE_START = "StartConference";
 	public static final String METHOD_CONFERENCE_END = "EndConference";
+	public static final String METHOD_CONFERENCE_QUERY = "ConferenceQuery";
 
 	// GroupÄ£¿é Jerry 5.22
 	public static final String METHOD_GROUP_UPDATE = "GroupUpdateQuery";

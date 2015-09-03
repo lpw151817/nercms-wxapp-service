@@ -1,8 +1,9 @@
 package android.wxapp.service.jerry.model.affair;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class QueryAffairInfoResponse {
+public class QueryAffairInfoResponse implements Serializable{
 	String s, aid, t, sid, d, topic, bt, et, ct, lot, lotime, up;
 	List<CreateTaskRequestAttachment> att;
 	List<CreateTaskRequestIds> rids;

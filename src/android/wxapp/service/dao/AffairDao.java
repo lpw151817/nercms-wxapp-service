@@ -63,6 +63,7 @@ public class AffairDao extends BaseDAO {
 			return false;
 	}
 
+	// TODO 此函数逻辑有错误
 	public boolean saveAffairInfo(QueryAffairInfoResponse affairInfo) {
 		db = dbHelper.getWritableDatabase();
 		// 插入到TABLE_AFFIARINFO中
@@ -80,40 +81,50 @@ public class AffairDao extends BaseDAO {
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_ATTACHMENT, gson.toJson(affairInfo.getAtt()));
 		values.put(DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID, affairInfo.getAid());
 
-		// 插入人员信息到TABLE_PERSON_ON_DUTY
-		boolean isSavePodSuccess = false;
-		boolean isSaveRidSuccess = false;
+		// 如果服务器中没有，则为创建，否则为更改
+		if (getAffairInfoByAid(affairInfo.getAid()) == null) {
 
-		int i;
-		for (i = 0; i < affairInfo.getPod().size(); i++) {
-			if (savePersonOnDuty(affairInfo.getAid(), affairInfo.getPod().get(i).getRid(),
-					affairInfo.getUp())) {
-				continue;
-			} else
-				break;
+			// 插入人员信息到TABLE_PERSON_ON_DUTY
+			boolean isSavePodSuccess = false;
+			boolean isSaveRidSuccess = false;
+
+			int i;
+			for (i = 0; i < affairInfo.getPod().size(); i++) {
+				if (savePersonOnDuty(affairInfo.getAid(), affairInfo.getPod().get(i).getRid(),
+						affairInfo.getUp())) {
+					continue;
+				} else
+					break;
+			}
+			if (i == affairInfo.getPod().size()) {
+				isSavePodSuccess = true;
+			}
+			// 归零
+			i = 0;
+			for (i = 0; i < affairInfo.getRids().size(); i++) {
+				if (saveReceiver(affairInfo.getAid(), affairInfo.getRids().get(i).getRid(),
+						affairInfo.getUp())) {
+					continue;
+				} else
+					break;
+			}
+			if (i == affairInfo.getRids().size()) {
+				isSaveRidSuccess = true;
+			}
+			if ((db.insert(DatabaseHelper.TABLE_AFFIARINFO, null, values) == -1) && isSavePodSuccess
+					&& isSaveRidSuccess) {
+				Log.i(TAG, "存储事务失败!");
+				return false;
+			} else {
+				Log.i(TAG, "存储事务成功!");
+				return true;
+			}
 		}
-		if (i == affairInfo.getPod().size()) {
-			isSavePodSuccess = true;
-		}
-		// 归零
-		i = 0;
-		for (i = 0; i < affairInfo.getRids().size(); i++) {
-			if (saveReceiver(affairInfo.getAid(), affairInfo.getRids().get(i).getRid(),
-					affairInfo.getUp())) {
-				continue;
-			} else
-				break;
-		}
-		if (i == affairInfo.getRids().size()) {
-			isSaveRidSuccess = true;
-		}
-		if ((db.insert(DatabaseHelper.TABLE_AFFIARINFO, null, values) == -1) && isSavePodSuccess
-				&& isSaveRidSuccess) {
-			Log.i(TAG, "存储事务失败!");
-			return false;
-		} else {
-			Log.i(TAG, "存储事务成功!");
-			return true;
+		// 数据库中有此条数据
+		else {
+			return db.update(DatabaseHelper.TABLE_AFFIARINFO, values,
+					DatabaseHelper.FIELD_AFFIARINFO_AFFAIR_ID + " = ?",
+					new String[] { affairInfo.getAid() }) > 0;
 		}
 
 	}
@@ -213,7 +224,8 @@ public class AffairDao extends BaseDAO {
 	 * 根据AffairId查询出人员信息
 	 * 
 	 * @param aid
-	 * @return < key , value >:<"1",List<CreateTaskRequestIds> pod>,<"2",List<CreateTaskRequestIds> rids>
+	 * @return < key , value >:<"1",List<CreateTaskRequestIds>
+	 *         pod>,<"2",List<CreateTaskRequestIds> rids>
 	 */
 	public Map<String, List<CreateTaskRequestIds>> getPersonIdByAffairId(String aid) {
 		SQLiteDatabase database = dbHelper.getReadableDatabase();

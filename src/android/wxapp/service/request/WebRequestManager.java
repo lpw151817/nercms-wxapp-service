@@ -110,6 +110,10 @@ public class WebRequestManager {
 		queue.add(new AffairRequest().getAffairUpdateRequest(context, count));
 	}
 
+	public void getAffair(String aid) {
+		queue.add(new AffairRequest().queryAffairInfo(context, aid));
+	}
+
 	// 创建新事务
 	public void sendAffair(String t, String d, String topic, String bt, String et, String ct,
 			String lot, String lotime, String up, List<String> ats, List<String> us, List<String> rids,
@@ -181,6 +185,10 @@ public class WebRequestManager {
 	// 更新会议
 	public void updateConference(String count) {
 		queue.add(new ConferenceRequest().updateConference(context, count));
+	}
+
+	public void getConference(String cid) {
+		queue.add(new ConferenceRequest().getConference(context, cid));
 	}
 
 	// 创建会议
