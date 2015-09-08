@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.widget.Toast;
+import android.wxapp.service.dao.MessageDao;
 import android.wxapp.service.handler.MessageHandlerManager;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryRequest;
 import android.wxapp.service.jerry.model.message.MessageUpdateQueryResponse;
@@ -105,7 +106,8 @@ public class MessageRequest extends BaseRequest {
 								NormalServerResponse.class);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.UPDATE_MESSAGE_REQUEST_FAIL, r, Contants.METHOD_MESSAGE_UPDATE);
+								Constant.UPDATE_MESSAGE_REQUEST_FAIL, r,
+								Contants.METHOD_MESSAGE_UPDATE);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -153,13 +155,13 @@ public class MessageRequest extends BaseRequest {
 	 *            更新时间
 	 * @return
 	 */
-	public JsonObjectRequest sendMessageRequest(final Context context, String t, String sid, String rid,
-			String st, String c, String at, String au, String ut) {
+	public JsonObjectRequest sendMessageRequest(final Context context, String t, String sid,
+			String rid, String st, String c, String at, String au, String ut) {
 		// 如果为获取到用户的id，则直接返回
 		if (getUserId(context) == null || getUserIc(context) == null)
 			return null;
-		final SendMessageRequest params = new SendMessageRequest(getUserId(context), getUserIc(context),
-				t, sid, rid, st, c, at, au, ut);
+		final SendMessageRequest params = new SendMessageRequest(getUserId(context),
+				getUserIc(context), t, sid, rid, st, c, at, au, ut);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_SEND
 				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println(this.url);
@@ -170,21 +172,25 @@ public class MessageRequest extends BaseRequest {
 				System.out.println(arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						SendMessageResponse r = gson.fromJson(arg0.toString(), SendMessageResponse.class);
+						SendMessageResponse r = gson.fromJson(arg0.toString(),
+								SendMessageResponse.class);
 						// 进行数据库的insert
-						new SaveMessageThread(context, r.getMid(), new ReceiveMessageResponse("", params
-								.getT(), params.getSid(), params.getRid(), params.getSt(),
-								params.getC(), params.getAt(), params.getAu(), params.getUt(), null))
-								.run();
+						new SaveMessageThread(context, r.getMid(),
+								new ReceiveMessageResponse("", r.getMid(), params.getT(),
+										params.getSid(), params.getRid(), params.getSt(),
+										params.getC(), params.getAt(), params.getAu(),
+										params.getUt(), null)).run();
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.SEND_MESSAGE_REQUEST_SUCCESS, r, Contants.METHOD_MESSAGE_SEND);
+								Constant.SEND_MESSAGE_REQUEST_SUCCESS, r,
+								Contants.METHOD_MESSAGE_SEND);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.SEND_MESSAGE_REQUEST_FAIL, r, Contants.METHOD_MESSAGE_SEND);
+								Constant.SEND_MESSAGE_REQUEST_FAIL, r,
+								Contants.METHOD_MESSAGE_SEND);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -288,11 +294,12 @@ public class MessageRequest extends BaseRequest {
 	 *            需要查询的消息id
 	 * @return
 	 */
-	public JsonObjectRequest receiveMessage(Context context, String ic, String mid) {
+	public JsonObjectRequest receiveMessage(final Context context, final String mid) {
 		// 如果为获取到用户的id，则直接返回
-		if (getUserId(context) == null)
+		if (getUserId(context) == null || getUserIc(context) == null)
 			return null;
-		ReceiveMessageRequest params = new ReceiveMessageRequest(getUserId(context), ic, mid);
+		ReceiveMessageRequest params = new ReceiveMessageRequest(getUserId(context),
+				getUserIc(context), mid);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_MESSAGE_RECEIVE
 				+ Contants.PARAM_NAME + parase2Json(params);
 		System.out.println(this.url);
@@ -306,6 +313,8 @@ public class MessageRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						ReceiveMessageResponse r = gson.fromJson(arg0.toString(),
 								ReceiveMessageResponse.class);
+						// db insert
+						new MessageDao(context).saveMessage(mid, r);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.QUERY_MESSAGE_INFO_REQUEST_SUCCESS, r,

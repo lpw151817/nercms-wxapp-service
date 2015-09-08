@@ -32,6 +32,8 @@ import android.wxapp.service.jerry.model.affair.QueryAffairListRequest;
 import android.wxapp.service.jerry.model.affair.QueryAffairListResponse;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryRequest;
 import android.wxapp.service.jerry.model.affair.TaskUpdateQueryResponse;
+import android.wxapp.service.jerry.model.affair.UpdateAffairInfoRequest;
+import android.wxapp.service.jerry.model.affair.UpdateAffairInfoResponse;
 import android.wxapp.service.jerry.model.affair.UpdateAffairReadTimeRequest;
 import android.wxapp.service.jerry.model.affair.UpdateAffairReadTimeResponse;
 import android.wxapp.service.jerry.model.gps.GpsUploadRequest;
@@ -151,7 +153,7 @@ public class AffairRequest extends BaseRequest {
 	}
 
 	/**
-	 * 创建事务 FINAL　Jerry 5.23
+	 * 创建事务 FINAL Jerry 5.23
 	 * 
 	 * @param c
 	 * @param ic
@@ -214,7 +216,8 @@ public class AffairRequest extends BaseRequest {
 			public void onResponse(JSONObject arg0) {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						CreateTaskResponse r = gson.fromJson(arg0.toString(), CreateTaskResponse.class);
+						CreateTaskResponse r = gson.fromJson(arg0.toString(),
+								CreateTaskResponse.class);
 
 						// DB insert
 						List<CreateTaskRequestAttachment> att = new ArrayList<CreateTaskRequestAttachment>();
@@ -229,9 +232,9 @@ public class AffairRequest extends BaseRequest {
 						for (int i = 0; i < pods.size(); i++) {
 							ids2.add(new CreateTaskRequestIds(rids.get(i)));
 						}
-						new SaveAffairThread(c, new QueryAffairInfoResponse("", r.getAid(), t,
-								getUserId(c), d, topic, bt, et, ct, lot, lotime, up, att, ids1, ids2))
-								.run();
+						new SaveAffairThread(c,
+								new QueryAffairInfoResponse("", r.getAid(), t, getUserId(c), d,
+										topic, bt, et, ct, lot, lotime, up, att, ids1, ids2)).run();
 
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
@@ -294,8 +297,9 @@ public class AffairRequest extends BaseRequest {
 				System.out.println("response>>>>>>>" + arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						ModifyTaskResponse r = gson.fromJson(arg0.toString(), ModifyTaskResponse.class);
-						// TODO 是否需要进行数据库的操作
+						ModifyTaskResponse r = gson.fromJson(arg0.toString(),
+								ModifyTaskResponse.class);
+								// TODO 是否需要进行数据库的操作
 
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
@@ -363,13 +367,15 @@ public class AffairRequest extends BaseRequest {
 						new AffairDao(c).updateAffairCompleted(aid, ct);
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
-								Constant.END_TASK_REQUEST_SUCCESS, r, Contants.METHOD_AFFAIRS_END_TASK);
+								Constant.END_TASK_REQUEST_SUCCESS, r,
+								Contants.METHOD_AFFAIRS_END_TASK);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 将返回结果返回给handler进行ui处理
-						MessageHandlerManager.getInstance().sendMessage(Constant.END_TASK_REQUEST_FAIL,
-								r, Contants.METHOD_AFFAIRS_END_TASK);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.END_TASK_REQUEST_FAIL, r,
+								Contants.METHOD_AFFAIRS_END_TASK);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -465,7 +471,8 @@ public class AffairRequest extends BaseRequest {
 	 *            标记是第几次查询数据，用于分页请求数据
 	 * @return
 	 */
-	public JsonObjectRequest queryAffairList(Context c, String ic, String sor, String t, String count) {
+	public JsonObjectRequest queryAffairList(Context c, String ic, String sor, String t,
+			String count) {
 		// 如果为获取到用户的id，则直接返回
 		if (getUserId(c) == null)
 			return null;
@@ -483,7 +490,7 @@ public class AffairRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryAffairListResponse r = gson.fromJson(arg0.toString(),
 								QueryAffairListResponse.class);
-						// TODO 进行数据库的操作,保存数据
+								// TODO 进行数据库的操作,保存数据
 
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
@@ -494,7 +501,7 @@ public class AffairRequest extends BaseRequest {
 					else if (arg0.getString("s").equals(Contants.RESULT_MORE)) {
 						QueryAffairListResponse r = gson.fromJson(arg0.toString(),
 								QueryAffairListResponse.class);
-						// TODO 进行数据库的操作,保存数据
+								// TODO 进行数据库的操作,保存数据
 
 						// 将返回结果返回给handler进行ui处理
 						MessageHandlerManager.getInstance().sendMessage(
@@ -556,7 +563,7 @@ public class AffairRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						QueryAffairInfoResponse r = gson.fromJson(arg0.toString(),
 								QueryAffairInfoResponse.class);
-						// 　db insert
+						// db insert
 						if (new AffairDao(c).saveAffairInfo(r)) {
 							// 将返回结果返回给handler进行ui处理
 							MessageHandlerManager.getInstance().sendMessage(
@@ -597,10 +604,11 @@ public class AffairRequest extends BaseRequest {
 	public JsonObjectRequest updateAffairReadtime(Context c, String aid) {
 		if (getUserIc(c) == null || getUserId(c) == null)
 			return null;
-		UpdateAffairReadTimeRequest params = new UpdateAffairReadTimeRequest(getUserId(c), getUserIc(c),
-				aid, System.currentTimeMillis() + "");
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_READTIME
-				+ Contants.PARAM_NAME + parase2Json(params);
+		UpdateAffairReadTimeRequest params = new UpdateAffairReadTimeRequest(getUserId(c),
+				getUserIc(c), aid, System.currentTimeMillis() + "");
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
+				+ Contants.METHOD_AFFAIRS_UPDATE_READTIME + Contants.PARAM_NAME
+				+ parase2Json(params);
 		System.out.println("request>>>>>>" + this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -622,6 +630,65 @@ public class AffairRequest extends BaseRequest {
 						MessageHandlerManager.getInstance().sendMessage(
 								Constant.UPDATE_TASK_READTIME_FAIL, r,
 								Contants.METHOD_AFFAIRS_UPDATE_READTIME);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		}, new ErrorListener() {
+
+			@Override
+			public void onErrorResponse(VolleyError arg0) {
+				arg0.printStackTrace();
+			}
+		}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				HashMap<String, String> headers = new HashMap<String, String>();
+				headers.put("Content-Type", "application/json; charset=utf-8");
+				return headers;
+			}
+
+		};
+
+	}
+
+	public JsonObjectRequest updateAffairInfo(final Context c, final String aid,
+			final List<CreateTaskRequestIds> pod, final List<CreateTaskRequestIds> rids,
+			final String d, final String topic, final String et,
+			final List<CreateTaskRequestAttachment> att) {
+		// 如果为获取到用户的id，则直接返回
+		if (getUserId(c) == null || getUserIc(c) == null)
+			return null;
+		UpdateAffairInfoRequest params = new UpdateAffairInfoRequest(getUserId(c), getUserIc(c),
+				aid, pod, rids, d, topic, et, att);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_AFFAIRS_UPDATE_INFO
+				+ Contants.PARAM_NAME + parase2Json(params);
+		System.out.println("request>>>>>>" + this.url);
+		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				System.out.println("response>>>>>>>" + arg0.toString());
+				try {
+					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
+						UpdateAffairInfoResponse r = gson.fromJson(arg0.toString(),
+								UpdateAffairInfoResponse.class);
+						// db update
+						if (new AffairDao(c).updateAffairInfo(aid, pod, rids, d, topic, et, att)) {
+							// 将返回结果返回给handler进行ui处理
+							MessageHandlerManager.getInstance().sendMessage(
+									Constant.UPDATE_TASK_INFO_SUCCESS, r,
+									Contants.METHOD_AFFAIRS_UPDATE_INFO);
+						}
+					} else {
+						NormalServerResponse r = gson.fromJson(arg0.toString(),
+								NormalServerResponse.class);
+						// 将返回结果返回给handler进行ui处理
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.UPDATE_TASK_INFO_FAIL, r,
+								Contants.METHOD_AFFAIRS_UPDATE_INFO);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

@@ -58,9 +58,9 @@ public class ConferenceDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_CONFERENCE_PERSON_CID + " = " + cid, null);
 		List<ConferenceUpdateQueryResponseRids> result = new ArrayList<ConferenceUpdateQueryResponseRids>();
 		while (c.moveToNext()) {
-			result.add(new ConferenceUpdateQueryResponseRids(getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_PERSON_UID), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_PERSON_TYPE)));
+			result.add(new ConferenceUpdateQueryResponseRids(
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_PERSON_UID),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_PERSON_TYPE)));
 		}
 		c.close();
 		return result;
@@ -79,7 +79,8 @@ public class ConferenceDao extends BaseDAO {
 		return result;
 	}
 
-	public Map<String, List<ConferenceUpdateQueryResponseRids>> getConferencePersonByPid(String pid) {
+	public Map<String, List<ConferenceUpdateQueryResponseRids>> getConferencePersonByPid(
+			String pid) {
 		Map<String, List<ConferenceUpdateQueryResponseRids>> result = new HashMap<String, List<ConferenceUpdateQueryResponseRids>>();
 		List<String> cids = getConferenceIdByPidInPerson(pid);
 		for (String item : cids) {
@@ -108,7 +109,8 @@ public class ConferenceDao extends BaseDAO {
 			else
 				break;
 		}
-		return (db.insert(DatabaseHelper.TABLE_CONFERENCE, null, values1) > 0) && (i == rids.size());
+		return (db.insert(DatabaseHelper.TABLE_CONFERENCE, null, values1) > 0)
+				&& (i == rids.size());
 	}
 
 	public boolean startConference(String cid, String starttime) {
@@ -129,19 +131,22 @@ public class ConferenceDao extends BaseDAO {
 
 	public ConferenceUpdateQueryResponseItem getConferenceByCid(String conferenceID) {
 		db = dbHelper.getReadableDatabase();
-		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_CONFERENCE + " where "
-				+ DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID + " = " + conferenceID, null);
+		Cursor c = db.rawQuery(
+				"select * from " + DatabaseHelper.TABLE_CONFERENCE + " where "
+						+ DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID + " = " + conferenceID,
+				null);
 		ConferenceUpdateQueryResponseItem result = null;
 		if (c.moveToFirst()) {
 
-			result = new ConferenceUpdateQueryResponseItem(conferenceID, getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_NAME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_SPONSORID), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_CONVENE_TIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_FROM), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_START_TIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_ENDTIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_REMARK), getConferencePersonByCid(conferenceID));
+			result = new ConferenceUpdateQueryResponseItem(conferenceID,
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_NAME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_SPONSORID),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_CONVENE_TIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_FROM),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_START_TIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_ENDTIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_REMARK),
+					getConferencePersonByCid(conferenceID));
 		}
 		c.close();
 		return result;
@@ -154,19 +159,20 @@ public class ConferenceDao extends BaseDAO {
 		List<ConferenceUpdateQueryResponseItem> result = new ArrayList<ConferenceUpdateQueryResponseItem>();
 		// 作为发起人
 		while (c.moveToNext()) {
-			result.add(new ConferenceUpdateQueryResponseItem(getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_NAME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_SPONSORID), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_CONVENE_TIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_FROM), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_START_TIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_ENDTIME), getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_REMARK), getConferencePersonByCid(getData(c,
-					DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID))));
+			result.add(new ConferenceUpdateQueryResponseItem(
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_NAME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_SPONSORID),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_CONVENE_TIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_FROM),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_START_TIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_ENDTIME),
+					getData(c, DatabaseHelper.FIELD_CONFERENCE_REMARK), getConferencePersonByCid(
+							getData(c, DatabaseHelper.FIELD_CONFERENCE_CONFERENCE_ID))));
 		}
 		// 作为接收人
-		Map<String, List<ConferenceUpdateQueryResponseRids>> data = getConferencePersonByPid(userID);
+		Map<String, List<ConferenceUpdateQueryResponseRids>> data = getConferencePersonByPid(
+				userID);
 		for (String item : data.keySet()) {
 			if (!result.contains(new ConferenceUpdateQueryResponseItem(item, null, null, null, null,
 					null, null, null, null)))
@@ -178,15 +184,10 @@ public class ConferenceDao extends BaseDAO {
 		return result;
 	}
 
-	public void deleteConferenceByID(String conferenceID) {
+	public boolean deleteConferenceByID(String conferenceID) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long id = db.delete(DatabaseHelper.TABLE_CONFERENCE, "conference_id = ?",
-				new String[] { conferenceID });
-		if (id == -1) {
-			Log.i(TAG, "删除会议失败!");
-		} else {
-			Log.i(TAG, "删除会议成功!");
-		}
+		return db.delete(DatabaseHelper.TABLE_CONFERENCE, "conference_id = ?",
+				new String[] { conferenceID }) > 0;
 	}
 
 	public boolean deleteAll() {

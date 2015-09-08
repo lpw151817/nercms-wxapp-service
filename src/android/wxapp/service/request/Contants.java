@@ -41,6 +41,7 @@ public class Contants {
 	public static final String METHOD_AFFAIRS_QUERY_LIST = "QueryAffairList";
 	public static final String METHOD_AFFAIRS_QUERY_INFO = "QueryAffairInfo";
 	public static final String METHOD_AFFAIRS_UPDATE_READTIME = "UpdateAffairReadTime";
+	public static final String METHOD_AFFAIRS_UPDATE_INFO = "UpdateAffairInfo";
 	// ===========以下为废弃接口==============
 	public static final String METHOD_AFFAIRS_CloseAffair = "CloseAffair";
 	public static final String METHOD_AFFAIRS_QueryAffairList = "QueryAffairList";

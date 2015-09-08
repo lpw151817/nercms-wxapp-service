@@ -3,7 +3,7 @@ package android.wxapp.service.jerry.model.message;
 import java.util.List;
 
 public class ReceiveMessageResponse {
-	String s, t, sid;
+	String s, mid, t, sid;
 	String rid;
 	String st, c, at, au, ut, ir;
 
@@ -87,10 +87,11 @@ public class ReceiveMessageResponse {
 		this.ir = ir;
 	}
 
-	public ReceiveMessageResponse(String s, String t, String sid, String rid, String st, String c,
-			String at, String au, String ut, String ir) {
+	public ReceiveMessageResponse(String s, String mid, String t, String sid, String rid, String st,
+			String c, String at, String au, String ut, String ir) {
 		super();
 		this.s = s;
+		this.mid = mid;
 		this.t = t;
 		this.sid = sid;
 		this.rid = rid;
@@ -100,6 +101,14 @@ public class ReceiveMessageResponse {
 		this.au = au;
 		this.ut = ut;
 		this.ir = ir;
+	}
+
+	public String getMid() {
+		return mid;
+	}
+
+	public void setMid(String mid) {
+		this.mid = mid;
 	}
 
 	public ReceiveMessageResponse() {

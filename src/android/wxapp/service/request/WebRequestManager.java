@@ -6,6 +6,8 @@ import java.util.List;
 import android.content.Context;
 import android.provider.MediaStore.Video;
 import android.wxapp.service.AppApplication;
+import android.wxapp.service.jerry.model.affair.CreateTaskRequestAttachment;
+import android.wxapp.service.jerry.model.affair.CreateTaskRequestIds;
 import android.wxapp.service.jerry.model.conference.ConferenceUpdateQueryResponseRids;
 import android.wxapp.service.jerry.model.feedback.TaskFeedbackRequestIds;
 import android.wxapp.service.jerry.model.group.GroupUpdateQueryRequestIds;
@@ -89,7 +91,8 @@ public class WebRequestManager {
 
 	// 编辑客户信息 废弃接口 Jerry 5.25
 	@Deprecated
-	public void modifyCustomer(CustomerModel customer, ArrayList<CustomerContactModel> contactList) {
+	public void modifyCustomer(CustomerModel customer,
+			ArrayList<CustomerContactModel> contactList) {
 		// queue.add(new PersonRequest().sendModifyCustomerRequest(customer,
 		// contactList));
 	}
@@ -116,8 +119,8 @@ public class WebRequestManager {
 
 	// 创建新事务
 	public void sendAffair(String t, String d, String topic, String bt, String et, String ct,
-			String lot, String lotime, String up, List<String> ats, List<String> us, List<String> rids,
-			List<String> pods) {
+			String lot, String lotime, String up, List<String> ats, List<String> us,
+			List<String> rids, List<String> pods) {
 		queue.add(new AffairRequest().getCreateAffairRequest(context, t, d, topic, bt, et, ct, lot,
 				lotime, up, ats, us, rids, pods));
 	}
@@ -128,10 +131,16 @@ public class WebRequestManager {
 		// affairID, timeString));
 	}
 
+	public void modifyAffair(String aid, List<CreateTaskRequestIds> pod,
+			List<CreateTaskRequestIds> rids, String d, String topic, String et,
+			List<CreateTaskRequestAttachment> att) {
+		queue.add(new AffairRequest().updateAffairInfo(context, aid, pod, rids, d, topic, et, att));
+	}
+
 	// 完成事务
 	public void endAffair(String affairID) {
-		queue.add(new AffairRequest().getEndTaskRequest(context, affairID, System.currentTimeMillis()
-				+ ""));
+		queue.add(new AffairRequest().getEndTaskRequest(context, affairID,
+				System.currentTimeMillis() + ""));
 	}
 
 	//
@@ -139,7 +148,8 @@ public class WebRequestManager {
 	//
 
 	// 发送新反馈
-	public void sendFeedback(String sid, String rid, String st, String c, String at, String au, String ut) {
+	public void sendFeedback(String sid, String rid, String st, String c, String at, String au,
+			String ut) {
 		queue.add(new FeedbackRequest().sendFeedbackRequest(context, sid, st, c, at, au, ut, rid));
 	}
 
@@ -160,8 +170,8 @@ public class WebRequestManager {
 	//
 
 	// 发送新消息
-	public void sendMessage(String t, String sid, String rid, String st, String c, String at, String au,
-			String ut) {
+	public void sendMessage(String t, String sid, String rid, String st, String c, String at,
+			String au, String ut) {
 		queue.add(new MessageRequest().sendMessageRequest(context, t, sid, rid, st, c, at, au, ut));
 	}
 
@@ -171,7 +181,7 @@ public class WebRequestManager {
 	}
 
 	public void getMessage(String mid) {
-
+		queue.add(new MessageRequest().receiveMessage(context, mid));
 	}
 
 	public void sendCrashReport(JsonObjectRequest request) {

@@ -3,6 +3,7 @@ package android.wxapp.service.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +45,28 @@ public class MessageDao extends BaseDAO {
 	 * @return
 	 */
 	public List<ReceiveMessageResponse> getFeedback(String aid) {
-		String uid = MySharedPreference.get(c, MySharedPreference.USER_ID, null);
 		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
-		result.addAll(getMessageBySidAndRid(uid, aid, "4"));
+		// String uid = MySharedPreference.get(c, MySharedPreference.USER_ID,
+		// null);
+		// result.addAll(getMessageBySidAndRid(uid, aid, "4"));
+
+		db = dbHelper.getReadableDatabase();
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_MESSAGE + " where "
+				+ DatabaseHelper.FIELD_MESSAGE_RELATION_ID + " = ? order by "
+				+ DatabaseHelper.FIELD_MESSAGE_SEND_TIME + " ASC", new String[] { aid });
+		while (c.moveToNext()) {
+			result.add(new ReceiveMessageResponse("",
+					getData(c, DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_CONTENT),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
+		}
+
 		return result;
 	}
 
@@ -74,9 +94,10 @@ public class MessageDao extends BaseDAO {
 
 	public boolean saveMessageUpdate(MessageUpdateQueryResponse message) {
 		for (MessageUpdateQueryResponseMessages item : message.getMids()) {
-			if (saveMessage(item.getMid(), new ReceiveMessageResponse("", item.getT(), item.getSid(),
-					item.getRid(), item.getSt(), item.getC(), item.getAt(), item.getAu(), item.getUt(),
-					"")))
+			if (saveMessage(item.getMid(),
+					new ReceiveMessageResponse("", item.getMid(), item.getT(), item.getSid(),
+							item.getRid(), item.getSt(), item.getC(), item.getAt(), item.getAu(),
+							item.getUt(), "")))
 				continue;
 			else
 				return false;
@@ -106,14 +127,16 @@ public class MessageDao extends BaseDAO {
 		Cursor c = db.rawQuery(sql, null);
 		List<ReceiveMessageResponse> result = new ArrayList<ReceiveMessageResponse>();
 		while (c.moveToNext()) {
-			result.add(new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
+			result.add(new ReceiveMessageResponse("",
+					getData(c, DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_CONTENT),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), ""));
 		}
 		c.close();
 		return result;
@@ -191,8 +214,8 @@ public class MessageDao extends BaseDAO {
 		db = dbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(DatabaseHelper.FIELD_MESSAGE_READTIME, System.currentTimeMillis());
-		return db.update(DatabaseHelper.TABLE_MESSAGE, values, DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID
-				+ " = ?", new String[] { mid }) > 0;
+		return db.update(DatabaseHelper.TABLE_MESSAGE, values,
+				DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID + " = ?", new String[] { mid }) > 0;
 	}
 
 	/**
@@ -249,14 +272,16 @@ public class MessageDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID + " = " + mid, null);
 		ReceiveMessageResponse result = null;
 		if (c.moveToFirst()) {
-			result = new ReceiveMessageResponse("", getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
-					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_RELATION_ID), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_SEND_TIME), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_CONTENT), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), getData(c,
-							DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), "");
+			result = new ReceiveMessageResponse("",
+					getData(c, DatabaseHelper.FIELD_MESSAGE_MESSAGE_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SENDER_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_RELATION_ID),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_SEND_TIME),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_CONTENT),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_TYPE),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL),
+					getData(c, DatabaseHelper.FIELD_MESSAGE_ATTACHMENT_URL), "");
 		}
 		c.close();
 		return result;
@@ -300,7 +325,8 @@ public class MessageDao extends BaseDAO {
 		// SQLiteDatabase db = dbHelper.getReadableDatabase();
 		// cursor = db
 		// .rawQuery(
-		// "SELECT sender_id,receiver_id,message_id,is_group FROM message WHERE sender_id = ? OR receiver_id = ? OR is_group = 1",
+		// "SELECT sender_id,receiver_id,message_id,is_group FROM message WHERE
+		// sender_id = ? OR receiver_id = ? OR is_group = 1",
 		// new String[] { userID, userID });
 		//
 		// while (cursor.moveToNext()) {
@@ -325,11 +351,14 @@ public class MessageDao extends BaseDAO {
 		// 根据对象ID列表，找出与该对象最新的一次Message
 		// cursor2 = db
 		// .rawQuery(
-		// "SELECT message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
+		// "SELECT
+		// message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
 		// + " FROM "
 		// + DBConstants.MESSAGE_TABLE_NAME
 		// +
-		// " WHERE (sender_id = ? and receiver_id = ?) or (receiver_id = ? and sender_id = ?) or (receiver_id = ? and is_group = 1) order by send_time desc",
+		// " WHERE (sender_id = ? and receiver_id = ?) or (receiver_id = ? and
+		// sender_id = ?) or (receiver_id = ? and is_group = 1) order by
+		// send_time desc",
 		// new String[] { idList.get(i), userID,
 		// idList.get(i), userID, idList.get(i) });
 		// cursor2.moveToFirst(); // 只取第一条数据（最新消息）
@@ -394,7 +423,8 @@ public class MessageDao extends BaseDAO {
 		// db.update(
 		// DBConstants.MESSAGE_TABLE_NAME,
 		// values,
-		// "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?) or (receiver_id = ? and is_group = 1)",
+		// "(sender_id = ? and receiver_id = ?) or (sender_id = ? and
+		// receiver_id = ?) or (receiver_id = ? and is_group = 1)",
 		// new String[] { objectID, userID, userID, objectID, objectID });
 		//
 		// } finally {
@@ -405,7 +435,8 @@ public class MessageDao extends BaseDAO {
 		// SQLiteDatabase db = dbHelper.getWritableDatabase();
 		// long id = db
 		// .delete(DBConstants.MESSAGE_TABLE_NAME,
-		// "(sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?) or (receiver_id = ? and is_group = 1)",
+		// "(sender_id = ? and receiver_id = ?) or (sender_id = ? and
+		// receiver_id = ?) or (receiver_id = ? and is_group = 1)",
 		// new String[] { objectID, userID, userID, objectID,
 		// objectID });
 		// if (id == -1) {
@@ -429,11 +460,13 @@ public class MessageDao extends BaseDAO {
 		// SQLiteDatabase db = dbHelper.getReadableDatabase();
 		// cursor = db
 		// .rawQuery(
-		// "SELECT message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_read"
+		// "SELECT
+		// message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_read"
 		// + " FROM "
 		// + DBConstants.MESSAGE_TABLE_NAME
 		// +
-		// " WHERE (sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?) and is_read = 0",
+		// " WHERE (sender_id = ? and receiver_id = ?) or (sender_id = ? and
+		// receiver_id = ?) and is_read = 0",
 		// new String[] { userID, objectID, objectID, userID });
 		// while (cursor.moveToNext()) {
 		// msgList.add(createMessageFromCursor(cursor));
@@ -461,11 +494,13 @@ public class MessageDao extends BaseDAO {
 		// SQLiteDatabase db = dbHelper.getReadableDatabase();
 		// cursor = db
 		// .rawQuery(
-		// "SELECT message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
+		// "SELECT
+		// message_id,sender_id,receiver_id,send_time,content,attachment_type,attachment_url,is_group,is_read"
 		// + " FROM "
 		// + DBConstants.MESSAGE_TABLE_NAME
 		// +
-		// " WHERE (sender_id = ? and receiver_id = ?) or (sender_id = ? and receiver_id = ?) or (receiver_id = ? and is_group = 1)",
+		// " WHERE (sender_id = ? and receiver_id = ?) or (sender_id = ? and
+		// receiver_id = ?) or (receiver_id = ? and is_group = 1)",
 		// new String[] { userID, personID, personID, userID,
 		// personID });
 		// while (cursor.moveToNext()) {
