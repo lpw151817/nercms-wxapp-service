@@ -230,7 +230,7 @@ public class AffairRequest extends BaseRequest {
 						}
 						List<CreateTaskRequestIds> ids2 = new ArrayList<CreateTaskRequestIds>();
 						for (int i = 0; i < pods.size(); i++) {
-							ids2.add(new CreateTaskRequestIds(rids.get(i)));
+							ids2.add(new CreateTaskRequestIds(pods.get(i)));
 						}
 						new SaveAffairThread(c,
 								new QueryAffairInfoResponse("", r.getAid(), t, getUserId(c), d,

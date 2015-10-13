@@ -10,9 +10,12 @@ import java.io.File;
  */
 public class Contants {
 	// TIP：所有的url结尾均带/
+	// public static final String SERVER="202.114.66.77";
+	// public static final String PORT="8080";
+	public static final String SERVER = "120.26.78.7";
+	public static final String PORT = "8012";
 
-	// 服务器地址
-	public static final String SERVER_URL = "http://202.114.66.77:8080" + File.separator;
+	public static final String SERVER_URL = "http://" + SERVER + ":" + PORT + File.separator;
 
 	// 模块名称
 	public static final String MODEL_NAME = "HttpService" + File.separator;

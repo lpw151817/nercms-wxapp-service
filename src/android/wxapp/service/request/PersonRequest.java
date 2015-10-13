@@ -163,7 +163,8 @@ public class PersonRequest extends BaseRequest {
 	 * @return
 	 */
 	@Deprecated
-	public JsonObjectRequest sendDeleteCustomerRequest(final Context context, final String customerID) {
+	public JsonObjectRequest sendDeleteCustomerRequest(final Context context,
+			final String customerID) {
 		return null;
 		// url = Constant.SERVER_BASE_URL + Constant.DELETE_CUSTOMER_URL +
 		// "?param={\"csid\":\""
@@ -346,7 +347,8 @@ public class PersonRequest extends BaseRequest {
 	public JsonObjectRequest modifyCustomerInfo(Context c, String identifyCode, String aliasName) {
 		if (getUserId(c) == null)
 			return null;
-		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode, aliasName);
+		ModifyCustomerRequest params = new ModifyCustomerRequest(getUserId(c), identifyCode,
+				aliasName);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_MODIFYUSERINFO
 				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
@@ -394,9 +396,10 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		String orgCodeUptateTime = getLastOrgUpdateTime(c);
 		if (orgCodeUptateTime == null)
-//			 orgCodeUptateTime = System.currentTimeMillis() + "";
+			// orgCodeUptateTime = System.currentTimeMillis() + "";
 			orgCodeUptateTime = "";
-		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c), orgCodeUptateTime);
+		GetOrgCodeRequest params = new GetOrgCodeRequest(getUserId(c), getUserIc(c),
+				orgCodeUptateTime);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_ORG_CODE
 				+ Contants.PARAM_NAME + parase2Json(params);
 		Log.e("URL", this.url);
@@ -407,7 +410,8 @@ public class PersonRequest extends BaseRequest {
 				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
-						GetOrgCodeResponse r = gson.fromJson(arg0.toString(), GetOrgCodeResponse.class);
+						GetOrgCodeResponse r = gson.fromJson(arg0.toString(),
+								GetOrgCodeResponse.class);
 						// 进行数据库的添加,并保存时间戳，返回handler到ui线程进行操作
 						new SaveOrgCodeThread(c, r).run();
 					} else {
@@ -442,7 +446,7 @@ public class PersonRequest extends BaseRequest {
 			return null;
 		String orgPersonUptateTime = getLastOrgPersonUpdateTime(c);
 		if (orgPersonUptateTime == null)
-//			 orgPersonUptateTime = System.currentTimeMillis() + "";
+			// orgPersonUptateTime = System.currentTimeMillis() + "";
 			orgPersonUptateTime = "";
 		GetOrgCodePersonRequest params = new GetOrgCodePersonRequest(getUserId(c), getUserIc(c),
 				orgPersonUptateTime);
@@ -502,14 +506,14 @@ public class PersonRequest extends BaseRequest {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						LoginResponse r = gson.fromJson(arg0.toString(), LoginResponse.class);
 						// 返回用户id
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_SUCCESS,
-								r, Contants.METHOD_PERSON_LOGIN);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.LOGIN_REQUEST_SUCCESS, r, Contants.METHOD_PERSON_LOGIN);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL, r,
-								Contants.METHOD_PERSON_LOGIN);
+						MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
+								r, Contants.METHOD_PERSON_LOGIN);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -520,6 +524,8 @@ public class PersonRequest extends BaseRequest {
 			@Override
 			public void onErrorResponse(VolleyError arg0) {
 				arg0.printStackTrace();
+				MessageHandlerManager.getInstance().sendMessage(Constant.LOGIN_REQUEST_FAIL,
+						Contants.METHOD_PERSON_LOGIN);
 			}
 		});
 
@@ -543,14 +549,14 @@ public class PersonRequest extends BaseRequest {
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						LogoutResponse r = gson.fromJson(arg0.toString(), LogoutResponse.class);
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_SUCCESS,
-								r, Contants.METHOD_PERSON_LOGOUT);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.LOGOUT_REQUEST_SUCCESS, r, Contants.METHOD_PERSON_LOGOUT);
 					} else {
 						NormalServerResponse r = gson.fromJson(arg0.toString(),
 								NormalServerResponse.class);
 						// 返回错误代码
-						MessageHandlerManager.getInstance().sendMessage(Constant.LOGOUT_REQUEST_FAIL, r,
-								Contants.METHOD_PERSON_LOGOUT);
+						MessageHandlerManager.getInstance().sendMessage(
+								Constant.LOGOUT_REQUEST_FAIL, r, Contants.METHOD_PERSON_LOGOUT);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -580,9 +586,11 @@ public class PersonRequest extends BaseRequest {
 	public JsonObjectRequest getPersonInfo(final Context c, String personId) {
 		if (getUserId(c) == null || getUserIc(c) == null)
 			return null;
-		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), getUserIc(c), personId);
-		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_GET_PERSON_INFO
-				+ Contants.PARAM_NAME + parase2Json(params);
+		GetPersonInfoRequest params = new GetPersonInfoRequest(getUserId(c), getUserIc(c),
+				personId);
+		this.url = Contants.SERVER_URL + Contants.MODEL_NAME
+				+ Contants.METHOD_PERSON_GET_PERSON_INFO + Contants.PARAM_NAME
+				+ parase2Json(params);
 		Log.e("URL", this.url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
@@ -780,11 +788,11 @@ public class PersonRequest extends BaseRequest {
 				ChangePwdResponse r = gson.fromJson(arg0.toString(), ChangePwdResponse.class);
 				if (r.getS().equals(Contants.RESULT_SUCCESS)) {
 					// 通知界面
-					MessageHandlerManager.getInstance().sendMessage(
-							Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
+					MessageHandlerManager.getInstance()
+							.sendMessage(Constant.CHANGE_PASSWORD_REQUEST_SUCCESS, "Profile");
 				} else if (r.getS().equals(Contants.RESULT_FAIL)) {
-					MessageHandlerManager.getInstance().sendMessage(
-							Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
+					MessageHandlerManager.getInstance()
+							.sendMessage(Constant.CHANGE_PASSWORD_REQUEST_FAIL, "Profile");
 				}
 			}
 		}, new ErrorListener() {
