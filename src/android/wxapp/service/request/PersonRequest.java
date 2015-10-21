@@ -780,6 +780,7 @@ public class PersonRequest extends BaseRequest {
 		ChangePwdRequest changePwd = new ChangePwdRequest(getUserId(c), newIdentifyCode);
 		this.url = Contants.SERVER_URL + Contants.MODEL_NAME + Contants.METHOD_PERSON_CHANGEPWD
 				+ Contants.PARAM_NAME + gson.toJson(changePwd);
+		Log.e("URL", url);
 		return new JsonObjectRequest(this.url, null, new Listener<JSONObject>() {
 
 			@Override

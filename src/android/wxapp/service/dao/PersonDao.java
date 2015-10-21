@@ -81,8 +81,8 @@ public class PersonDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_ORG_CODE_ORG_CODE + " LIKE '" + "_';", null);
 		List<OrgInfo> result = new ArrayList<OrgInfo>();
 		while (c.moveToNext()) {
-			result.add(new OrgInfo(getData(c, DatabaseHelper.FIELD_ORG_CODE_ORG_CODE), getData(c,
-					DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION)));
+			result.add(new OrgInfo(getData(c, DatabaseHelper.FIELD_ORG_CODE_ORG_CODE),
+					getData(c, DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION)));
 		}
 		c.close();
 		return result;
@@ -102,8 +102,8 @@ public class PersonDao extends BaseDAO {
 				+ DatabaseHelper.FIELD_ORG_CODE_ORG_CODE + " LIKE '" + oc + "_';", null);
 		List<OrgInfo> result = new ArrayList<OrgInfo>();
 		while (c.moveToNext()) {
-			result.add(new OrgInfo(getData(c, DatabaseHelper.FIELD_ORG_CODE_ORG_CODE), getData(c,
-					DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION)));
+			result.add(new OrgInfo(getData(c, DatabaseHelper.FIELD_ORG_CODE_ORG_CODE),
+					getData(c, DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION)));
 		}
 		c.close();
 		return result;
@@ -147,6 +147,17 @@ public class PersonDao extends BaseDAO {
 		return true;
 	}
 
+	public String getOrgDes(String orgId) {
+		db = dbHelper.getReadableDatabase();
+		Cursor c = db.rawQuery("select * from " + DatabaseHelper.TABLE_ORG_CODE + " where "
+				+ DatabaseHelper.FIELD_ORG_CODE_ORG_CODE + " = ?", new String[] { orgId });
+		if (c.moveToFirst())
+			return getData(c, DatabaseHelper.FIELD_ORG_CODE_DESCRIPTION);
+		else
+			return null;
+
+	}
+
 	/**
 	 * 查询对应oc下面的的人员信息 jerry 6.5
 	 * 
@@ -163,10 +174,10 @@ public class PersonDao extends BaseDAO {
 					getData(c, DatabaseHelper.FIELD_ORG_PERSON_CONTACTS),
 					new TypeToken<List<Contacts>>() {
 					}.getType());
-			result.add(new OrgPersonInfo(getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID), getData(c,
-					DatabaseHelper.FIELD_ORG_PERSON_USER_NAME), oc, getData(c,
-					DatabaseHelper.FIELD_ORG_PERSON_NAME), getData(c,
-					DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts));
+			result.add(new OrgPersonInfo(getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_ID),
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_USER_NAME), oc,
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME),
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts));
 		}
 		c.close();
 		return result;
@@ -177,8 +188,9 @@ public class PersonDao extends BaseDAO {
 		// 选出对应uid的oc
 		String sql = "select * from " + DatabaseHelper.TABLE_ORG_CODE + " where "
 				+ DatabaseHelper.FIELD_ORG_CODE_ORG_CODE + "= (select "
-				+ DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE + " from " + DatabaseHelper.TABLE_ORG_PERSON
-				+ " where " + DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + uid + " )";
+				+ DatabaseHelper.FIELD_ORG_PERSON_ORG_CODE + " from "
+				+ DatabaseHelper.TABLE_ORG_PERSON + " where "
+				+ DatabaseHelper.FIELD_ORG_PERSON_USER_ID + " = " + uid + " )";
 		Log.e("PersonDao SQL", sql);
 		Cursor c = db.rawQuery(sql, null);
 		String result = "";
@@ -207,8 +219,8 @@ public class PersonDao extends BaseDAO {
 					new TypeToken<List<Contacts>>() {
 					}.getType());
 			result = new GetPersonInfoResponse("", temp,
-					getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME), "", getData(c,
-							DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts);
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_NAME), "",
+					getData(c, DatabaseHelper.FIELD_ORG_PERSON_REMARK), tempContacts);
 		}
 		c.close();
 		return result;
@@ -255,11 +267,11 @@ public class PersonDao extends BaseDAO {
 				List<Contacts> paramContacts = new Gson().fromJson(temp,
 						new TypeToken<List<Contacts>>() {
 						}.getType());
-				GetPersonInfoResponse r = new GetPersonInfoResponse(0 + "", getData(c,
-						DatabaseHelper.FIELD_MY_INFO_USERNAME), getData(c,
-						DatabaseHelper.FIELD_MY_INFO_NAME),
-						getData(c, DatabaseHelper.FIELD_MY_INFO_DES), getData(c,
-								DatabaseHelper.FIELD_MY_INFO_REMARK), paramContacts);
+				GetPersonInfoResponse r = new GetPersonInfoResponse(0 + "",
+						getData(c, DatabaseHelper.FIELD_MY_INFO_USERNAME),
+						getData(c, DatabaseHelper.FIELD_MY_INFO_NAME),
+						getData(c, DatabaseHelper.FIELD_MY_INFO_DES),
+						getData(c, DatabaseHelper.FIELD_MY_INFO_REMARK), paramContacts);
 				c.close();
 				return r;
 			}
@@ -287,7 +299,8 @@ public class PersonDao extends BaseDAO {
 			if (org_code.length() == 1)
 				r.add(new Org("o" + org_code, 0 + "", name));
 			else
-				r.add(new Org("o" + org_code, "o" + org_code.substring(0, org_code.length() - 1), name));
+				r.add(new Org("o" + org_code, "o" + org_code.substring(0, org_code.length() - 1),
+						name));
 		}
 		c.close();
 		return r;
@@ -566,7 +579,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor =
-		// db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code like '1_'",
+		// db.rawQuery("SELECT org_code, description FROM org_node WHERE
+		// org_code like '1_'",
 		// null);
 		//
 		// while (cursor.moveToNext()) {
@@ -596,7 +610,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor =
-		// db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code like '"
+		// db.rawQuery("SELECT org_code, description FROM org_node WHERE
+		// org_code like '"
 		// + secondNodeCode + "_'", null);
 		//
 		// while (cursor.moveToNext()) {
@@ -627,7 +642,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db.rawQuery(
-		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence,
+		// OS.name, OS.position, OS.rank"
 		// + " FROM org_staff OS"
 		// + " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
 		// + " inner join org_node ONN on ONS.org_code=ONN.org_code", null);
@@ -658,7 +674,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db.rawQuery(
-		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence,
+		// OS.name, OS.position, OS.rank"
 		// + " FROM org_staff OS"
 		// + " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
 		// + " inner join org_node ONN on ONS.org_code=ONN.org_code "
@@ -735,7 +752,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor =
-		// db.rawQuery("SELECT contact_id, type, content FROM contact WHERE contact_id = ?",
+		// db.rawQuery("SELECT contact_id, type, content FROM contact WHERE
+		// contact_id = ?",
 		// new String[] { contactID });
 		//
 		// while (cursor.moveToNext()) {
@@ -764,7 +782,8 @@ public class PersonDao extends BaseDAO {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db
 		// .rawQuery(
-		// "SELECT customer_id, name, unit, description, contact_id FROM customer WHERE contact_id = ?",
+		// "SELECT customer_id, name, unit, description, contact_id FROM
+		// customer WHERE contact_id = ?",
 		// new String[] { userID });
 		// while (cursor.moveToNext()) {
 		// customerList.add(createCustomerFromCursor(cursor));
@@ -793,7 +812,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db.rawQuery(
-		// "SELECT customer_id, type, content FROM customer_contact WHERE customer_id = ?",
+		// "SELECT customer_id, type, content FROM customer_contact WHERE
+		// customer_id = ?",
 		// new String[] { customerID });
 		// while (cursor.moveToNext()) {
 		// customerContactList.add(creatCustomerContactFromCursor(cursor));
@@ -841,7 +861,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db.rawQuery(
-		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence, OS.name, OS.position, OS.rank"
+		// "SELECT OS.contact_id, ONN.org_code, ONN.description, ONS.sequence,
+		// OS.name, OS.position, OS.rank"
 		// + " FROM org_staff OS"
 		// + " inner join org_node_staff ONS on OS.contact_id=ONS.contact_id"
 		// + " inner join org_node ONN on ONS.org_code=ONN.org_code"
@@ -874,7 +895,8 @@ public class PersonDao extends BaseDAO {
 		// db = dbHelper.getReadableDatabase();
 		// cursor = db
 		// .rawQuery(
-		// "SELECT customer_id, name, unit, description, contact_id FROM customer WHERE customer_id = ?",
+		// "SELECT customer_id, name, unit, description, contact_id FROM
+		// customer WHERE customer_id = ?",
 		// new String[] { customerID });
 		// if (cursor.moveToFirst()) {
 		// return createCustomerFromCursor(cursor);
@@ -902,7 +924,8 @@ public class PersonDao extends BaseDAO {
 		// try {
 		// db = dbHelper.getReadableDatabase();
 		// cursor =
-		// db.rawQuery("SELECT org_code, description FROM org_node WHERE org_code = ?",
+		// db.rawQuery("SELECT org_code, description FROM org_node WHERE
+		// org_code = ?",
 		// new String[] { orgID });
 		// if (cursor.moveToFirst()) {
 		// return createOrgNodeFromCursor(cursor);

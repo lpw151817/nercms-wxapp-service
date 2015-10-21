@@ -44,6 +44,7 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 
 	@Override
 	protected String doInBackground(String... params) {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>in upload");
 		String result = "文件上传失败";
 		try {
 			result = post(params[0], params[1]);
@@ -119,6 +120,7 @@ public class HttpUploadTask extends AsyncTask<String, Integer, String> {
 	protected void onPostExecute(String result) {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>out upload");
 		if (result.equals("success")) {
 			MessageHandlerManager.getInstance().sendMessage(Constant.FILE_UPLOAD_SUCCESS,
 					context.getClass().getSimpleName());

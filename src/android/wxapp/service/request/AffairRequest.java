@@ -214,6 +214,7 @@ public class AffairRequest extends BaseRequest {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				Log.e("Response", arg0.toString());
 				try {
 					if (arg0.getString("s").equals(Contants.RESULT_SUCCESS)) {
 						CreateTaskResponse r = gson.fromJson(arg0.toString(),
